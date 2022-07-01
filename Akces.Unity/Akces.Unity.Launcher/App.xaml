@@ -1,0 +1,15 @@
+﻿<Application x:Class="Akces.Unity.Launcher.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Akces.Unity.Launcher"
+             Startup="Application_Startup"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+
+        <BitmapImage x:Key="logo_akces" UriSource="Assets/Images/logo_akces.png" />
+        <BitmapImage x:Key="nazwa_akces" UriSource="Assets/Images/nazwa_akces.png" />
+        <BitmapImage x:Key="logo_akces_back" UriSource="Assets/Images/logo_akces_back.png" />
+        <BitmapImage x:Key="side_picture" UriSource="Assets/Images/side_picture.png" />
+        
+    </Application.Resources>
+</Application>

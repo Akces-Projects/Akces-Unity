@@ -1,0 +1,44 @@
+﻿<Window x:Class="Akces.Unity.Launcher.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewmodels="clr-namespace:Akces.Unity.Launcher.ViewModels"
+        xmlns:converters="clr-namespace:Akces.Wpf.Converters;assembly=Akces.Wpf"
+        xmlns:controls="clr-namespace:Akces.Wpf.Controls;assembly=Akces.Wpf"
+        xmlns:style="clr-namespace:Akces.Wpf.Extensions.Style;assembly=Akces.Wpf"
+        d:DataContext="{d:DesignInstance Type=viewmodels:MainViewModel}"
+        mc:Ignorable="d"
+        Title="Akces" 
+        Icon="Assets/akces_icon.ico" 
+        WindowStyle="SingleBorderWindow"
+        Background="#f6f5ff"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanMinimize"
+        Height="344" Width="700">
+    
+    <Window.Resources>
+        <converters:BoolToVisibilityConverter x:Key="boolToVisibilityConverter"/>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Canvas>
+            <Image Opacity="0.2" Canvas.Top="-20" Canvas.Left="470" Width="430" Source="{StaticResource logo_akces_back}" RenderOptions.BitmapScalingMode="Fant" />
+        </Canvas>
+
+        <Image Grid.Row="0" Grid.Column="0"
+               Opacity="0.9" Canvas.Top="0" Width="200" 
+               Source="{StaticResource side_picture}" 
+               RenderOptions.BitmapScalingMode="Fant" />
+
+        <ContentControl Grid.Row="0" Grid.Column="1" Content="{Binding ControlViewModel}"/>
+        <controls:LoadingOverlay Grid.Column="0" Grid.ColumnSpan="2" Style="{style:AkcesStyle ResourceKey=LoadingOverlay}"/>
+    </Grid>
+</Window>

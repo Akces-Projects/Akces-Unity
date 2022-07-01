@@ -1,0 +1,42 @@
+﻿<UserControl x:Class="Akces.Unity.App.Views.RaportView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Akces.Unity.App.Views" 
+             xmlns:viewmodels="clr-namespace:Akces.Unity.App.ViewModels" 
+             d:DataContext="{d:DesignInstance Type=viewmodels:RaportViewModel}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    
+    <Grid>
+        <DataGrid ItemsSource="{Binding OperationResults}" AutoGenerateColumns="False" CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Obiekt" Binding="{Binding ObjectName}" IsReadOnly="True" Width="100"/>
+                <DataGridCheckBoxColumn Header="Sukces" Binding="{Binding IsSuccess}" IsReadOnly="True" Width="50"/>
+                <DataGridCheckBoxColumn Header="Bez zmian" Binding="{Binding NoChangesMade}" IsReadOnly="True" Width="70"/>
+                <DataGridTemplateColumn Header="Informajce" IsReadOnly="True" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Infos}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Uwagi" IsReadOnly="True" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Warrnings}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Błędy" IsReadOnly="True" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Errors}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>
