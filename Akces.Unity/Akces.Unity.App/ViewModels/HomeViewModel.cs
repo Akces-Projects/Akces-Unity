@@ -1,6 +1,4 @@
-﻿using Akces.Unity.Core.NexoData.Operations;
-using Akces.Wpf.Models;
-using System.Collections.ObjectModel;
+﻿using Akces.Wpf.Models;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
@@ -8,15 +6,7 @@ using System.Windows.Input;
 
 namespace Akces.Unity.App.ViewModels
 {
-    public class RaportViewModel : ControlViewModel
-    {
-        public ObservableCollection<OperationResult> OperationResults { get; }
 
-        public RaportViewModel(HostViewModel host) : base(host)
-        {
-            OperationResults = new ObservableCollection<OperationResult>();
-        }
-    }
     public class HomeViewModel : ControlViewModel
     {
         public ICommand StartLauncherCommand { get; set; }

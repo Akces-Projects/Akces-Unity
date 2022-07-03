@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Akces.Unity.DataAccess.NexoManagers.Operations
+namespace Akces.Unity.DataAccess
 {
     public class OperationResult
     {

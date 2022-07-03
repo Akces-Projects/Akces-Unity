@@ -1,6 +1,4 @@
 ﻿using Akces.Core.Nexo;
-using Akces.Unity.Core;
-using Akces.Unity.Core.NexoData;
 using Akces.Wpf.Helpers;
 using Akces.Wpf.Models;
 using System;
@@ -65,10 +63,7 @@ namespace Akces.Unity.App.ViewModels
         private void OnNexoUserLoggedIn(NexoContext nexoContext)
         {
             ServicesProvider.AddSingleton(nexoContext);
-
-            var ordersManager = nexoContext.GetManager<NexoOrdersManager>();
-            var unityService = new UnityService(ordersManager);
-            ServicesProvider.AddSingleton(unityService);
+            ServicesProvider.AddSingleton(new HarmonogramWorker());
 
             nexoDatabase.OnNexoUserLogginFailed -= OnNexoUserLogginFailed;
             nexoDatabase.OnNexoUserLoggedIn -= OnNexoUserLoggedIn;
@@ -84,7 +79,7 @@ namespace Akces.Unity.App.ViewModels
             var navbar = (Host as MainViewModel).NavbarViewModel;
             Host.Window.Title = $"{nexoDatabase.Name} - {nexoContext.NexoUser.Name} - {App.AppName}";
             navbar.Logged = true;
-            Host.UpdateView<IndexViewModel>();
+            Host.UpdateView<ActiveHarmonogramViewModel>();
         }
         private void OnAutoLoginChanged(bool value)
         {

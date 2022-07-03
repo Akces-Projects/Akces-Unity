@@ -17,7 +17,7 @@ namespace Akces.Unity.DataAccess.NexoManagers
 
         public async Task<OperationResult> AddIfNotExistsAsync(Contractor contractor, NexoConfiguration configuration)
         {
-            var addContractorOperation = new AddContractorOperation(contractor, sfera, configuration);
+            var addContractorOperation = new AddContractorOperation(contractor, sfera);
             var operationResult = await addContractorOperation.ExecuteAsync();
 
             return operationResult;

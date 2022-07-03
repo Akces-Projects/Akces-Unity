@@ -12,15 +12,13 @@ namespace Akces.Unity.DataAccess.NexoManagers.Operations
     public class AddContractorOperation : IOperation<Contractor>
     {
         private readonly OperationResult operationResult;
-        private readonly NexoConfiguration configuration;
         private readonly Uchwyt sfera;
         public Contractor Data { get; private set; }
 
-        public AddContractorOperation(Contractor data, Uchwyt sfera, NexoConfiguration configuration)
+        public AddContractorOperation(Contractor data, Uchwyt sfera)
         {
             Data = data;
             this.sfera = sfera;
-            this.configuration = configuration;
             operationResult = new OperationResult();
             operationResult.ObjectName = data.Name;
         }

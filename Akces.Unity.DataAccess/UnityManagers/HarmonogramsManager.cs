@@ -13,6 +13,7 @@ namespace Akces.Unity.DataAccess.Managers
             using (var unityDbContext = new UnityDbContext())
             {
                 var harmonograms = unityDbContext.Harmonograms
+                    .Include(x => x.Positions)
                     .AsNoTracking()
                     .ToList();
 
@@ -48,6 +49,22 @@ namespace Akces.Unity.DataAccess.Managers
             var bo = new HarmonogramBO(unityDbContext);
             bo.Data = harmonogram;
             return bo;
+        }
+
+        public bool SaveHarmonogramPosition(HarmonogramPosition harmonogramPosition) 
+        {
+            var unityDbContext = new UnityDbContext();
+            var position = unityDbContext.Set<HarmonogramPosition>().Find(harmonogramPosition.Id);
+
+            if (position == null)
+                return false;
+
+            position.LastLaunchTime = harmonogramPosition.LastLaunchTime;
+
+            unityDbContext.Update(position).State = EntityState.Modified;
+            var result = unityDbContext.SaveChanges();
+            unityDbContext.Dispose();
+            return result > 0;
         }
     }
 }

@@ -19,17 +19,18 @@ namespace Akces.Unity.DataAccess.NexoManagers
         {
             var objectName = $"Zamówienie {order.SourceSaleChannelName} {order.Original}";
 
-            var addContractorOperation = new AddContractorOperation(order.Purchaser, sfera, configuration);
+            var addContractorOperation = new AddContractorOperation(order.Purchaser, sfera);
             var operationResult1 = await addContractorOperation.ExecuteAsync();
 
             if (!operationResult1.IsSuccess)
             {
-                operationResult1.ObjectName = order.Original + "/" + operationResult1.ObjectName;
+                operationResult1.ObjectName = objectName;
                 return operationResult1;
             }
 
             var addOrderOperation = new AddOrderOperation(order, sfera, configuration);
             var operationResult2 = await addOrderOperation.ExecuteAsync();
+            operationResult2.ObjectName = objectName;
 
             return operationResult2;
         }

@@ -1,0 +1,231 @@
+﻿<UserControl x:Class="Akces.Unity.App.Views.ActiveHarmonogramView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:style="clr-namespace:Akces.Wpf.Extensions.Style;assembly=Akces.Wpf"
+             xmlns:converters="clr-namespace:Akces.Unity.App.Converters"
+             xmlns:controls="clr-namespace:Akces.Wpf.Controls;assembly=Akces.Wpf"
+             xmlns:local="clr-namespace:Akces.Unity.App" 
+             xmlns:models="clr-namespace:Akces.Unity.Models;assembly=Akces.Unity.Models"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
+             xmlns:viewmodels="clr-namespace:Akces.Unity.App.ViewModels"
+             d:DataContext="{d:DesignInstance Type=viewmodels:ActiveHarmonogramViewModel}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="1200">
+
+    <UserControl.Resources>
+        <converters:BoolToVisibility x:Key="boolToVisibility"/>
+        <converters:IsHarmonogramPositionNotWorking x:Key="isHarmonogramPositionNotWorking"/>
+        <converters:IsHarmonogramPositionWorking x:Key="isHarmonogramPositionWorking"/>
+        <local:BindingProxy x:Key="Proxy" Data="{Binding}" />
+
+        <Style TargetType="Button" x:Key="menuButton">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+
+        <Style TargetType="TextBlock" x:Key="rowText">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+    </UserControl.Resources>
+
+    <StackPanel>
+        <TextBlock Text="Lista aktywnych zadań">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="FontSize" Value="22"/>
+                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                    <Setter Property="Background" Value="#eeeeee"/>
+                    <Setter Property="FontWeight" Value="DemiBold"/>
+                    <Setter Property="Padding" Value="26,12,12,12"/>
+                    <Setter Property="Foreground" Value="{style:AkcesStyle ResourceKey=ThemeColor}"/>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+
+        <Grid Margin="20,0,0,0"
+              Background="White"
+              Height="40">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="2"/>
+                <ColumnDefinition Width="220"/>
+                <ColumnDefinition Width="10"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock FontSize="16"
+                       VerticalAlignment="Center"
+                       FontWeight="SemiBold"
+                       IsEnabled="{Binding IsWorkerEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <Trigger Property="IsEnabled" Value="True">
+                                <Setter Property="Text" Value="Wykonywanie zadań jest aktywne"/>
+                                <Setter Property="Foreground" Value="Green"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Text" Value="Wykonywanie zadań jest zatrzymane"/>
+                                <Setter Property="Foreground" Value="OrangeRed"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
+            <StackPanel Grid.Column="2"
+                        Visibility="{Binding IsWorkerNotEnabled, Converter={StaticResource boolToVisibility}}"
+                        Orientation="Horizontal" 
+                        Margin="0,0,10,0">
+                
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#bee6fd"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+                
+                <Button Style="{StaticResource menuButton}" Content="Wznów" Command="{Binding StartWorkerCommand}"/>
+                <fa:ImageAwesome Margin="5,0,0,0" Icon="PlayCircle" Width="18" Foreground="{style:AkcesStyle ResourceKey=ThemeColor}" VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="2"
+                        Visibility="{Binding IsWorkerEnabled, Converter={StaticResource boolToVisibility}}"
+                        Orientation="Horizontal" 
+                        Margin="0,0,10,0">
+
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#bee6fd"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+
+                <Button Style="{StaticResource menuButton}" Content="Zatrzymaj" Command="{Binding StopWorkerCommand}"/>
+                <fa:ImageAwesome Margin="5,0,0,0" Icon="StopCircle" Width="18" Foreground="OrangeRed" VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <TextBlock Grid.Column="4"
+                       FontSize="18"
+                       Margin="0,0,0,2"
+                       VerticalAlignment="Center"
+                       Text="Aktywny harmonogram: "/>
+
+            <ComboBox Grid.Column="6"
+                      ItemsSource="{Binding Harmonograms}"
+                      SelectedItem="{Binding ActiveHarmonogram}"
+                      Height="30"
+                      FontSize="16"
+                      DisplayMemberPath="Name">
+            </ComboBox>
+        </Grid>
+
+        <DataGrid ItemsSource="{Binding Positions}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+                  RowHeight="40">
+            <DataGrid.Columns>                
+                <DataGridTemplateColumn Header="Typ operacji" Width="220">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding HarmonogramOperation, UpdateSourceTrigger=PropertyChanged}" 
+                                       FontSize="16"
+                                       Style="{StaticResource rowText}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Konto" Width="150">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Account.Name, UpdateSourceTrigger=PropertyChanged}" 
+                                       Style="{StaticResource rowText}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Opis" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" 
+                                       Style="{StaticResource rowText}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Pierwsze uruchomienie" Width="190">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding StartTime, UpdateSourceTrigger=PropertyChanged}" 
+                                       Style="{StaticResource rowText}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Ostatnie uruchomienie" Width="190">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <TextBlock Text="{Binding LastLaunchTime, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                                           Style="{StaticResource rowText}">
+                                    <TextBlock.Visibility>
+                                        <MultiBinding Converter="{StaticResource isHarmonogramPositionNotWorking}">
+                                            <Binding Path="Id"/>
+                                            <Binding Source="{StaticResource Proxy}" Path="Data.CurrentWorkingPositionId" />
+                                        </MultiBinding>
+                                    </TextBlock.Visibility>
+                                </TextBlock>
+
+                                <StackPanel Orientation="Horizontal">
+                                    <StackPanel.Visibility>
+                                        <MultiBinding Converter="{StaticResource isHarmonogramPositionWorking}">
+                                            <Binding Path="Id" />
+                                            <Binding Source="{StaticResource Proxy}" Path="Data.CurrentWorkingPositionId" />
+                                        </MultiBinding>
+                                    </StackPanel.Visibility>
+
+                                    <TextBlock Text="W trakcie..." Style="{StaticResource rowText}" FontWeight="SemiBold"/>
+                                    <Control Style="{style:AkcesStyle ResourceKey=BusyAnimationStyle}" Width="60" Height="60">
+                                        <Control.LayoutTransform>
+                                            <ScaleTransform ScaleX="0.7" ScaleY="0.7"/>
+                                        </Control.LayoutTransform>
+                                    </Control>
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Powtarzaj" Width="60">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding Repeat, UpdateSourceTrigger=PropertyChanged}"
+                                      IsEnabled="False"
+                                      VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <CheckBox.LayoutTransform>
+                                    <ScaleTransform ScaleX="1.4" ScaleY="1.4"/>
+                                </CheckBox.LayoutTransform>
+                            </CheckBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Po ( min.)" Width="60">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock FontSize="17" Text="{Binding RepeatAfterMinutes, UpdateSourceTrigger=PropertyChanged}" 
+                                       Style="{StaticResource rowText}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </StackPanel>
+</UserControl>

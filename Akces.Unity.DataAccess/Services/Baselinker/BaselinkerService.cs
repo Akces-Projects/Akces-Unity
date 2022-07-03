@@ -26,10 +26,11 @@ namespace Akces.Unity.DataAccess.Services
             this.baselinkerConfiguration = baselinkerConfiguration;
         }
 
-        public async Task<List<Order>> GetOrdersAsync(DateTime from)
+        public async Task<List<Order>> GetOrdersAsync()
         {
             var orders = new List<Order>();
 
+            var from = DateTime.Now.AddHours(-baselinkerConfiguration.ImportOrdersFromOffsetHours);
             var dateFrom = ((DateTimeOffset)from).ToUnixTimeSeconds();
 
             while (true)
@@ -82,13 +83,34 @@ namespace Akces.Unity.DataAccess.Services
         {
             throw new NotImplementedException();
         }
-        public Task<bool> AuthenticateAsync()
+        public async Task<bool> AuthenticateAsync()
         {
-            throw new NotImplementedException();
+            try
+            {
+                await GetOrdersAsync();
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+        public async Task<bool> TestConnectionAsync()
+        {
+            try
+            {
+                await GetOrdersAsync();
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
         }
         public void Dispose()
         {
-            throw new NotImplementedException();
+            httpClient?.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }

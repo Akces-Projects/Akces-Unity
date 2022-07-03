@@ -35,9 +35,13 @@ namespace Akces.Unity.DataAccess.Managers.BusinessObjects
         }
         public void RemovePosition(HarmonogramPosition harmonogramPosition) 
         {
-            var entity = unityDbContext.Entry(harmonogramPosition);
-            entity.State = EntityState.Deleted;
-            Data.Positions.Remove(entity.Entity);
+            if (harmonogramPosition.Id != default)
+            {
+                var entity = unityDbContext.Entry(harmonogramPosition);
+                entity.State = EntityState.Deleted;
+            }
+
+            Data.Positions.Remove(harmonogramPosition);
         }
         public bool Save()
         {

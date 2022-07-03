@@ -7,9 +7,10 @@ namespace Akces.Unity.Models
     {
         public int Id { get; set; }
         public int HarmonogramPositionId { get; set; }
-        public string ObjectName { get; set; }
+        public string Description { get; set; }
         public OperationType OperationType { get; set; }
         public DateTime Created { get; set; }
+        public int PositionsCount { get; set; }
         public int InfosCount { get; set; }
         public int WarningsCount { get; set; }
         public int ErrorsCount { get; set; }

@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Akces.Unity.App" 
         xmlns:controls="clr-namespace:Akces.Wpf.Controls;assembly=Akces.Wpf"
+        xmlns:converters="clr-namespace:Akces.Unity.App.Converters"
         xmlns:style="clr-namespace:Akces.Wpf.Extensions.Style;assembly=Akces.Wpf"
         xmlns:viewmodels="clr-namespace:Akces.Unity.App.ViewModels" 
         d:DataContext="{d:DesignInstance Type=viewmodels:MainViewModel}"
@@ -16,6 +17,10 @@
         WindowStyle="SingleBorderWindow"
         Background="#fcfeff"
         WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <converters:BoolToVisibility x:Key="boolToVisibility"/>
+    </Window.Resources>
     
     <Grid>
         <Grid.RowDefinitions>
@@ -28,7 +33,20 @@
         </Canvas>
 
         <UserControl Grid.Row="0" Content="{Binding NavbarViewModel}"/>
-        <UserControl Grid.Row="1" Content="{Binding ControlViewModel}"/>
+
+        <DockPanel Grid.Row="1"
+                   LastChildFill="True">
+            
+            <UserControl Width="200" 
+                         HorizontalAlignment="Left" 
+                         IsEnabled="{Binding SidebarVisable}"
+                         IsVisibleChanged="UserControl_IsVisibleChanged"
+                         Visibility="{Binding SidebarVisable, Converter={StaticResource boolToVisibility}}"
+                         Content="{Binding SidebarViewModel}"/>
+
+            <UserControl x:Name="d" Content="{Binding ControlViewModel}"/>
+        </DockPanel>
+
         <controls:LoadingOverlay x:Name="loadingOverlay" Grid.Row="0" Grid.RowSpan="2" Style="{style:AkcesStyle ResourceKey=LoadingOverlay}"/>
     </Grid>
 </Window>

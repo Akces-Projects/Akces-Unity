@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Akces.Unity.DataAccess.Migrations
 {
     [DbContext(typeof(UnityDbContext))]
-    [Migration("20220701122002_init")]
-    partial class init
+    [Migration("20220702232821_init2")]
+    partial class init2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -273,6 +273,9 @@ namespace Akces.Unity.DataAccess.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("WorkerEnabled")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
                     b.ToTable("Harmonograms");
@@ -346,6 +349,9 @@ namespace Akces.Unity.DataAccess.Migrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("ErrorsCount")
                         .HasColumnType("INTEGER");
 
@@ -355,10 +361,10 @@ namespace Akces.Unity.DataAccess.Migrations
                     b.Property<int>("InfosCount")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("ObjectName")
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("OperationType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PositionsCount")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("WarningsCount")
@@ -423,6 +429,9 @@ namespace Akces.Unity.DataAccess.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("GetUnconfirmedOrders")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ImportOrdersFromOffsetHours")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Token")

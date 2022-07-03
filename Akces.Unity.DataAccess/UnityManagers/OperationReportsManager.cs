@@ -51,5 +51,17 @@ namespace Akces.Unity.DataAccess.Managers
             bo.Data.OperationType = operationType;
             return bo;
         }
+        public IOperationReport Find(OperationReport entity)
+        {
+            var unityDbContext = new UnityDbContext();
+
+            var report = unityDbContext.OperationReports
+                   .Include(unityDbContext.GetIncludePaths(typeof(OperationReport)))
+                   .FirstOrDefault(x => x.Id == entity.Id);
+
+            var bo = new OperationReportBO(unityDbContext);
+            bo.Data = report;
+            return bo;
+        }
     }
 }

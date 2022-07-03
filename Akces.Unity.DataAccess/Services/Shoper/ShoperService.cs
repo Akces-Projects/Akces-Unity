@@ -22,7 +22,7 @@ namespace Akces.Unity.DataAccess.Services
         {
             throw new NotImplementedException();
         }
-        public Task<List<Order>> GetOrdersAsync(DateTime from)
+        public Task<List<Order>> GetOrdersAsync()
         {
             throw new NotImplementedException();
         }
@@ -35,6 +35,11 @@ namespace Akces.Unity.DataAccess.Services
             throw new NotImplementedException();
         }
         public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> TestConnectionAsync()
         {
             throw new NotImplementedException();
         }

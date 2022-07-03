@@ -271,6 +271,9 @@ namespace Akces.Unity.DataAccess.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("WorkerEnabled")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
                     b.ToTable("Harmonograms");
@@ -344,6 +347,9 @@ namespace Akces.Unity.DataAccess.Migrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("ErrorsCount")
                         .HasColumnType("INTEGER");
 
@@ -353,10 +359,10 @@ namespace Akces.Unity.DataAccess.Migrations
                     b.Property<int>("InfosCount")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("ObjectName")
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("OperationType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PositionsCount")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("WarningsCount")
@@ -421,6 +427,9 @@ namespace Akces.Unity.DataAccess.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("GetUnconfirmedOrders")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ImportOrdersFromOffsetHours")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Token")

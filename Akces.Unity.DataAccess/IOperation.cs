@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Akces.Unity.DataAccess.NexoManagers.Operations
+namespace Akces.Unity.DataAccess
 {
     public interface IOperation<T>
     {

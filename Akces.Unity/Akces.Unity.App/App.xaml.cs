@@ -1,4 +1,5 @@
 ﻿using Akces.Core.Nexo;
+using Akces.Unity.DataAccess;
 using Akces.Wpf.Extensions.Style;
 using Akces.Wpf.Helpers;
 using System;
@@ -62,16 +63,17 @@ GODZINY OTWARCIA :    Poniedziałek – Piątek 8:00 – 16:00";
         {
             // DLA TESTOW:
             NexoDatabase.TryFromFile(out NexoDatabase nexoDatabase, "..\\localdata");
-
             // W WERSJI OSTATECZNEJ:
             //var nexoDatabase = ServicesProvider.AddSingleton(NexoDatabase.FromString(e.Args[0]));
+
+            ServicesProvider.AddSingleton(nexoDatabase);
 
             var lickey = File.ReadAllText("..\\lickey");
             var licenseIsValid = nexoDatabase.TryCheckLicense("ABC", lickey, out _, out _);
             if (!licenseIsValid)
                 Current.Shutdown();
 
-            ServicesProvider.AddSingleton(nexoDatabase);
+            UnityConnection.ConnectionString = "Data Source=..\\..\\..\\..\\..\\Akces.Unity.Tests\\Data\\unity.db";
         }
     }
 }

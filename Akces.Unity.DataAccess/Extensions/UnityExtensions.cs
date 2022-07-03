@@ -1,4 +1,5 @@
-﻿using Akces.Unity.DataAccess.Services;
+﻿using Akces.Unity.DataAccess.Managers;
+using Akces.Unity.DataAccess.Services;
 using Akces.Unity.Models;
 using Akces.Unity.Models.SaleChannels;
 
@@ -8,14 +9,18 @@ namespace Akces.Unity.DataAccess
     {
         public static ISaleChannelService CreateService(this Account account) 
         {
+            var accountsManager = new AccountsManager();
+
             switch (account.AccountType)
             {
                 case AccountType.Shoper:
-                    return new ShoperService((account as ShoperAccount).ShoperConfiguration);
+                    var shoperConfiguration = accountsManager.Get<ShoperAccount>(account.Id)?.ShoperConfiguration;
+                    return new ShoperService(shoperConfiguration);
                 case AccountType.shopGold:
                     break;
                 case AccountType.Baselinker:
-                    return new BaselinkerService((account as BaselinkerAccount).BaselinkerConfiguration);
+                    var baselinkerConfiguration = accountsManager.Get<BaselinkerAccount>(account.Id)?.BaselinkerConfiguration;
+                    return new BaselinkerService(baselinkerConfiguration);
                 case AccountType.Allegro:
                     break;
                 default:

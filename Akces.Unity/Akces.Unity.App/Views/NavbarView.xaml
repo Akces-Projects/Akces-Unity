@@ -8,6 +8,7 @@
              xmlns:viewmodels="clr-namespace:Akces.Unity.App.ViewModels" 
              d:DataContext="{d:DesignInstance Type=viewmodels:NavbarViewModel}"
              mc:Ignorable="d" 
+             Background="{style:AkcesStyle ResourceKey=ThemeColor}"
              d:DesignHeight="50" d:DesignWidth="800">
 
     <UserControl.Resources>
@@ -32,7 +33,7 @@
         <Button Grid.Column="1"
                 Content="Pomoc"                
                 FontWeight="Medium"
-                Foreground="{style:AkcesStyle ResourceKey=ThemeColor}"
+                Foreground="White"
                 Background="Transparent"
                 BorderBrush="Transparent"
                 HorizontalAlignment="Left"
@@ -42,7 +43,7 @@
 
         <Button Grid.Column="2"
                 Content="Kontakt"
-                Foreground="{style:AkcesStyle ResourceKey=ThemeColor}"
+                Foreground="White"
                 FontWeight="Medium"
                 Background="Transparent"
                 BorderBrush="Transparent"

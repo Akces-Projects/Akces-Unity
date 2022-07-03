@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace Akces.Unity.App.Views
 {
     /// <summary>
-    /// Logika interakcji dla klasy RaportViewModel.xaml
+    /// Logika interakcji dla klasy ReportsView.xaml
     /// </summary>
-    public partial class RaportView : UserControl
+    public partial class ReportsView : UserControl
     {
-        public RaportView()
+        public ReportsView()
         {
             InitializeComponent();
         }

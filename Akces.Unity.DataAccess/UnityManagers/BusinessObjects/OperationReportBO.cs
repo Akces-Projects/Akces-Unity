@@ -76,6 +76,7 @@ namespace Akces.Unity.DataAccess.Managers.BusinessObjects
         {
             Validate();
 
+            Data.PositionsCount = Data.Positions.Count;
             Data.InfosCount = Data.Positions.Count(x => x.Type == ReportPositionType.Info);
             Data.WarningsCount = Data.Positions.Count(x => x.Type == ReportPositionType.Warn);
             Data.ErrorsCount = Data.Positions.Count(x => x.Type == ReportPositionType.Error);

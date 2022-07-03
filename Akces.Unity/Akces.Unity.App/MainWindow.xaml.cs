@@ -5,6 +5,7 @@ using Akces.Wpf.Helpers;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Akces.Unity.App
 {
@@ -38,6 +39,12 @@ namespace Akces.Unity.App
             await Task.Delay(10);
             DataContext = dc;
             loadingOverlay.Visibility = Visibility.Visible;
+        }
+
+        private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            var uc = sender as UserControl;
+            uc.Width = uc.Visibility == Visibility.Visible ? 200 : 0;
         }
     }
 }

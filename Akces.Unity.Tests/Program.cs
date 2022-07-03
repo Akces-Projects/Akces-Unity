@@ -23,12 +23,14 @@ namespace Akces.Unity.Tests
             UnityConnection.ConnectionString = "Data Source=..\\..\\Data\\unity.db";
 
             var accountsManager = new AccountsManager();
-            var operationReportsManager = new OperationReportsManager();            
+            var operationReportsManager = new OperationReportsManager();
+
+            CreateAcc();
 
             var account = accountsManager.Get<BaselinkerAccount>(1);
             var service = account.CreateService();
 
-            var orders = await service.GetOrdersAsync(DateTime.Now.AddHours(-1000));
+            var orders = await service.GetOrdersAsync();
 
             //3008690-3013746-QDCOQ0OZC24XRXH9A4IQLNRSK5C93U2DPUJLBGVKDATIVPWIGFKKJP2QIIFS9TK3
 
@@ -42,7 +44,7 @@ namespace Akces.Unity.Tests
 
                 using (var reportBO = operationReportsManager.Create(OperationType.ImportZamowien))
                 {
-                    reportBO.Data.ObjectName = $"Zamówienie {account.AccountType} - {order.Original}";
+                    reportBO.Data.Description = $"Zamówienie {account.AccountType} - {order.Original}";
                     operationResult.Infos.ForEach(x => reportBO.AddInfo(x));
                     operationResult.Warrnings.ForEach(x => reportBO.AddWarn(x));
                     operationResult.Errors.ForEach(x => reportBO.AddError(x));

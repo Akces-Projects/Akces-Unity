@@ -32,6 +32,7 @@ namespace Akces.Unity.DataAccess.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(nullable: true),
                     Active = table.Column<bool>(nullable: false),
+                    WorkerEnabled = table.Column<bool>(nullable: false),
                     Modified = table.Column<DateTime>(nullable: false),
                     Created = table.Column<DateTime>(nullable: false)
                 },
@@ -47,7 +48,7 @@ namespace Akces.Unity.DataAccess.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     HarmonogramPositionId = table.Column<int>(nullable: false),
-                    ObjectName = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
                     OperationType = table.Column<int>(nullable: false),
                     Created = table.Column<DateTime>(nullable: false),
                     InfosCount = table.Column<int>(nullable: false),
@@ -87,6 +88,7 @@ namespace Akces.Unity.DataAccess.Migrations
                     BaseAddress = table.Column<string>(nullable: true),
                     Token = table.Column<string>(nullable: true),
                     GetUnconfirmedOrders = table.Column<bool>(nullable: false),
+                    ImportOrdersFromOffsetHours = table.Column<int>(nullable: false),
                     AccountId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
