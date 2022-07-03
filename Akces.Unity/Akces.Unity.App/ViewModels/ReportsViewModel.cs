@@ -5,6 +5,8 @@ using Akces.Wpf.Models;
 using Akces.Wpf.Extensions;
 using Akces.Unity.Models;
 using Akces.Unity.DataAccess.Managers;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Akces.Unity.App.ViewModels
 {
@@ -13,7 +15,7 @@ namespace Akces.Unity.App.ViewModels
         private readonly OperationReportsManager reportsManager;
 
         public ObservableCollection<OperationReport> Reports { get; set; }
-        public OperationReport SelectedReport { get; set; }
+        public List<OperationReport> SelectedReports { get; set; }
         public ICommand ShowReportCommand { get; set; }
         public ICommand DeleteReportCommand { get; set; }
 
@@ -22,6 +24,7 @@ namespace Akces.Unity.App.ViewModels
             (Host as MainViewModel).SidebarVisable = true;
             this.reportsManager = new OperationReportsManager();
             Reports = new ObservableCollection<OperationReport>();
+            SelectedReports = new List<OperationReport>();
 
             ShowReportCommand = CreateCommand(ShowReport, (err) => Host.ShowError(err));
             DeleteReportCommand = CreateCommand(DeleteReport, (err) => Host.ShowError(err));
@@ -36,11 +39,11 @@ namespace Akces.Unity.App.ViewModels
         }
         private void ShowReport()
         {
-            if (SelectedReport == null)
+            if (SelectedReports == null || !SelectedReports.Any())
                 return;
 
-            var report = reportsManager.Get(SelectedReport.Id);
-            var window = Host.CreateWindow<ExtraWindow, MainViewModel>(800, 600);
+            var report = reportsManager.Get(SelectedReports.First().Id);
+            var window = Host.CreateWindow<ExtraWindow, MainViewModel>(1100, 700);
             var host = window.GetHost();
             var vm = host.UpdateView<ReportViewModel>();
             vm.Report = report;
@@ -48,25 +51,31 @@ namespace Akces.Unity.App.ViewModels
         }
         private void DeleteReport()
         {
-            if (SelectedReport == null)
+            if (SelectedReports == null || !SelectedReports.Any())
                 return;
 
-            var report = SelectedReport;
+            var reports = SelectedReports.ToArray();
 
             var result = MessageBox.Show(
-                "Czy na pewno chcesz usunąć raport?",
-                $"{report.Description} ({report.Created})",
+                $"Czy na pewno chcesz usunąć ({reports.Length}) raporty?",
+                $"Raporty",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Warning);
 
             if (result == MessageBoxResult.No)
                 return;
 
-            var reportBO = reportsManager.Find(report);
-            reportBO.Delete();
-            reportBO.Dispose();
+            foreach (var report in reports)
+            {
+                var reportBO = reportsManager.Find(report);
+                reportBO.Delete();
+                reportBO.Dispose();
+            }
 
-            Reports.Remove(SelectedReport);
+            foreach (var report in reports)
+            {
+                Reports.Remove(report);
+            }
         }
     }
 }

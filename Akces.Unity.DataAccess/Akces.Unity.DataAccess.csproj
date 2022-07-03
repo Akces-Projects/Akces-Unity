@@ -207,6 +207,10 @@
     <Compile Include="Migrations\20220702232821_init2.designer.cs">
       <DependentUpon>20220702232821_init2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\20220703093056_init4.cs" />
+    <Compile Include="Migrations\20220703093056_init4.designer.cs">
+      <DependentUpon>20220703093056_init4.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\UnityDbContextModelSnapshot.cs" />
     <Compile Include="NexoManagers\NexoContractorsManager.cs" />
     <Compile Include="NexoManagers\NexoOrdersManager.cs" />

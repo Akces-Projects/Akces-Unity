@@ -11,9 +11,9 @@ namespace Akces.Unity.DataAccess.Managers.BusinessObjects
         bool Save();
         bool Delete();
         void Validate();
-        OperationReportPosition AddInfo(string description);
-        OperationReportPosition AddWarn(string description);
-        OperationReportPosition AddError(string description);
+        OperationReportPosition AddInfo(string objectName, string description);
+        OperationReportPosition AddWarn(string objectName, string description);
+        OperationReportPosition AddError(string objectName, string description);
         void RemovePosition(OperationReportPosition operationReportPosition);
     }
 
@@ -27,10 +27,11 @@ namespace Akces.Unity.DataAccess.Managers.BusinessObjects
             this.unityDbContext = unityDbContext ?? new UnityDbContext();
         }
 
-        public OperationReportPosition AddInfo(string description)
+        public OperationReportPosition AddInfo(string objectName, string description)
         {
             var position = new OperationReportPosition()
             {
+                ObjectName = objectName,
                 Description = description,
                 Type = ReportPositionType.Info
             };
@@ -40,10 +41,11 @@ namespace Akces.Unity.DataAccess.Managers.BusinessObjects
             Data.Positions.Add(entity.Entity);
             return entity.Entity;
         }
-        public OperationReportPosition AddWarn(string description)
+        public OperationReportPosition AddWarn(string objectName, string description)
         {
             var position = new OperationReportPosition()
             {
+                ObjectName = objectName,
                 Description = description,
                 Type = ReportPositionType.Warn
             };
@@ -53,10 +55,11 @@ namespace Akces.Unity.DataAccess.Managers.BusinessObjects
             Data.Positions.Add(entity.Entity);
             return entity.Entity;
         }
-        public OperationReportPosition AddError(string description)
+        public OperationReportPosition AddError(string objectName, string description)
         {
             var position = new OperationReportPosition()
             {
+                ObjectName = objectName,
                 Description = description,
                 Type = ReportPositionType.Error
             };

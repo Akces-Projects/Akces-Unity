@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Akces.Unity.App.ViewModels;
+using Akces.Unity.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +22,27 @@ namespace Akces.Unity.App.Views
     /// </summary>
     public partial class ReportsView : UserControl
     {
+        private readonly List<OperationReport> operationReports = new List<OperationReport>();
+
         public ReportsView()
         {
             InitializeComponent();
+        }
+
+        private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var vm = (DataContext as ReportsViewModel);
+
+            if (vm == null)
+                return;
+
+            var operationReports = vm.SelectedReports;
+            operationReports.AddRange(e.AddedItems.Cast<OperationReport>());
+
+            foreach (var report in e.RemovedItems.Cast<OperationReport>())
+            {
+                operationReports.Remove(report);
+            }
         }
     }
 }

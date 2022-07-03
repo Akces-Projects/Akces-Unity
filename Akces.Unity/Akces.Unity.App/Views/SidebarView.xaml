@@ -43,19 +43,19 @@
 
             <TextBlock Style="{StaticResource mainText}" Text="Procesy"/>
 
-            <Button Content="Aktywne zadania" Style="{StaticResource mainButton}" Command="{Binding GoToActiveHarmonogramCommand}"/>
-            <Button Content="Harmonogramy" Style="{StaticResource mainButton}" Command="{Binding GoToHarmonogramsCommand}"/>
-            <Button Content="Raporty" Style="{StaticResource mainButton}" Command="{Binding GoToReportsCommand}"/>
+            <Button Click="Button_Click" Content="Aktywne zadania" Style="{StaticResource mainButton}" Command="{Binding GoToActiveHarmonogramCommand}"/>
+            <Button Click="Button_Click" Content="Harmonogramy" Style="{StaticResource mainButton}" Command="{Binding GoToHarmonogramsCommand}"/>
+            <Button Click="Button_Click" Content="Raporty" Style="{StaticResource mainButton}" Command="{Binding GoToReportsCommand}"/>
 
             <TextBlock Style="{StaticResource mainText}" Text="Operacje"/>
 
-            <Button Content="Aktualizacja cenników" Style="{StaticResource mainButton}"/>
-            <Button Content="Import zamówień" Style="{StaticResource mainButton}"/>
+            <Button Click="Button_Click" Content="Aktualizacja cenników" Style="{StaticResource mainButton}"/>
+            <Button Click="Button_Click" Content="Import zamówień" Style="{StaticResource mainButton}"/>
 
             <TextBlock Style="{StaticResource mainText}" VerticalAlignment="Bottom" Text="Konfiguracja"/>
-            <Button Content="Konta" Style="{StaticResource mainButton}"  Command="{Binding GoToAccountsCommand}"/>
-            <Button Content="Użytkownicy" Style="{StaticResource mainButton}"/>
-            <Button Content="Połączenie" Style="{StaticResource mainButton}"/>
+            <Button Click="Button_Click" Content="Konta" Style="{StaticResource mainButton}"  Command="{Binding GoToAccountsCommand}"/>
+            <Button Click="Button_Click" Content="Użytkownicy" Style="{StaticResource mainButton}"/>
+            <Button Click="Button_Click" Content="Połączenie" Style="{StaticResource mainButton}"/>
 
         </StackPanel>
         

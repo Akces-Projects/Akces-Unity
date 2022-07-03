@@ -8,6 +8,7 @@ using Akces.Wpf.Helpers;
 using System.Windows.Input;
 using System.Windows.Threading;
 using System;
+using Akces.Wpf.Extensions;
 
 namespace Akces.Unity.App.ViewModels
 {
@@ -15,6 +16,7 @@ namespace Akces.Unity.App.ViewModels
     {
         private readonly HarmonogramWorker harmonogramWorker;
         private readonly HarmonogramsManager harmonogramsManager;
+        private readonly OperationReportsManager reportsManager;
         private int? currentWorkingPositionId;
         private bool isWorkerEnabled;
 
@@ -33,6 +35,7 @@ namespace Akces.Unity.App.ViewModels
         }
 
         public ObservableCollection<HarmonogramPosition> Positions { get; set; }
+        public HarmonogramPosition  SelectedPosition { get; set; }
         public ObservableCollection<Harmonogram> Harmonograms { get; set; }
         public int? CurrentWorkingPositionId { get => currentWorkingPositionId; set { currentWorkingPositionId = value; OnPropertyChanged(); } }
         public bool IsWorkerEnabled
@@ -48,6 +51,7 @@ namespace Akces.Unity.App.ViewModels
         public bool IsWorkerNotEnabled { get => !isWorkerEnabled; }
         public ICommand StartWorkerCommand { get; set; }
         public ICommand StopWorkerCommand { get; set; }
+        public ICommand ShowReportCommand { get; set; }
 
         public ActiveHarmonogramViewModel(HostViewModel host) : base(host)
         {
@@ -56,12 +60,14 @@ namespace Akces.Unity.App.ViewModels
             harmonogramWorker.OnOperationStarted += OnOperationStarted;
             harmonogramWorker.OnOperationExecuted += OnOperationExecuted;
             harmonogramsManager = new HarmonogramsManager();
+            reportsManager = new OperationReportsManager();
             Positions = new ObservableCollection<HarmonogramPosition>();
             Harmonograms = new ObservableCollection<Harmonogram>(harmonogramsManager.Get());
             activeHarmonogram = Harmonograms.FirstOrDefault(x => x.Active);
             IsWorkerEnabled = harmonogramWorker.Enabled;
             StartWorkerCommand = CreateCommand(StartWorker, (err) => host.ShowError(err));
             StopWorkerCommand = CreateCommand(StopWorker, (err) => host.ShowError(err));
+            ShowReportCommand = CreateCommand(ShowReport, (err) => host.ShowError(err));
             LoadHarmonogramPositions(activeHarmonogram);
         }
 
@@ -90,6 +96,7 @@ namespace Akces.Unity.App.ViewModels
             LoadHarmonogramPositions(harmonogram);
             activeHarmonogram = harmonogram;
             harmonogramWorker.Enabled = activeHarmonogram.WorkerEnabled;
+            IsWorkerEnabled = harmonogramWorker.Enabled;
         }
         private void StartWorker()
         {
@@ -116,6 +123,23 @@ namespace Akces.Unity.App.ViewModels
             }
 
             IsWorkerEnabled = false;
+        }
+        private void ShowReport()
+        {
+            if (SelectedPosition == null)
+                return;
+
+            var reports = reportsManager.GetForHarmonogramPosition(SelectedPosition);
+
+            if (reports == null || !reports.Any())
+                return;
+
+            var report = reports.OrderBy(x => x.Created).LastOrDefault();
+            var window = Host.CreateWindow<ExtraWindow, MainViewModel>(1100, 700);
+            var host = window.GetHost();
+            var vm = host.UpdateView<ReportViewModel>();
+            vm.Report = report;
+            window.Show();
         }
 
         private void OnOperationStarted(HarmonogramPosition harmonogramPosition) 

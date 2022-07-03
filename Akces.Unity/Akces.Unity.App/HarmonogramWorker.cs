@@ -127,7 +127,7 @@ namespace Akces.Unity.App
             {
                 reportBO.Data.HarmonogramPositionId = harmonogramPosition.Id;
                 reportBO.Data.Description = $"{harmonogramPosition.HarmonogramOperation} {harmonogramPosition.Account.Name} ({harmonogramPosition.Account.AccountType})";
-                reportBO.AddError(error);
+                reportBO.AddError("", error);
                 reportBO.Save();
                 OnOperationExecuted.Invoke(harmonogramPosition, reportBO.Data);
             }
@@ -154,9 +154,9 @@ namespace Akces.Unity.App
                 {
                     var operationResult = await nexoOrdersManager.AddIfNotExistsAsync(order, account.NexoConfiguration);
 
-                    operationResult.Infos.ForEach(x => reportBO.AddInfo(x));
-                    operationResult.Warrnings.ForEach(x => reportBO.AddWarn(x));
-                    operationResult.Errors.ForEach(x => reportBO.AddError(x));
+                    operationResult.Infos.ForEach(x => reportBO.AddInfo(order.Original, x));
+                    operationResult.Warrnings.ForEach(x => reportBO.AddWarn(order.Original, x));
+                    operationResult.Errors.ForEach(x => reportBO.AddError(order.Original, x));
 
                     executed++;
 

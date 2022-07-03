@@ -55,6 +55,8 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="10"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="200"/>
                 <ColumnDefinition Width="2"/>
@@ -120,22 +122,44 @@
                 <fa:ImageAwesome Margin="5,0,0,0" Icon="StopCircle" Width="18" Foreground="OrangeRed" VerticalAlignment="Center"/>
             </StackPanel>
 
-            <TextBlock Grid.Column="4"
+            <StackPanel Grid.Column="4"
+                        Orientation="Horizontal" 
+                        Margin="0,0,10,0">
+
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#bee6fd"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+
+                <Button Style="{StaticResource menuButton}" Content="Pokaż ostatni raport" Command="{Binding ShowReportCommand}"/>
+                <fa:ImageAwesome Margin="5,0,0,0" Icon="FileText" Width="18" Foreground="{style:AkcesStyle ResourceKey=ThemeColor}" VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <TextBlock Grid.Column="6"
                        FontSize="18"
                        Margin="0,0,0,2"
                        VerticalAlignment="Center"
                        Text="Aktywny harmonogram: "/>
 
-            <ComboBox Grid.Column="6"
+            <ComboBox Grid.Column="8"
                       ItemsSource="{Binding Harmonograms}"
-                      SelectedItem="{Binding ActiveHarmonogram}"
+                      SelectedItem="{Binding ActiveHarmonogram, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                       Height="30"
                       FontSize="16"
                       DisplayMemberPath="Name">
             </ComboBox>
         </Grid>
 
-        <DataGrid ItemsSource="{Binding Positions}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+        <DataGrid ItemsSource="{Binding Positions}" 
+                  SelectedItem="{Binding SelectedPosition}"
+                  AutoGenerateColumns="False" 
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
                   RowHeight="40">
             <DataGrid.Columns>                
                 <DataGridTemplateColumn Header="Typ operacji" Width="220">

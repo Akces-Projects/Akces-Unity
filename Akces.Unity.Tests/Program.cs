@@ -45,9 +45,9 @@ namespace Akces.Unity.Tests
                 using (var reportBO = operationReportsManager.Create(OperationType.ImportZamowien))
                 {
                     reportBO.Data.Description = $"Zamówienie {account.AccountType} - {order.Original}";
-                    operationResult.Infos.ForEach(x => reportBO.AddInfo(x));
-                    operationResult.Warrnings.ForEach(x => reportBO.AddWarn(x));
-                    operationResult.Errors.ForEach(x => reportBO.AddError(x));
+                    operationResult.Infos.ForEach(x => reportBO.AddInfo(x, order.Original));
+                    operationResult.Warrnings.ForEach(x => reportBO.AddWarn(x, order.Original));
+                    operationResult.Errors.ForEach(x => reportBO.AddError(x, order.Original));
                     reportBO.Save();
                 }
             }

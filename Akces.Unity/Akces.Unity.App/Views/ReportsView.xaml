@@ -77,7 +77,8 @@
         </StackPanel>
 
         <DataGrid ItemsSource="{Binding Reports}"
-                  SelectedItem="{Binding SelectedReport, UpdateSourceTrigger=PropertyChanged}"
+                  SelectionMode="Extended"
+                  SelectionChanged="DataGrid_SelectionChanged"
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"
                   CanUserReorderColumns="False"

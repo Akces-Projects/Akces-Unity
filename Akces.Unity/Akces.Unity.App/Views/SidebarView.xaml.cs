@@ -15,14 +15,36 @@ using System.Windows.Shapes;
 
 namespace Akces.Unity.App.Views
 {
-    /// <summary>
-    /// Logika interakcji dla klasy SidebarView.xaml
-    /// </summary>
     public partial class SidebarView : UserControl
     {
+        private Button selectedButton;
+
         public SidebarView()
         {
             InitializeComponent();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (!(sender is Button clickedButton))
+                return;
+
+            if (clickedButton == selectedButton)
+                return;
+
+            if (selectedButton != null) 
+            {
+                selectedButton.Background = Brushes.Transparent;
+                selectedButton.Foreground = Brushes.Black;
+                selectedButton.FontWeight = FontWeights.Normal;
+                selectedButton.Focusable = true;
+            }
+
+            clickedButton.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#0083d6"); ;
+            clickedButton.Foreground = Brushes.White;
+            clickedButton.FontWeight= FontWeights.SemiBold;
+
+            selectedButton = clickedButton;
         }
     }
 }
