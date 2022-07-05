@@ -48,8 +48,8 @@ namespace Akces.Unity.DataAccess.Managers
         }
         public IAccount<T> Create<T>() where T : Account, new()
         {
-            var bo = new AccountBO<T>();
-            bo.Data = new T();
+            var data = new T();
+            var bo = new AccountBO<T>(data);            
             return bo;
         }
         public IAccount<Account> Find(Account entity)
@@ -60,8 +60,7 @@ namespace Akces.Unity.DataAccess.Managers
                 .Include(unityDbContext.GetIncludePaths(typeof(Account)))
                 .FirstOrDefault(x => x.Id == entity.Id);
 
-            var bo = new AccountBO<Account>(unityDbContext);
-            bo.Data = account;
+            var bo = new AccountBO<Account>(account, unityDbContext);
             return bo;
         }
         public IAccount<T> Find<T>(Account entity) where T : Account, new()
@@ -76,8 +75,7 @@ namespace Akces.Unity.DataAccess.Managers
                 .Include(configurationName)
                 .FirstOrDefault(x => x.Id == entity.Id);
 
-            var bo = new AccountBO<T>(unityDbContext);
-            bo.Data = (T)account;
+            var bo = new AccountBO<T>(account, unityDbContext);
             return bo;
         }
     }

@@ -19,11 +19,12 @@ namespace Akces.Unity.DataAccess.Managers.BusinessObjects
 
     internal class OperationReportBO : IOperationReport
     {
-        public OperationReport Data { get; internal set; }
+        public OperationReport Data { get; private set; }
         private readonly UnityDbContext unityDbContext;
 
-        internal OperationReportBO(UnityDbContext unityDbContext = null)
+        internal OperationReportBO(OperationReport data, UnityDbContext unityDbContext = null)
         {
+            this.Data = data;
             this.unityDbContext = unityDbContext ?? new UnityDbContext();
         }
 

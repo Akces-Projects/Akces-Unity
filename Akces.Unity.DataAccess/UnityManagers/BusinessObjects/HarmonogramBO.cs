@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using Akces.Unity.Models;
 
 namespace Akces.Unity.DataAccess.Managers.BusinessObjects
@@ -17,15 +18,16 @@ namespace Akces.Unity.DataAccess.Managers.BusinessObjects
 
     internal class HarmonogramBO : IHarmonogram
     {
-        public Harmonogram Data { get; internal set; }
+        public Harmonogram Data { get; private set; }
         private readonly UnityDbContext unityDbContext;
 
-        internal HarmonogramBO(UnityDbContext unityDbContext = null)
+        internal HarmonogramBO(Harmonogram data, UnityDbContext unityDbContext = null)
         {
+            this.Data = data;
             this.unityDbContext = unityDbContext ?? new UnityDbContext();
         }
 
-        public HarmonogramPosition AddPosition() 
+        public HarmonogramPosition AddPosition()
         {
             var position = new HarmonogramPosition();
             var entity = unityDbContext.Attach(position);
@@ -33,7 +35,7 @@ namespace Akces.Unity.DataAccess.Managers.BusinessObjects
             Data.Positions.Add(entity.Entity);
             return entity.Entity;
         }
-        public void RemovePosition(HarmonogramPosition harmonogramPosition) 
+        public void RemovePosition(HarmonogramPosition harmonogramPosition)
         {
             if (harmonogramPosition.Id != default)
             {
@@ -47,8 +49,15 @@ namespace Akces.Unity.DataAccess.Managers.BusinessObjects
         {
             Validate();
 
-            foreach (var position in Data.Positions.Where(x => x.Account != null)) 
-                unityDbContext.Entry(position.Account).State = EntityState.Unchanged;
+            var accounts = unityDbContext.Accounts.ToList();
+
+            foreach (var position in Data.Positions)
+            {
+                if (position.Account == null)
+                    continue;
+
+                position.Account = accounts.FirstOrDefault(x => x.Id == position.Account.Id);
+            }
 
             if (Data.Id == default)
             {

@@ -139,14 +139,26 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Konto" Width="160">
+                <DataGridTemplateColumn Header="Konto" Width="230">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <ComboBox ItemsSource="{Binding Path=DataContext.Accounts, RelativeSource= {RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, UpdateSourceTrigger=PropertyChanged}"
                                       SelectedItem="{Binding Account, UpdateSourceTrigger=PropertyChanged}"
-                                      DisplayMemberPath="Name"
                                       FontSize="15"
                                       SelectedIndex="0">
+
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock>
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0} ({1})">
+                                                    <Binding Path="Name"/>
+                                                    <Binding Path="AccountType"/>
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
                             </ComboBox>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

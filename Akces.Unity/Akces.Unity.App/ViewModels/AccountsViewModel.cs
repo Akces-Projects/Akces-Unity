@@ -9,6 +9,7 @@ using Akces.Unity.DataAccess.Managers;
 
 namespace Akces.Unity.App.ViewModels
 {
+
     public class AccountsViewModel : ControlViewModel 
     {
         private readonly AccountsManager accountsManager;

@@ -11,6 +11,7 @@ using Akces.Unity.Models.ConfigurationMembers;
 using Akces.Unity.DataAccess;
 using Akces.Unity.DataAccess.NexoManagers;
 using Akces.Unity.DataAccess.Managers.BusinessObjects;
+using System;
 
 namespace Akces.Unity.App.ViewModels
 {
@@ -132,6 +133,10 @@ namespace Akces.Unity.App.ViewModels
             {
                 service = Account.Data.CreateService();
                 var result = await service.AuthenticateAsync();
+
+                if (!result)
+                    throw new Exception();
+
                 Host.ShowInfo("Autentykacja przebiegła pomyślnie");
             }
             catch  
@@ -150,7 +155,7 @@ namespace Akces.Unity.App.ViewModels
             try
             {
                 service = Account.Data.CreateService();
-                var result = await service.AuthenticateAsync();
+                var result = await service.TestConnectionAsync();
                 Host.ShowInfo("Test połączenia zakończony powodzeniem");
             }
             catch

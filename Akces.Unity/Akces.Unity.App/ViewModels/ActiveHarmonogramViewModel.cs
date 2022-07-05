@@ -58,7 +58,7 @@ namespace Akces.Unity.App.ViewModels
             (Host as MainViewModel).SidebarVisable = true;
             harmonogramWorker = ServicesProvider.GetService<HarmonogramWorker>();
             harmonogramWorker.OnOperationStarted += OnOperationStarted;
-            harmonogramWorker.OnOperationExecuted += OnOperationExecuted;
+            harmonogramWorker.OnOperationFinished += OnOperationFinished;
             harmonogramsManager = new HarmonogramsManager();
             reportsManager = new OperationReportsManager();
             Positions = new ObservableCollection<HarmonogramPosition>();
@@ -146,7 +146,7 @@ namespace Akces.Unity.App.ViewModels
         {
             CurrentWorkingPositionId = harmonogramPosition?.Id;
         }
-        private void OnOperationExecuted(HarmonogramPosition harmonogramPosition, OperationReport report) 
+        private void OnOperationFinished(OperationReport report, HarmonogramPosition harmonogramPosition) 
         {
             if (CurrentWorkingPositionId == harmonogramPosition.Id) 
                 CurrentWorkingPositionId = null;

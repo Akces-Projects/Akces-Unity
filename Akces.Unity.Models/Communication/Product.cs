@@ -37,6 +37,7 @@
         /// <summary>
         /// Jednostka miary
         /// </summary>
+        public string Currency { get; set; }
         public string Unit { get; set; }
         public decimal DiscountPercentage { get; set; }
     }

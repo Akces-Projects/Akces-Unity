@@ -189,6 +189,7 @@
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -199,19 +200,12 @@
   <ItemGroup>
     <Compile Include="Extensions\EF_Extensions.cs" />
     <Compile Include="Extensions\NexoExtensions.cs" />
-    <Compile Include="Migrations\20220702210054_init.cs" />
-    <Compile Include="Migrations\20220702210054_init.designer.cs">
-      <DependentUpon>20220702210054_init.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\20220702232821_init2.cs" />
-    <Compile Include="Migrations\20220702232821_init2.designer.cs">
-      <DependentUpon>20220702232821_init2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\20220703093056_init4.cs" />
-    <Compile Include="Migrations\20220703093056_init4.designer.cs">
-      <DependentUpon>20220703093056_init4.cs</DependentUpon>
+    <Compile Include="Migrations\20220705003424_init.cs" />
+    <Compile Include="Migrations\20220705003424_init.designer.cs">
+      <DependentUpon>20220705003424_init.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\UnityDbContextModelSnapshot.cs" />
+    <Compile Include="NexoManagers\NexoAssortmentManager.cs" />
     <Compile Include="NexoManagers\NexoContractorsManager.cs" />
     <Compile Include="NexoManagers\NexoOrdersManager.cs" />
     <Compile Include="NexoManagers\NexoSettingsManager.cs" />
@@ -220,6 +214,13 @@
     <Compile Include="IOperation.cs" />
     <Compile Include="OperationResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\Allegro\AllegroService.cs" />
+    <Compile Include="Services\Allegro\Models\AllegroGetTokenResponse.cs" />
+    <Compile Include="Services\Allegro\Models\AllegroOffer.cs" />
+    <Compile Include="Services\Allegro\Models\BuyNowPrice.cs" />
+    <Compile Include="Services\Allegro\Models\ChangePriceRequest.cs" />
+    <Compile Include="Services\Allegro\Models\DeviceAuthResponse.cs" />
+    <Compile Include="Services\Allegro\Models\Input.cs" />
     <Compile Include="Services\Baselinker\BaselinkerService.cs" />
     <Compile Include="Services\Baselinker\Models\BaseLinkerGetOrdersResponse.cs" />
     <Compile Include="Services\Baselinker\Models\BaseLinkerOrder.cs" />
@@ -248,7 +249,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Services\Allegro\" />
     <Folder Include="Services\Shopgold\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

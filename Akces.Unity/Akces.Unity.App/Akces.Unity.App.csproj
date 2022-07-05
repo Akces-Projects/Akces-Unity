@@ -167,6 +167,9 @@
       <DependentUpon>ExtraWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="HarmonogramWorker.cs" />
+    <Compile Include="Operations\ImportOrdersOperation.cs" />
+    <Compile Include="Operations\IOperation.cs" />
+    <Compile Include="Operations\UpdateProductPricesOperation.cs" />
     <Compile Include="ViewModels\AccountsViewModel.cs" />
     <Compile Include="ViewModels\Accounts\AllegroAccountViewModel.cs" />
     <Compile Include="ViewModels\Accounts\BaselinkerAccountViewModel.cs" />
@@ -180,6 +183,9 @@
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\NavbarViewModel.cs" />
+    <Compile Include="ViewModels\OperationsProgressViewModel.cs" />
+    <Compile Include="ViewModels\PricesModificationViewModel.cs" />
+    <Compile Include="ViewModels\ProductsPrizesUpdateViewModel.cs" />
     <Compile Include="ViewModels\ReportsViewModel.cs" />
     <Compile Include="ViewModels\ReportViewModel.cs" />
     <Compile Include="ViewModels\SidebarViewModel.cs" />
@@ -215,6 +221,15 @@
     </Compile>
     <Compile Include="Views\NavbarView.xaml.cs">
       <DependentUpon>NavbarView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\OperationsProgressView.xaml.cs">
+      <DependentUpon>OperationsProgressView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PricesModificationView.xaml.cs">
+      <DependentUpon>PricesModificationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ProductsPricesUpdateView.xaml.cs">
+      <DependentUpon>ProductsPricesUpdateView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ReportsView.xaml.cs">
       <DependentUpon>ReportsView.xaml</DependentUpon>
@@ -285,6 +300,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\OperationsProgressView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PricesModificationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ProductsPricesUpdateView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ReportsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -345,6 +372,7 @@
       <Name>Akces.Unity.Models</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

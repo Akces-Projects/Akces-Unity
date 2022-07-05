@@ -8,7 +8,7 @@
              xmlns:viewmodels="clr-namespace:Akces.Unity.App.ViewModels" 
              d:DataContext="{d:DesignInstance Type=viewmodels:NavbarViewModel}"
              mc:Ignorable="d" 
-             Background="{style:AkcesStyle ResourceKey=ThemeColor}"
+             Background="#0071b8"
              d:DesignHeight="50" d:DesignWidth="800">
 
     <UserControl.Resources>

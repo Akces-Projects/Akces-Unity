@@ -120,28 +120,28 @@
                       AutoGenerateColumns="False">
 
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Typ konta" Width="150">
+                <DataGridTemplateColumn Header="Typ konta" Width="150" SortMemberPath="AccountType" CanUserSort="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding AccountType}" Style="{StaticResource rowText}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Nazwa" Width="*">
+                <DataGridTemplateColumn Header="Nazwa" Width="*" SortMemberPath="Name" CanUserSort="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Name}" Style="{StaticResource rowText}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Utworzono" Width="200">
+                <DataGridTemplateColumn Header="Utworzono" Width="200" SortMemberPath="Created" CanUserSort="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Created}" Style="{StaticResource rowText}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Modyfikowano" Width="200">
+                <DataGridTemplateColumn Header="Modyfikowano" Width="200" SortMemberPath="Modified" CanUserSort="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Modified}" Style="{StaticResource rowText}"/>

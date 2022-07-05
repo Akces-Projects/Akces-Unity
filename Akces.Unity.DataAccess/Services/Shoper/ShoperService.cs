@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using Akces.Unity.Models;
 using Akces.Unity.Models.Communication;
 using Akces.Unity.Models.SaleChannels.Shoper;
@@ -34,12 +35,32 @@ namespace Akces.Unity.DataAccess.Services
         {
             throw new NotImplementedException();
         }
+        public Task<bool> TestConnectionAsync()
+        {
+            throw new NotImplementedException();
+        }
+        public void SaveConfiguration()
+        {
+            if (shoperConfiguration == null || shoperConfiguration.Id == default)
+                return;
+
+            using (var context = new UnityDbContext())
+            {
+                context.Set<ShoperConfiguration>().Update(shoperConfiguration).State = EntityState.Modified;
+                context.SaveChanges();
+            }
+        }
         public void Dispose()
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> TestConnectionAsync()
+        public Task<ProductsContainer> GetProductsAsync(int pageIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> UpdateProductPriceAsync(object id, string currency, decimal newPrice)
         {
             throw new NotImplementedException();
         }

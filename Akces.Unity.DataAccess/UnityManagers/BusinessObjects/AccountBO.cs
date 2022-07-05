@@ -15,11 +15,12 @@ namespace Akces.Unity.DataAccess.Managers.BusinessObjects
 
     internal class AccountBO<T> : IAccount<T> where T : Account
     {
-        public T Data { get; internal set; }
+        public T Data { get; private set; }
         private readonly UnityDbContext unityDbContext;
 
-        internal AccountBO(UnityDbContext unityDbContext = null)
+        internal AccountBO(T data, UnityDbContext unityDbContext = null)
         {
+            this.Data = data;
             this.unityDbContext = unityDbContext ?? new UnityDbContext();
         }
 

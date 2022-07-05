@@ -46,8 +46,8 @@ namespace Akces.Unity.DataAccess.Managers
         }
         public IOperationReport Create(OperationType operationType)
         {
-            var bo = new OperationReportBO();
-            bo.Data = new OperationReport();
+            var data = new OperationReport();
+            var bo = new OperationReportBO(data);
             bo.Data.OperationType = operationType;
             return bo;
         }
@@ -59,8 +59,7 @@ namespace Akces.Unity.DataAccess.Managers
                    .Include(unityDbContext.GetIncludePaths(typeof(OperationReport)))
                    .FirstOrDefault(x => x.Id == entity.Id);
 
-            var bo = new OperationReportBO(unityDbContext);
-            bo.Data = report;
+            var bo = new OperationReportBO(report, unityDbContext);
             return bo;
         }
     }

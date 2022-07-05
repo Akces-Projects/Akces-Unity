@@ -353,7 +353,7 @@ namespace Akces.Unity.DataAccess.Migrations
                     b.Property<int>("ErrorsCount")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("HarmonogramPositionId")
+                    b.Property<int?>("HarmonogramPositionId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("InfosCount")
@@ -404,9 +404,30 @@ namespace Akces.Unity.DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("AccessToken")
+                        .HasColumnType("TEXT");
+
                     b.Property<int?>("AccountId")
                         .IsRequired()
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("BaseAddress")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ClientId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ClientSecret")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Sandbox")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("SandboxBaseAddress")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 

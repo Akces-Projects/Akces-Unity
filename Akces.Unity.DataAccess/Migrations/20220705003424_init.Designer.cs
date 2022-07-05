@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Akces.Unity.DataAccess.Migrations
 {
     [DbContext(typeof(UnityDbContext))]
-    [Migration("20220702232821_init2")]
-    partial class init2
+    [Migration("20220705003424_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -355,7 +355,7 @@ namespace Akces.Unity.DataAccess.Migrations
                     b.Property<int>("ErrorsCount")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("HarmonogramPositionId")
+                    b.Property<int?>("HarmonogramPositionId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("InfosCount")
@@ -384,6 +384,9 @@ namespace Akces.Unity.DataAccess.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("ObjectName")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("OperationReportId")
                         .HasColumnType("INTEGER");
 
@@ -403,9 +406,30 @@ namespace Akces.Unity.DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("AccessToken")
+                        .HasColumnType("TEXT");
+
                     b.Property<int?>("AccountId")
                         .IsRequired()
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("BaseAddress")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ClientId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ClientSecret")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Sandbox")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("SandboxBaseAddress")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 

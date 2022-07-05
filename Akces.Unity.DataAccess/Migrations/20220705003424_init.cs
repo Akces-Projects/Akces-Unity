@@ -47,10 +47,11 @@ namespace Akces.Unity.DataAccess.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    HarmonogramPositionId = table.Column<int>(nullable: false),
+                    HarmonogramPositionId = table.Column<int>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     OperationType = table.Column<int>(nullable: false),
                     Created = table.Column<DateTime>(nullable: false),
+                    PositionsCount = table.Column<int>(nullable: false),
                     InfosCount = table.Column<int>(nullable: false),
                     WarningsCount = table.Column<int>(nullable: false),
                     ErrorsCount = table.Column<int>(nullable: false)
@@ -66,6 +67,13 @@ namespace Akces.Unity.DataAccess.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    ClientId = table.Column<string>(nullable: true),
+                    ClientSecret = table.Column<string>(nullable: true),
+                    Sandbox = table.Column<bool>(nullable: false),
+                    BaseAddress = table.Column<string>(nullable: true),
+                    SandboxBaseAddress = table.Column<string>(nullable: true),
+                    RefreshToken = table.Column<string>(nullable: true),
+                    AccessToken = table.Column<string>(nullable: true),
                     AccountId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -198,6 +206,7 @@ namespace Akces.Unity.DataAccess.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    ObjectName = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     Type = table.Column<int>(nullable: false),
                     OperationReportId = table.Column<int>(nullable: false)

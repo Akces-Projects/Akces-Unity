@@ -9,6 +9,7 @@ namespace Akces.Unity.App.ViewModels
         public ICommand GoToReportsCommand { get; set; }
         public ICommand GoToHarmonogramsCommand { get; set; }
         public ICommand GoToActiveHarmonogramCommand { get; set; }
+        public ICommand GoToProductsPrizesUpdateCommand { get; set; }
 
         public SidebarViewModel(HostViewModel host) : base(host)
         {
@@ -16,6 +17,7 @@ namespace Akces.Unity.App.ViewModels
             GoToReportsCommand = CreateCommand(() => host.UpdateView<ReportsViewModel>());
             GoToHarmonogramsCommand = CreateCommand(() => host.UpdateView<HarmonogramsViewModel>());
             GoToActiveHarmonogramCommand = CreateCommand(() => host.UpdateView<ActiveHarmonogramViewModel>());
+            GoToProductsPrizesUpdateCommand = CreateCommand(() => host.UpdateView<ProductsPricesUpdateViewModel>());
         }
     }
 }

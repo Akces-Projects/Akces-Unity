@@ -2,16 +2,14 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:style="clr-namespace:Akces.Wpf.Extensions.Style;assembly=Akces.Wpf"
              xmlns:converters="clr-namespace:Akces.Unity.App.Converters"
-             xmlns:controls="clr-namespace:Akces.Wpf.Controls;assembly=Akces.Wpf"
-             xmlns:local="clr-namespace:Akces.Unity.App" 
-             xmlns:models="clr-namespace:Akces.Unity.Models;assembly=Akces.Unity.Models"
+             xmlns:local="clr-namespace:Akces.Unity.App"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              xmlns:viewmodels="clr-namespace:Akces.Unity.App.ViewModels"
              d:DataContext="{d:DesignInstance Type=viewmodels:ActiveHarmonogramViewModel}"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="1200">
 
     <UserControl.Resources>
@@ -160,9 +158,9 @@
                   AutoGenerateColumns="False" 
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"
-                  RowHeight="40">
-            <DataGrid.Columns>                
-                <DataGridTemplateColumn Header="Typ operacji" Width="220">
+                  RowHeight="37">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Typ operacji" Width="220" SortMemberPath="HarmonogramOperation">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding HarmonogramOperation, UpdateSourceTrigger=PropertyChanged}" 
@@ -171,7 +169,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Konto" Width="150">
+                <DataGridTemplateColumn Header="Konto" Width="150" SortMemberPath="Account.Name">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Account.Name, UpdateSourceTrigger=PropertyChanged}" 
@@ -179,7 +177,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Opis" Width="*">
+                <DataGridTemplateColumn Header="Opis" Width="*" SortMemberPath="Description">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" 
@@ -187,7 +185,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Pierwsze uruchomienie" Width="190">
+                <DataGridTemplateColumn Header="Pierwsze uruchomienie" Width="190" SortMemberPath="StartTime">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding StartTime, UpdateSourceTrigger=PropertyChanged}" 
@@ -195,7 +193,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Ostatnie uruchomienie" Width="190">
+                <DataGridTemplateColumn Header="Ostatnie uruchomienie" Width="190" SortMemberPath="LastLaunchTime">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>
@@ -228,7 +226,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Powtarzaj" Width="60">
+                <DataGridTemplateColumn Header="Powtarzaj" Width="60" SortMemberPath="Repeat">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <CheckBox IsChecked="{Binding Repeat, UpdateSourceTrigger=PropertyChanged}"
@@ -241,7 +239,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Po ( min.)" Width="60">
+                <DataGridTemplateColumn Header="Po ( min.)" Width="60" SortMemberPath="RepeatAfterMinutes">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock FontSize="17" Text="{Binding RepeatAfterMinutes, UpdateSourceTrigger=PropertyChanged}" 

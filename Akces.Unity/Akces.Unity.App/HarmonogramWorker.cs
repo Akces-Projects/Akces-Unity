@@ -8,33 +8,29 @@ using Akces.Unity.Models;
 using Akces.Unity.DataAccess;
 using Akces.Unity.DataAccess.Managers;
 using Akces.Unity.DataAccess.NexoManagers;
+using Akces.Unity.App.Operations;
 
 namespace Akces.Unity.App
 {
-    public delegate void OnOperationExecuted(HarmonogramPosition harmonogramPosition, OperationReport operationReport);
-    public delegate void OnOperationStarted(HarmonogramPosition harmonogramPosition);
+
     internal class HarmonogramWorker : IDisposable
     {
         private const int WORKER_RUN_INTERVAL_SECONDS = 10;
 
         private bool isRunning;
         private readonly Timer timer;
-        private readonly NexoContext nexoContext;
         private readonly HarmonogramsManager harmonogramsManager;
-        private readonly OperationReportsManager operationReportsManager;
+        private readonly OperationReportsManager reportsManager;
 
         public bool Enabled { get; set; }
         public Harmonogram ActiveHarmonogram { get; private set; }
-        public OnOperationExecuted OnOperationExecuted { get; set; }
         public OnOperationStarted OnOperationStarted { get; set; }
+        public OnOperationFinished OnOperationFinished { get; set; }
 
         public HarmonogramWorker()
         {
             harmonogramsManager = new HarmonogramsManager();
-            operationReportsManager = new OperationReportsManager();
-            nexoContext = ServicesProvider.GetService<NexoContext>();
-            OnOperationExecuted = new OnOperationExecuted(OperationExecuted);
-            OnOperationStarted = new OnOperationStarted((h) => { });
+            reportsManager = new OperationReportsManager();
 
             ActiveHarmonogram = GetActiveHarmonogram();
             Enabled = ActiveHarmonogram?.WorkerEnabled ?? false;
@@ -112,70 +108,31 @@ namespace Akces.Unity.App
         }
         public async Task RunHarmonogramPositionAsync(HarmonogramPosition harmonogramPosition)
         {
-            harmonogramPosition.LastLaunchTime = DateTime.Now;
-            OnOperationStarted.Invoke(harmonogramPosition);
+            IUnityOperation unityOperation = null;
 
             if (harmonogramPosition.HarmonogramOperation == OperationType.ImportZamowien)
-            {
-                await ExecuteImportAsync(harmonogramPosition);
-            }
+                unityOperation = new ImportOrdersOperation(harmonogramPosition.Account, true, harmonogramPosition);
+
+            if (unityOperation == null)
+                return;
+
+            harmonogramPosition.LastLaunchTime = DateTime.Now;
+            harmonogramsManager.SaveHarmonogramPosition(harmonogramPosition);
+
+            OnOperationStarted.Invoke(harmonogramPosition);
+            await unityOperation.ExecuteAsync();
+            OnOperationFinished.Invoke(unityOperation.OperationReport, harmonogramPosition);
         }
 
         public void CreateErrorReport(HarmonogramPosition harmonogramPosition, string error) 
         {
-            using (var reportBO = operationReportsManager.Create(harmonogramPosition.HarmonogramOperation))
+            using (var reportBO = reportsManager.Create(harmonogramPosition.HarmonogramOperation))
             {
                 reportBO.Data.HarmonogramPositionId = harmonogramPosition.Id;
                 reportBO.Data.Description = $"{harmonogramPosition.HarmonogramOperation} {harmonogramPosition.Account.Name} ({harmonogramPosition.Account.AccountType})";
                 reportBO.AddError("", error);
                 reportBO.Save();
-                OnOperationExecuted.Invoke(harmonogramPosition, reportBO.Data);
             }
-        }
-
-        private async Task ExecuteImportAsync(HarmonogramPosition harmonogramPosition)
-        {
-            var account = harmonogramPosition.Account;
-            var saleChannelService = account.CreateService();
-            var orders = await saleChannelService.GetOrdersAsync();
-            var nexoOrdersManager = nexoContext.GetManager<NexoOrdersManager>();
-
-            var executed = 0;
-            var succeeded = 0;
-            var warns = 0;
-            var failed = 0;
-
-            using (var reportBO = operationReportsManager.Create(OperationType.ImportZamowien))
-            {
-                reportBO.Data.HarmonogramPositionId = harmonogramPosition.Id;
-                reportBO.Data.Description = $"Import zamówień {account.Name} ({account.AccountType})";
-
-                foreach (var order in orders)
-                {
-                    var operationResult = await nexoOrdersManager.AddIfNotExistsAsync(order, account.NexoConfiguration);
-
-                    operationResult.Infos.ForEach(x => reportBO.AddInfo(order.Original, x));
-                    operationResult.Warrnings.ForEach(x => reportBO.AddWarn(order.Original, x));
-                    operationResult.Errors.ForEach(x => reportBO.AddError(order.Original, x));
-
-                    executed++;
-
-                    if (!operationResult.IsSuccess)
-                        failed++;
-                    else if (operationResult.Warrnings.Any())
-                        warns++;
-                    else
-                        succeeded++;
-                }
-
-                reportBO.Save();
-                OnOperationExecuted.Invoke(harmonogramPosition, reportBO.Data);
-            }
-        }
-
-        private void OperationExecuted(HarmonogramPosition harmonogramPosition, OperationReport report)
-        {
-            var result = harmonogramsManager.SaveHarmonogramPosition(harmonogramPosition);
         }
         public void Dispose()
         {

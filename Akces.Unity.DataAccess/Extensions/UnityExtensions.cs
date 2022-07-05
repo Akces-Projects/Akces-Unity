@@ -1,7 +1,7 @@
-﻿using Akces.Unity.DataAccess.Managers;
-using Akces.Unity.DataAccess.Services;
-using Akces.Unity.Models;
+﻿using Akces.Unity.Models;
 using Akces.Unity.Models.SaleChannels;
+using Akces.Unity.DataAccess.Managers;
+using Akces.Unity.DataAccess.Services;
 
 namespace Akces.Unity.DataAccess
 {
@@ -14,15 +14,28 @@ namespace Akces.Unity.DataAccess
             switch (account.AccountType)
             {
                 case AccountType.Shoper:
-                    var shoperConfiguration = accountsManager.Get<ShoperAccount>(account.Id)?.ShoperConfiguration;
+
+                    var shoperConfiguration = account.Id == default ?
+                        (account as ShoperAccount).ShoperConfiguration :
+                        accountsManager.Get<ShoperAccount>(account.Id)?.ShoperConfiguration;
+
                     return new ShoperService(shoperConfiguration);
                 case AccountType.shopGold:
                     break;
                 case AccountType.Baselinker:
-                    var baselinkerConfiguration = accountsManager.Get<BaselinkerAccount>(account.Id)?.BaselinkerConfiguration;
+
+                    var baselinkerConfiguration = account.Id == default ?
+                        (account as BaselinkerAccount).BaselinkerConfiguration :
+                        accountsManager.Get<BaselinkerAccount>(account.Id)?.BaselinkerConfiguration;
+
                     return new BaselinkerService(baselinkerConfiguration);
                 case AccountType.Allegro:
-                    break;
+
+                    var allegroConfiguration = account.Id == default ?
+                        (account as AllegroAccount).AllegroConfiguration :
+                        accountsManager.Get<AllegroAccount>(account.Id)?.AllegroConfiguration;
+
+                    return new AllegroService(allegroConfiguration);
                 default:
                     break;
             }

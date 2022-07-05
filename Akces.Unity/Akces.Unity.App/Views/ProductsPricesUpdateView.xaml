@@ -1,0 +1,401 @@
+﻿<UserControl x:Class="Akces.Unity.App.Views.ProductsPricesUpdateView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:style="clr-namespace:Akces.Wpf.Extensions.Style;assembly=Akces.Wpf"
+             xmlns:converters="clr-namespace:Akces.Unity.App.Converters"
+             xmlns:local="clr-namespace:Akces.Unity.App"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
+             xmlns:viewmodels="clr-namespace:Akces.Unity.App.ViewModels"
+             d:DataContext="{d:DesignInstance Type=viewmodels:ProductsPricesUpdateViewModel}"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="1200">
+
+    <UserControl.Resources>
+        <converters:BoolToVisibility x:Key="boolToVisibility"/>
+        <converters:IsHarmonogramPositionNotWorking x:Key="isHarmonogramPositionNotWorking"/>
+        <converters:IsHarmonogramPositionWorking x:Key="isHarmonogramPositionWorking"/>
+        <local:BindingProxy x:Key="Proxy" Data="{Binding}" />
+
+        <Style TargetType="Button" x:Key="menuButton">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+
+        <Style TargetType="TextBlock" x:Key="rowText">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="4"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <TextBlock Text="Aktualizacja cenników" Grid.Row="0">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="FontSize" Value="22"/>
+                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                    <Setter Property="Background" Value="#eeeeee"/>
+                    <Setter Property="FontWeight" Value="DemiBold"/>
+                    <Setter Property="Padding" Value="26,12,12,12"/>
+                    <Setter Property="Foreground" Value="{style:AkcesStyle ResourceKey=ThemeColor}"/>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+
+        <Grid Margin="20,0,0,0"
+              Background="White"
+              Grid.Row="1"
+              Height="40">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="54"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="180"/>
+                <ColumnDefinition Width="30"/>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="180"/>
+                <ColumnDefinition Width="10"/>
+            </Grid.ColumnDefinitions>
+
+            
+            <StackPanel Grid.Column="0"
+                        Orientation="Horizontal" 
+                        Margin="0,0,10,0">
+
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#bee6fd"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+
+                <Button Style="{StaticResource menuButton}" Content="Pobierz produkty" Command="{Binding LoadProductsCommand}"/>
+                <fa:ImageAwesome Margin="5,0,0,0" Icon="ArrowCircleDown" Width="20" Foreground="{style:AkcesStyle ResourceKey=ThemeColor}" VerticalAlignment="Center"/>
+            </StackPanel>
+          
+
+            <StackPanel Grid.Column="2"
+                        Orientation="Horizontal" 
+                        Margin="0,0,10,0">
+
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#bee6fd"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+
+                <Button Style="{StaticResource menuButton}" Content="Aktualizuj ceny" Command="{Binding ModifyPricesCommand}"/>
+                <fa:ImageAwesome Margin="5,0,0,0" Icon="ArrowCircleUp" Width="20" Foreground="{style:AkcesStyle ResourceKey=ThemeColor}" VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="3"
+                        Orientation="Horizontal" 
+                        Margin="0,0,10,0">
+
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#bee6fd"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+
+                <Button Style="{StaticResource menuButton}" Content="Modyfikuj ceny" Command="{Binding OpenModificationWindowCommand}"/>
+                <fa:ImageAwesome Margin="5,0,0,0" Icon="Edit" Width="20" Foreground="{style:AkcesStyle ResourceKey=ThemeColor}" VerticalAlignment="Center"/>
+            </StackPanel>
+
+
+            <TextBlock Grid.Column="4"
+                       FontSize="18"
+                       Margin="0,0,0,2"
+                       VerticalAlignment="Center"
+                       Text="Konto: "/>
+
+            <ComboBox Grid.Column="6"
+                      ItemsSource="{Binding Accounts}"
+                      SelectedItem="{Binding SelectedAccount, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                      Height="30"
+                      FontSize="16"
+                      DisplayMemberPath="Name">
+            </ComboBox>
+
+            <TextBlock Grid.Column="8"
+                       FontSize="18"
+                       Margin="0,0,0,2"
+                       VerticalAlignment="Center"
+                       Text="Cennik: "/>
+
+            <ComboBox Grid.Column="10"
+                      ItemsSource="{Binding PriceLists}"
+                      SelectedItem="{Binding SelectedPriceList, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                      Height="30"
+                      FontSize="16"
+                      DisplayMemberPath="Name">
+            </ComboBox>
+        </Grid>
+
+        <Grid Grid.Row="2" Background="#eeeeee">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+
+            <Grid>
+                <TextBox Text="{Binding Searchstring, UpdateSourceTrigger=PropertyChanged}" 
+                         FontSize="18"
+                         Height="30"
+                         VerticalContentAlignment="Center"
+                         Padding="5,0,0,0"
+                         VerticalAlignment="Center"
+                         HorizontalAlignment="Stretch" 
+                         x:Name="SearchTermTextBox" 
+                         Margin="5"/>
+                
+                <TextBlock IsHitTestVisible="False" Text="Wyszukaj..." FontSize="16" Padding="5,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="DarkGray">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Text, ElementName=SearchTermTextBox}" Value="">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
+
+            <TextBlock Text="Z cennika nexo"
+                       Width="240"
+                       Padding="5,2,2,2"
+                       FontSize="16"
+                       VerticalAlignment="Bottom"
+                       Foreground="White"
+                       Background="{style:AkcesStyle ResourceKey=ThemeColor}"
+                       Grid.Column="1"/>
+        </Grid>
+
+        <DataGrid ItemsSource="{Binding Products}" 
+                  Grid.Row="3"
+                  AutoGenerateColumns="False" 
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False">    
+
+            <DataGrid.Columns>
+
+                <DataGridTemplateColumn Width="32">
+                    <DataGridTemplateColumn.Header>
+                        <CheckBox Padding="10" VerticalAlignment="Center" HorizontalAlignment="Center" 
+                                  IsChecked="{Binding Source={StaticResource Proxy}, Path=Data.SelectAll, UpdateSourceTrigger=PropertyChanged}">
+                            <CheckBox.LayoutTransform>
+                                <ScaleTransform ScaleX="1.32" ScaleY="1.38"/>
+                            </CheckBox.LayoutTransform>
+                        </CheckBox>
+                    </DataGridTemplateColumn.Header>
+                    
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding Selected, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <CheckBox.LayoutTransform>
+                                    <ScaleTransform ScaleX="1.3" ScaleY="1.36"/>
+                                </CheckBox.LayoutTransform>
+                            </CheckBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Id produktu" SortMemberPath="SaleChannelId">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding SaleChannelId}" Style="{StaticResource rowText}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Nazwa" Width="*" SortMemberPath="SaleChannelName">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding SaleChannelName}" Style="{StaticResource rowText}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Symbol" Width="100" SortMemberPath="SaleChannelSymbol">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding SaleChannelSymbol}" Style="{StaticResource rowText}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="EAN" Width="100" SortMemberPath="SaleChannelEan">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding SaleChannelEan}" Style="{StaticResource rowText}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Width="100" SortMemberPath="SaleChannelPrice">
+                    <DataGridTemplateColumn.Header>
+                        <TextBlock Text="Aktualna cena" TextWrapping="WrapWithOverflow"/>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding SaleChannelPrice}" FontSize="14" Style="{StaticResource rowText}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Waluta" Width="100" SortMemberPath="ErpEan">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding SaleChannelCurrency}" Style="{StaticResource rowText}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Width="100" SortMemberPath="CurrentPrice">
+                    <DataGridTemplateColumn.Header>
+                        <TextBlock Text="Nowa cena" TextWrapping="WrapWithOverflow"/>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding CurrentPrice, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat='{}{0:#.00}', ConverterCulture='pl-PL'}" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Width="120" SortMemberPath="ErpRegistrationPrice">
+                    <DataGridTemplateColumn.Header>
+                        <TextBlock Text="Cena ewidencyjna" TextWrapping="WrapWithOverflow"/>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding ErpRegistrationPrice}" FontSize="14" Style="{StaticResource rowText}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Width="120" SortMemberPath="ErpPriceText">
+                    <DataGridTemplateColumn.Header>
+                        <TextBlock Text="Cena brutto" TextWrapping="WrapWithOverflow"/>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding ErpPriceText}" FontSize="14" Style="{StaticResource rowText}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel Grid.Row="4" Margin="10,10,60,8" Orientation="Horizontal" HorizontalAlignment="Center">
+            <TextBlock Text="Strona:" FontSize="18" FontWeight="DemiBold" VerticalAlignment="Center" Padding="8,0,8,6"/>
+
+            <Button BorderThickness="0" Background="Transparent" Margin="5,0,2,0" VerticalAlignment="Center"
+                    x:Name="firstButton"
+                    Command="{Binding FirstPageCommand}">
+                <fa:ImageAwesome Icon="ArrowCircleOutlineLeft" Width="21" IsEnabled="{Binding ElementName=firstButton, Path=IsEnabled, UpdateSourceTrigger=PropertyChanged}">
+                    <fa:ImageAwesome.Style>
+                        <Style TargetType="fa:ImageAwesome">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Foreground" Value="LightGray"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="True">
+                                    <Setter Property="Foreground" Value="{style:AkcesStyle ResourceKey=ThemeColor}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </fa:ImageAwesome.Style>
+                </fa:ImageAwesome>
+            </Button>
+            <Button BorderThickness="0" Background="Transparent" Margin="5,0,5,0" VerticalAlignment="Center"
+                    Command="{Binding PreviousPageCommand}"
+                    x:Name="previousButton">
+                <fa:ImageAwesome Icon="ArrowLeft" Width="21" IsEnabled="{Binding ElementName=previousButton, Path=IsEnabled, UpdateSourceTrigger=PropertyChanged}">
+                    <fa:ImageAwesome.Style>
+                        <Style TargetType="fa:ImageAwesome">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Foreground" Value="LightGray"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="True">
+                                    <Setter Property="Foreground" Value="{style:AkcesStyle ResourceKey=ThemeColor}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </fa:ImageAwesome.Style>
+                </fa:ImageAwesome>
+            </Button>
+
+            <TextBox IsReadOnly="False" Height="25" Text="{Binding CurrentPage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="18" VerticalAlignment="Center" Padding="8,0,8,2"/>
+            <TextBlock Text="/" FontSize="18" VerticalAlignment="Center" Padding="8,0,8,2"/>
+            <TextBox IsReadOnly="True" Text="{Binding PageCount, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Height="25" FontSize="18" VerticalAlignment="Center" Padding="8,0,8,2"/>
+
+            <Button BorderThickness="0" Background="Transparent" Margin="5,0,5,0" VerticalAlignment="Center"
+                    Command="{Binding NextPageCommand}"
+                    x:Name="nextButton">
+                <fa:ImageAwesome Icon="ArrowRight" Width="21" IsEnabled="{Binding ElementName=nextButton, Path=IsEnabled, UpdateSourceTrigger=PropertyChanged}">
+                    <fa:ImageAwesome.Style>
+                        <Style TargetType="fa:ImageAwesome">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Foreground" Value="LightGray"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="True">
+                                    <Setter Property="Foreground" Value="{style:AkcesStyle ResourceKey=ThemeColor}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </fa:ImageAwesome.Style>
+                </fa:ImageAwesome>
+            </Button>
+            <Button BorderThickness="0" Background="Transparent" Margin="2,0,5,0" VerticalAlignment="Center"
+                    Command="{Binding LastPageCommand}"
+                    x:Name="lastButton">
+                <fa:ImageAwesome Icon="ArrowCircleOutlineRight" Width="21" IsEnabled="{Binding ElementName=lastButton, Path=IsEnabled, UpdateSourceTrigger=PropertyChanged}">
+                    <fa:ImageAwesome.Style>
+                        <Style TargetType="fa:ImageAwesome">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Foreground" Value="LightGray"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="True">
+                                    <Setter Property="Foreground" Value="{style:AkcesStyle ResourceKey=ThemeColor}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </fa:ImageAwesome.Style>
+                </fa:ImageAwesome>
+            </Button>
+        </StackPanel>
+    </Grid>
+</UserControl>

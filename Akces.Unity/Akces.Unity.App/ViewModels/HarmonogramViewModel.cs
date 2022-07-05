@@ -37,6 +37,11 @@ namespace Akces.Unity.App.ViewModels
 
         public void LoadHarmonogramPositions()
         {
+            foreach (var harmonogramPosition in Harmonogram.Data.Positions.Where(x => x.Account != null))
+            {
+                harmonogramPosition.Account = Accounts.FirstOrDefault(x => x.Id == harmonogramPosition.Account.Id);
+            }
+
             Positions = new ObservableCollection<HarmonogramPosition>(Harmonogram.Data.Positions);
         }
         private void Save()

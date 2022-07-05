@@ -7,7 +7,6 @@ using System.Windows.Input;
 
 namespace Akces.Unity.App.ViewModels
 {
-
     public class NavbarViewModel : ControlViewModel
     {
         private bool logged;
@@ -26,7 +25,7 @@ namespace Akces.Unity.App.ViewModels
 
         private void Logout()
         {
-            //ServicesProvider.RemoveInstance<UnityService>()?.Dispose();
+            ServicesProvider.RemoveInstance<HarmonogramWorker>()?.Dispose();
             ServicesProvider.RemoveInstance<NexoContext>()?.Dispose();
 
             var nexoDatabase = ServicesProvider.GetService<NexoDatabase>();

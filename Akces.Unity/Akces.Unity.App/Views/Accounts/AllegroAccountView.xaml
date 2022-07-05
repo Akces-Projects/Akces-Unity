@@ -3,10 +3,686 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Akces.Unity.App.Views"
-             mc:Ignorable="d" 
+             xmlns:style="clr-namespace:Akces.Wpf.Extensions.Style;assembly=Akces.Wpf"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
+             xmlns:local="clr-namespace:Akces.Unity.App" 
+             xmlns:viewmodels="clr-namespace:Akces.Unity.App.ViewModels" 
+             d:DataContext="{d:DesignInstance Type=viewmodels:AllegroAccountViewModel}"
+             mc:Ignorable="d"
+             Background="#eeeeee"
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-            
-    </Grid>
+
+    <UserControl.Resources>
+        <local:BindingProxy x:Key="Proxy" Data="{Binding}" />
+
+        <Style TargetType="Button" x:Key="menuButton">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+
+        <Style TargetType="TextBlock" x:Key="rowText">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+    </UserControl.Resources>
+
+    <StackPanel>
+
+        <Grid Margin="20,0,0,0"
+              Height="40">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="0,0,10,0">
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#bee6fd"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+                <Button Style="{StaticResource menuButton}" Content="Zapisz" Command="{Binding SaveCommand}"/>
+                <fa:ImageAwesome Margin="5,0,0,0" Icon="Save" Width="17" Foreground="ForestGreen" VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,10,0">
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#bee6fd"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+                <Button Style="{StaticResource menuButton}" Content="Anuluj" Command="{Binding CancelCommand}"/>
+                <fa:ImageAwesome Margin="5,0,0,0" Icon="Times" Width="15" Foreground="OrangeRed" VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="3" Orientation="Horizontal" Margin="0,0,10,0">
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#bee6fd"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+                <Button Style="{StaticResource menuButton}" Content="Autentykacja" Command="{Binding AuthenticateCommand}"/>
+                <fa:ImageAwesome Margin="5,0,0,0" Icon="ArrowCircleRight" Width="20" Foreground="{style:AkcesStyle ResourceKey=ThemeColor}" VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="4" Orientation="Horizontal" Margin="0,0,10,0">
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#bee6fd"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+                <Button Style="{StaticResource menuButton}" Content="Test połączenia" Command="{Binding TestConnectionCommand}"/>
+                <fa:ImageAwesome Margin="5,0,0,0" Icon="CheckCircle" Width="20" Foreground="{style:AkcesStyle ResourceKey=ThemeColor}" VerticalAlignment="Center"/>
+            </StackPanel>
+
+        </Grid>
+
+        <TextBlock>
+            <TextBlock.Text>
+                <MultiBinding StringFormat="{}Konto {1}:  {0}">
+                    <Binding Path="Account.Data.Name" />
+                    <Binding Path="Account.Data.AccountType" />
+                </MultiBinding>
+            </TextBlock.Text>
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="FontSize" Value="20"/>
+                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                    <Setter Property="Background" Value="White"/>
+                    <Setter Property="FontWeight" Value="DemiBold"/>
+                    <Setter Property="Padding" Value="26,8,5,8"/>
+                    <Setter Property="Foreground" Value="Gray"/>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+
+        <Grid Height="220" Background="Transparent">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="15"/>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="15"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="15"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="15"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="15"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="1" Grid.Column="1"
+                       Height="28"
+                       VerticalAlignment="Center"
+                       FontSize="15"
+                       Text="Nazwa konta:"/>
+
+            <TextBox Grid.Row="1" Grid.Column="3"
+                     Height="28"
+                     VerticalContentAlignment="Center"
+                     FontSize="15"
+                     Padding="5,0,0,0"
+                     Text="{Binding Account.Data.Name, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <TextBlock Grid.Row="3" Grid.Column="1"
+                       Height="28"
+                       VerticalAlignment="Center"
+                       FontSize="15"
+                       Text="Typ konta:"/>
+
+            <TextBox Grid.Row="3" Grid.Column="3"
+                     Height="28"
+                     VerticalContentAlignment="Center"
+                     FontSize="15"
+                     Padding="5,0,0,0"
+                     IsReadOnly="True"
+                     Text="{Binding Account.Data.AccountType, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <!--<TextBlock Grid.Row="5" Grid.Column="1"
+                       Height="28"
+                       VerticalAlignment="Center"
+                       FontSize="15"
+                       Text="Token autoryzacyjny:"/>
+
+            <TextBox Grid.Row="5" Grid.Column="3"
+                     Height="28"
+                     VerticalContentAlignment="Center"
+                     FontSize="15"
+                     Padding="5,0,0,0"/>
+
+            <TextBlock Grid.Row="7" Grid.Column="1"
+                       Height="28"
+                       VerticalAlignment="Center"
+                       FontSize="15"
+                       Text="Import offset ( godz.):"/>
+
+            <TextBox Grid.Row="7" Grid.Column="3"
+                     Height="28"
+                     VerticalContentAlignment="Center"
+                     FontSize="15"
+                     Padding="5,0,0,0"/>
+
+            <TextBlock Grid.Row="9" Grid.Column="1"
+                       Height="38"
+                       VerticalAlignment="Center"
+                       FontSize="15"
+                       TextWrapping="Wrap"
+                       Text="Import zamówień niepotwierdzonych"/>
+
+            <CheckBox Grid.Row="9" Grid.Column="3"
+                     Height="28"
+                     VerticalContentAlignment="Center"
+                     FontSize="15"
+                     Padding="5,0,0,0">
+                <CheckBox.LayoutTransform>
+                    <ScaleTransform ScaleX="1.4" ScaleY="1.5"/>
+                </CheckBox.LayoutTransform>
+            </CheckBox>-->
+
+        </Grid>
+
+        <TabControl>
+            <TabItem Header="Magazyny" FontSize="14" Foreground="{style:AkcesStyle ResourceKey=InfoColor}">
+                <DataGrid ItemsSource="{Binding WarehouseConfigurationMembers}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Domyślny" Width="75">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding Default, UpdateSourceTrigger=PropertyChanged}"
+                                              VerticalAlignment="Center" HorizontalAlignment="Center">
+                                        <CheckBox.LayoutTransform>
+                                            <ScaleTransform ScaleX="1.4" ScaleY="1.4"/>
+                                        </CheckBox.LayoutTransform>
+                                    </CheckBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Magazyn (sklep)" Width="110">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding ChannelWarehouse, UpdateSourceTrigger=PropertyChanged}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Magazyn (nexo)" Width="110">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox ItemsSource="{Binding Path=DataContext.Warehouses, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}"
+                                              SelectedValue="{Binding Path=ErpWarehouseSymbol, UpdateSourceTrigger=PropertyChanged}">
+                                    </ComboBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Rezerwacja" Width="80">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox ItemsSource="{Binding Path=DataContext.Statuses, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}"
+                                              SelectedValue="{Binding Path=ErpDocumentStatus, UpdateSourceTrigger=PropertyChanged}">
+                                    </ComboBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Kraje" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding CountriesCodes, UpdateSourceTrigger=PropertyChanged}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="60">
+                            <DataGridTemplateColumn.Header>
+                                <Button Content="Dodaj"
+                                        Background="Transparent"
+                                        BorderBrush="Transparent"
+                                        FontWeight="SemiBold"
+                                        FontSize="16"
+                                        HorizontalAlignment="Center"
+                                        Command="{Binding Source={StaticResource Proxy}, Path=Data.AddWarehouseCommand}"
+                                        Foreground="{style:AkcesStyle ResourceKey=SuccessColor}"/>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Usuń"
+                                            Background="Transparent"
+                                            BorderBrush="Transparent"
+                                            FontWeight="SemiBold"
+                                            FontSize="14"
+                                            Command="{Binding Source={StaticResource Proxy}, Path=Data.RemoveWarehouseCommand}"
+                                            CommandParameter="{Binding .}"
+                                            Foreground="{style:AkcesStyle ResourceKey=DangerColor}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="Formy płatności" FontSize="14" Foreground="{style:AkcesStyle ResourceKey=InfoColor}">
+                <DataGrid ItemsSource="{Binding PaymentMethodConfigurationMembers}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Domyślny" Width="75">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding Default, UpdateSourceTrigger=PropertyChanged}"
+                                              VerticalAlignment="Center" HorizontalAlignment="Center">
+                                        <CheckBox.LayoutTransform>
+                                            <ScaleTransform ScaleX="1.4" ScaleY="1.4"/>
+                                        </CheckBox.LayoutTransform>
+                                    </CheckBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Forma płatności (sklep)" Width="160">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding ChannelPaymentMethod, UpdateSourceTrigger=PropertyChanged}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Sposób dostawy (sklep)" Width="160">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding ChannelDeliveryMethod, UpdateSourceTrigger=PropertyChanged}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Waluta (sklep)" Width="160">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding CurrencyCode, UpdateSourceTrigger=PropertyChanged}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Forma płatności (nexo)" Width="160">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox ItemsSource="{Binding Path=DataContext.PaymentMethods, RelativeSource= {RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}"
+                                              SelectedValue="{Binding Path=ErpPaymentMethod, UpdateSourceTrigger=PropertyChanged}">
+                                    </ComboBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Kraje" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding CountriesCodes, UpdateSourceTrigger=PropertyChanged}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="60">
+                            <DataGridTemplateColumn.Header>
+                                <Button Content="Dodaj"
+                                        Background="Transparent"
+                                        BorderBrush="Transparent"
+                                        FontWeight="SemiBold"
+                                        FontSize="16"
+                                        HorizontalAlignment="Center"
+                                        Command="{Binding Source={StaticResource Proxy}, Path=Data.AddPaymentMethodCommand}"
+                                        Foreground="{style:AkcesStyle ResourceKey=SuccessColor}"/>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Usuń"
+                                            Background="Transparent"
+                                            BorderBrush="Transparent"
+                                            FontWeight="SemiBold"
+                                            FontSize="14"
+                                            Command="{Binding Source={StaticResource Proxy}, Path=Data.RemovePaymentMethodCommand}"
+                                            CommandParameter="{Binding .}"
+                                            Foreground="{style:AkcesStyle ResourceKey=DangerColor}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="Sposoby dostaw" FontSize="14" Foreground="{style:AkcesStyle ResourceKey=InfoColor}">
+                <DataGrid ItemsSource="{Binding DeliveryMethodConfigurationMembers}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Domyślny" Width="75">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding Default, UpdateSourceTrigger=PropertyChanged}"
+                                              VerticalAlignment="Center" HorizontalAlignment="Center">
+                                        <CheckBox.LayoutTransform>
+                                            <ScaleTransform ScaleX="1.4" ScaleY="1.4"/>
+                                        </CheckBox.LayoutTransform>
+                                    </CheckBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Sposób dostawy (sklep)" Width="160">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding ChannelDeliveryMethod, UpdateSourceTrigger=PropertyChanged}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Sposób dostawy (nexo)" Width="160">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox ItemsSource="{Binding Path=DataContext.DeliveryMethods, RelativeSource= {RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}"
+                                              SelectedValue="{Binding Path=ErpDeliveryMethodName, UpdateSourceTrigger=PropertyChanged}">
+                                    </ComboBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Kraje" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding CountriesCodes, UpdateSourceTrigger=PropertyChanged}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="60">
+                            <DataGridTemplateColumn.Header>
+                                <Button Content="Dodaj"
+                                        Background="Transparent"
+                                        BorderBrush="Transparent"
+                                        FontWeight="SemiBold"
+                                        FontSize="16"
+                                        HorizontalAlignment="Center"  
+                                        Command="{Binding Source={StaticResource Proxy}, Path=Data.AddDeliveryMethodCommand}"               
+                                        Foreground="{style:AkcesStyle ResourceKey=SuccessColor}"/>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Usuń"
+                                            Background="Transparent"
+                                            BorderBrush="Transparent"
+                                            FontWeight="SemiBold"
+                                            FontSize="14"
+                                            Command="{Binding Source={StaticResource Proxy}, Path=Data.RemoveDeliveryMethodCommand}"
+                                            CommandParameter="{Binding .}"
+                                            Foreground="{style:AkcesStyle ResourceKey=DangerColor}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="Transakcje handlowe" FontSize="14" Foreground="{style:AkcesStyle ResourceKey=InfoColor}">
+                <DataGrid ItemsSource="{Binding TransactionConfigurationMembers}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Domyślny" Width="75">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding Default, UpdateSourceTrigger=PropertyChanged}"
+                                              VerticalAlignment="Center" HorizontalAlignment="Center">
+                                        <CheckBox.LayoutTransform>
+                                            <ScaleTransform ScaleX="1.4" ScaleY="1.4"/>
+                                        </CheckBox.LayoutTransform>
+                                    </CheckBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Transakcja (nexo)" Width="120">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox ItemsSource="{Binding Path=DataContext.Transactions, RelativeSource= {RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}"
+                                              SelectedValue="{Binding Path=ErpTranstactionSymbol, UpdateSourceTrigger=PropertyChanged}">
+                                    </ComboBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Kraje" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding CountriesCodes, UpdateSourceTrigger=PropertyChanged}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="60">
+                            <DataGridTemplateColumn.Header>
+                                <Button Content="Dodaj"
+                                        Background="Transparent"
+                                        BorderBrush="Transparent"
+                                        FontWeight="SemiBold"
+                                        FontSize="16"
+                                        HorizontalAlignment="Center"
+                                        Command="{Binding Source={StaticResource Proxy}, Path=Data.AddTransactionCommand}"
+                                        Foreground="{style:AkcesStyle ResourceKey=SuccessColor}"/>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Usuń"
+                                            Background="Transparent"
+                                            BorderBrush="Transparent"
+                                            FontWeight="SemiBold"
+                                            FontSize="14"
+                                            Command="{Binding Source={StaticResource Proxy}, Path=Data.RemoveTransactionCommand}"
+                                            CommandParameter="{Binding .}"
+                                            Foreground="{style:AkcesStyle ResourceKey=DangerColor}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="Oddziały" FontSize="14" Foreground="{style:AkcesStyle ResourceKey=InfoColor}">
+                <DataGrid ItemsSource="{Binding BranchConfigurationMembers}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Domyślny" Width="75">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding Default, UpdateSourceTrigger=PropertyChanged}"
+                                              VerticalAlignment="Center" HorizontalAlignment="Center">
+                                        <CheckBox.LayoutTransform>
+                                            <ScaleTransform ScaleX="1.4" ScaleY="1.4"/>
+                                        </CheckBox.LayoutTransform>
+                                    </CheckBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Oddział (sklep)" Width="140">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding ChannelBranch, UpdateSourceTrigger=PropertyChanged}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Oddział (nexo)" Width="140">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox ItemsSource="{Binding Path=DataContext.Branches, RelativeSource= {RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}"
+                                              SelectedItem="{Binding ErpBranchSymbol, UpdateSourceTrigger=PropertyChanged}">
+                                    </ComboBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Kraje" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding CountriesCodes, UpdateSourceTrigger=PropertyChanged}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="60">
+                            <DataGridTemplateColumn.Header>
+                                <Button Content="Dodaj"
+                                        Background="Transparent"
+                                        BorderBrush="Transparent"
+                                        FontWeight="SemiBold"
+                                        FontSize="16"
+                                        HorizontalAlignment="Center"
+                                        Command="{Binding Source={StaticResource Proxy}, Path=Data.AddBranchCommand}"
+                                        Foreground="{style:AkcesStyle ResourceKey=SuccessColor}"/>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Usuń"
+                                            Background="Transparent"
+                                            BorderBrush="Transparent"
+                                            FontWeight="SemiBold"
+                                            FontSize="14"                                            
+                                            Command="{Binding Source={StaticResource Proxy}, Path=Data.RemoveBranchCommand}"
+                                            CommandParameter="{Binding .}"
+                                            Foreground="{style:AkcesStyle ResourceKey=DangerColor}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="Stawki VAT" FontSize="14" Foreground="{style:AkcesStyle ResourceKey=InfoColor}">
+                <DataGrid ItemsSource="{Binding TaxRateConfigurationMembers}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Domyślny" Width="75">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding Default, UpdateSourceTrigger=PropertyChanged}"
+                                              VerticalAlignment="Center" HorizontalAlignment="Center">
+                                        <CheckBox.LayoutTransform>
+                                            <ScaleTransform ScaleX="1.4" ScaleY="1.4"/>
+                                        </CheckBox.LayoutTransform>
+                                    </CheckBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Stawka VAT (sklep)" Width="130">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding ChannelTaxRate, UpdateSourceTrigger=PropertyChanged}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Stawka VAT (nexo)" Width="130">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox ItemsSource="{Binding Path=DataContext.TaxRates, UpdateSourceTrigger=PropertyChanged, RelativeSource= {RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}"
+                                              SelectedItem="{Binding ErpTaxRateSymbol, UpdateSourceTrigger=PropertyChanged}">
+                                    </ComboBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Kraje" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding CountriesCodes, UpdateSourceTrigger=PropertyChanged}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="60">
+                            <DataGridTemplateColumn.Header>
+                                <Button Content="Dodaj"
+                                        Background="Transparent"
+                                        BorderBrush="Transparent"
+                                        FontWeight="SemiBold"
+                                        FontSize="16"
+                                        HorizontalAlignment="Center"
+                                        Command="{Binding Source={StaticResource Proxy}, Path=Data.AddTaxRateCommand}"
+                                        Foreground="{style:AkcesStyle ResourceKey=SuccessColor}"/>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Usuń"
+                                            Background="Transparent"
+                                            BorderBrush="Transparent"
+                                            FontWeight="SemiBold"
+                                            FontSize="14"
+                                            Command="{Binding Source={StaticResource Proxy}, Path=Data.RemoveTaxRateCommand}"
+                                            CommandParameter="{Binding .}"
+                                            Foreground="{style:AkcesStyle ResourceKey=DangerColor}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="Jednostki miar" FontSize="14" Foreground="{style:AkcesStyle ResourceKey=InfoColor}">
+                <DataGrid ItemsSource="{Binding UnitConfigurationMembers}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Domyślny" Width="75">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding Default, UpdateSourceTrigger=PropertyChanged}"
+                                              VerticalAlignment="Center" HorizontalAlignment="Center">
+                                        <CheckBox.LayoutTransform>
+                                            <ScaleTransform ScaleX="1.4" ScaleY="1.4"/>
+                                        </CheckBox.LayoutTransform>
+                                    </CheckBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Jednostkia miary (sklep)" Width="160">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding ChannelUnit, UpdateSourceTrigger=PropertyChanged}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Jednostkia miary (nexo)" Width="160">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox ItemsSource="{Binding Path=DataContext.Units, RelativeSource= {RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, UpdateSourceTrigger=PropertyChanged}"
+                                              SelectedItem="{Binding ErpUnitSymbol, UpdateSourceTrigger=PropertyChanged}">
+                                    </ComboBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Kraje" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding CountriesCodes, UpdateSourceTrigger=PropertyChanged}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="60">
+                            <DataGridTemplateColumn.Header>
+                                <Button Content="Dodaj"
+                                        Background="Transparent"
+                                        BorderBrush="Transparent"
+                                        FontWeight="SemiBold"
+                                        FontSize="16"
+                                        HorizontalAlignment="Center"
+                                        Command="{Binding Source={StaticResource Proxy}, Path=Data.AddUnitCommand}"
+                                        Foreground="{style:AkcesStyle ResourceKey=SuccessColor}"/>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Usuń"
+                                            Background="Transparent"
+                                            BorderBrush="Transparent"
+                                            FontWeight="SemiBold"
+                                            FontSize="14"
+                                            Command="{Binding Source={StaticResource Proxy}, Path=Data.RemoveUnitCommand}"
+                                            CommandParameter="{Binding .}"
+                                            Foreground="{style:AkcesStyle ResourceKey=DangerColor}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+        </TabControl>
+    </StackPanel>
 </UserControl>

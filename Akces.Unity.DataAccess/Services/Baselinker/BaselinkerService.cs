@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using Akces.Unity.Models;
 using Akces.Unity.Models.Communication;
 using Akces.Unity.Models.SaleChannels.Baselinker;
@@ -107,10 +108,31 @@ namespace Akces.Unity.DataAccess.Services
                 return false;
             }
         }
+        public void SaveConfiguration()
+        {
+            if (baselinkerConfiguration == null || baselinkerConfiguration.Id == default)
+                return;
+
+            using (var context = new UnityDbContext())
+            {
+                context.Set<BaselinkerConfiguration>().Update(baselinkerConfiguration).State = EntityState.Modified;
+                context.SaveChanges();
+            }
+        }
         public void Dispose()
         {
             httpClient?.Dispose();
             GC.SuppressFinalize(this);
+        }
+
+        public Task<ProductsContainer> GetProductsAsync(int pageIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> UpdateProductPriceAsync(object id, string currency, decimal newPrice)
+        {
+            throw new NotImplementedException();
         }
     }
 }

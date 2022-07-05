@@ -34,8 +34,8 @@ namespace Akces.Unity.DataAccess.Managers
         }
         public IHarmonogram Create()
         {
-            var bo = new HarmonogramBO();
-            bo.Data = new Harmonogram();
+            var data = new Harmonogram();
+            var bo = new HarmonogramBO(data);
             return bo;
         }
         public IHarmonogram Find(Harmonogram entity)
@@ -46,11 +46,9 @@ namespace Akces.Unity.DataAccess.Managers
                    .Include(unityDbContext.GetIncludePaths(typeof(Harmonogram)))
                    .FirstOrDefault(x => x.Id == entity.Id);
 
-            var bo = new HarmonogramBO(unityDbContext);
-            bo.Data = harmonogram;
+            var bo = new HarmonogramBO(harmonogram, unityDbContext);
             return bo;
         }
-
         public bool SaveHarmonogramPosition(HarmonogramPosition harmonogramPosition) 
         {
             var unityDbContext = new UnityDbContext();
