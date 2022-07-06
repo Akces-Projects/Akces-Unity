@@ -467,6 +467,39 @@ namespace Akces.Unity.DataAccess.Migrations
                     b.ToTable("BaselinkerConfiguration");
                 });
 
+            modelBuilder.Entity("Akces.Unity.Models.SaleChannels.Olx.OlxConfiguration", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("AccessToken")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("AccountId")
+                        .IsRequired()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("BaseAddress")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ClientId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ClientSecret")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId")
+                        .IsUnique();
+
+                    b.ToTable("OlxConfiguration");
+                });
+
             modelBuilder.Entity("Akces.Unity.Models.SaleChannels.Shoper.ShoperConfiguration", b =>
                 {
                     b.Property<int>("Id")
@@ -495,12 +528,41 @@ namespace Akces.Unity.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("ConnectionString")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId")
                         .IsUnique();
 
                     b.ToTable("ShopgoldConfiguration");
+                });
+
+            modelBuilder.Entity("Akces.Unity.Models.UnityUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Admin")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("CanOpenHarmonograms")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("CanOpenPricesUpdate")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("CanOpenTasks")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UnityUsers");
                 });
 
             modelBuilder.Entity("Akces.Unity.Models.SaleChannels.AllegroAccount", b =>
@@ -515,6 +577,13 @@ namespace Akces.Unity.DataAccess.Migrations
                     b.HasBaseType("Akces.Unity.Models.Account");
 
                     b.HasDiscriminator().HasValue("BaselinkerAccount");
+                });
+
+            modelBuilder.Entity("Akces.Unity.Models.SaleChannels.Olx.OlxAccount", b =>
+                {
+                    b.HasBaseType("Akces.Unity.Models.Account");
+
+                    b.HasDiscriminator().HasValue("OlxAccount");
                 });
 
             modelBuilder.Entity("Akces.Unity.Models.SaleChannels.ShoperAccount", b =>
@@ -626,6 +695,15 @@ namespace Akces.Unity.DataAccess.Migrations
                     b.HasOne("Akces.Unity.Models.SaleChannels.BaselinkerAccount", null)
                         .WithOne("BaselinkerConfiguration")
                         .HasForeignKey("Akces.Unity.Models.SaleChannels.Baselinker.BaselinkerConfiguration", "AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Akces.Unity.Models.SaleChannels.Olx.OlxConfiguration", b =>
+                {
+                    b.HasOne("Akces.Unity.Models.SaleChannels.Olx.OlxAccount", null)
+                        .WithOne("OlxConfiguration")
+                        .HasForeignKey("Akces.Unity.Models.SaleChannels.Olx.OlxConfiguration", "AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

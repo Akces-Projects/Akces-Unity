@@ -6,6 +6,21 @@ using Akces.Unity.DataAccess.Managers.BusinessObjects;
 
 namespace Akces.Unity.DataAccess.Managers
 {
+    public class UnityUsersManager 
+    {
+        public UnityUser Get(string name)
+        {
+            using (var unityDbContext = new UnityDbContext())
+            {
+                var unityUser = unityDbContext.UnityUsers
+                    .AsNoTracking()
+                    .FirstOrDefault(x => x.UserName == name);
+
+                return unityUser;
+            }
+        }
+    }
+
     public class AccountsManager
     {
         public List<Account> Get()

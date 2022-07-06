@@ -96,6 +96,7 @@ namespace Akces.Unity.DataAccess.Services
                     .Select(x => new Product()
                     {
                         Id = x.id,
+                        Symbol = x.external?.id == null ? "" : x.external.id.Split(' ').FirstOrDefault(),
                         EAN = "",
                         Currency = x.sellingMode.price.currency,
                         Price = x.sellingMode.price.amount,

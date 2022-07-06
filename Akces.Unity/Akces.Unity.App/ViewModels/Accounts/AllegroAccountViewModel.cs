@@ -4,6 +4,7 @@ using Akces.Unity.DataAccess.Managers.BusinessObjects;
 
 namespace Akces.Unity.App.ViewModels
 {
+
     internal class AllegroAccountViewModel : AccountViewModel<AllegroAccount>
     {
         private IAccount<AllegroAccount> account;

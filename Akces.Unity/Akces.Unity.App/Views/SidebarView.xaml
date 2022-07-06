@@ -50,12 +50,12 @@
             <TextBlock Style="{StaticResource mainText}" Text="Operacje"/>
 
             <Button Click="Button_Click" Content="Aktualizacja cenników" Style="{StaticResource mainButton}" Command="{Binding GoToProductsPrizesUpdateCommand}"/>
-            <Button Click="Button_Click" Content="Import zamówień" Style="{StaticResource mainButton}"/>
+            <!--<Button Click="Button_Click" Content="Import zamówień" Style="{StaticResource mainButton}"/>-->
 
             <TextBlock Style="{StaticResource mainText}" VerticalAlignment="Bottom" Text="Konfiguracja"/>
             <Button Click="Button_Click" Content="Konta" Style="{StaticResource mainButton}" Command="{Binding GoToAccountsCommand}"/>
-            <Button Click="Button_Click" Content="Użytkownicy" Style="{StaticResource mainButton}"/>
-            <Button Click="Button_Click" Content="Połączenie" Style="{StaticResource mainButton}"/>
+            <!--<Button Click="Button_Click" Content="Użytkownicy" Style="{StaticResource mainButton}"/>
+            <Button Click="Button_Click" Content="Połączenie" Style="{StaticResource mainButton}"/>-->
 
         </StackPanel>
         

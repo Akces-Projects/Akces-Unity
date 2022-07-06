@@ -125,7 +125,7 @@ namespace Akces.Unity.App.ViewModels
             Account?.Dispose();
             Host.Window.Close();
         }
-        private async Task AuthenticateAsync()
+        protected virtual async Task AuthenticateAsync()
         {
             ISaleChannelService service = null;
 

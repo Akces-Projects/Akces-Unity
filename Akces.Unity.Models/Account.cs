@@ -19,6 +19,6 @@ namespace Akces.Unity.Models
 
     public enum AccountType
     {
-        Shoper, shopGold, Baselinker, Allegro
+        Shoper, shopGold, Baselinker, Allegro, Olx
     }
 }

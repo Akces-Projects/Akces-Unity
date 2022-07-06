@@ -48,5 +48,6 @@
             <fa:ImageAwesome Margin="-4,5,5,0" Icon="Times" Width="15" Foreground="OrangeRed" VerticalAlignment="Center"/>
         </StackPanel>
 
+
     </StackPanel>
 </UserControl>

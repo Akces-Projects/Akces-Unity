@@ -302,7 +302,7 @@ namespace Akces.Unity.DataAccess.NexoManagers.Operations
             var unitSymbol = unit?.ErpUnitSymbol ?? eanUnit ?? countryUnitSymbol ?? defaultUnitSymbol;
             var jednostkiMiarMgr = sfera.PodajObiektTypu<IJednostkiMiar>().Dane.Wszystkie();
 
-            var jednostkaMiary = jednostkiMiarMgr.FirstOrDefault(x => x.Symbol == unitSymbol);
+            var jednostkaMiary = jednostkiMiarMgr.FirstOrDefault(x => x.Symbol == unitSymbol) ?? asor?.JednostkiMiar.First().JednostkaMiary;
             return jednostkaMiary;
         }
         private JednostkaOrganizacyjna DopasujOddzial(string oddzialNaZamowieniu, string kodKraju)

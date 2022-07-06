@@ -25,6 +25,11 @@ namespace Akces.Unity.DataAccess.Services.Allegro.Models
         public ShippingRates shippingRates { get; set; }
     }
 
+    public class External
+    {
+        public string id { get; set; }
+    }
+
     public class ImpliedWarranty
     {
         public string id { get; set; }
@@ -43,7 +48,7 @@ namespace Akces.Unity.DataAccess.Services.Allegro.Models
         public Publication publication { get; set; }
         public AfterSalesServices afterSalesServices { get; set; }
         public object additionalServices { get; set; }
-        public object external { get; set; }
+        public External external { get; set; }
         public Delivery delivery { get; set; }
         public B2b b2b { get; set; }
     }
@@ -63,7 +68,7 @@ namespace Akces.Unity.DataAccess.Services.Allegro.Models
     {
         public string status { get; set; }
         public object startingAt { get; set; }
-        public DateTime startedAt { get; set; }
+        public object startedAt { get; set; }
         public object endingAt { get; set; }
         public object endedAt { get; set; }
     }

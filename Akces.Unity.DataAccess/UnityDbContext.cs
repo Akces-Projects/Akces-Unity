@@ -7,6 +7,8 @@ using Akces.Unity.Models.SaleChannels.Allegro;
 using Akces.Unity.Models.SaleChannels.Shopgold;
 using Akces.Unity.Models.SaleChannels.Baselinker;
 using Akces.Unity.Models.SaleChannels;
+using Akces.Unity.Models.SaleChannels.Olx;
+using System.Linq;
 
 namespace Akces.Unity.DataAccess
 { 
@@ -15,11 +17,12 @@ namespace Akces.Unity.DataAccess
         public static string ConnectionString { get; set; } = "Data Source=Data\\unity.db";
     }
 
-    internal class UnityDbContext : DbContext
+    public class UnityDbContext : DbContext
     {
         internal DbSet<Account> Accounts { get; set; }
         internal DbSet<Harmonogram> Harmonograms { get; set; }
         internal DbSet<OperationReport> OperationReports { get; set; }
+        internal DbSet<UnityUser> UnityUsers { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -91,7 +94,25 @@ namespace Akces.Unity.DataAccess
                 .IsRequired(true)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            //Olx
+            modelBuilder.Entity<OlxAccount>().HasOne(x => x.NexoConfiguration)
+                .WithOne()
+                .HasForeignKey<NexoConfiguration>("AccountId")
+                .IsRequired(true)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<OlxAccount>().HasOne(x => x.OlxConfiguration)
+                .WithOne()
+                .HasForeignKey<OlxConfiguration>("AccountId")
+                .IsRequired(true)
+                .OnDelete(DeleteBehavior.Cascade);
+
             base.OnModelCreating(modelBuilder);
+        }
+
+        public UnityUser GetUser(string user)
+        {
+            return UnityUsers.Where(x => x.UserName == user).FirstOrDefault();
         }
     }
 }

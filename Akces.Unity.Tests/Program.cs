@@ -6,7 +6,10 @@ using Akces.Unity.Models.ConfigurationMembers;
 using Akces.Unity.Models.SaleChannels;
 using InsERT.Moria.Sfera;
 using InsERT.Mox.Product;
+using MySql.Data.MySqlClient;
 using System;
+using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Akces.Unity.Tests
@@ -15,43 +18,14 @@ namespace Akces.Unity.Tests
     {
         static void Main(string[] args)
         {
-            Test().Wait();
-        }
 
-        public static async Task Test() 
-        {
-            UnityConnection.ConnectionString = "Data Source=..\\..\\Data\\unity.db";
-
-            var accountsManager = new AccountsManager();
-            var operationReportsManager = new OperationReportsManager();
-
-            CreateAcc();
-
-            var account = accountsManager.Get<BaselinkerAccount>(1);
-            var service = account.CreateService();
-
-            var orders = await service.GetOrdersAsync();
-
-            //3008690-3013746-QDCOQ0OZC24XRXH9A4IQLNRSK5C93U2DPUJLBGVKDATIVPWIGFKKJP2QIIFS9TK3
-
-            var sfera = UruchomSfere();
-
-            var nexoOrdersManager = new NexoOrdersManager(sfera);
-
-            foreach (var order in orders)
+            while (true)
             {
-                var operationResult = await nexoOrdersManager.AddIfNotExistsAsync(order, account.NexoConfiguration);
-
-                using (var reportBO = operationReportsManager.Create(OperationType.ImportZamowien))
-                {
-                    reportBO.Data.Description = $"Zamówienie {account.AccountType} - {order.Original}";
-                    operationResult.Infos.ForEach(x => reportBO.AddInfo(x, order.Original));
-                    operationResult.Warrnings.ForEach(x => reportBO.AddWarn(x, order.Original));
-                    operationResult.Errors.ForEach(x => reportBO.AddError(x, order.Original));
-                    reportBO.Save();
-                }
+                Console.ReadKey();
             }
         }
+
+        
 
         public static Uchwyt UruchomSfere()
         {
@@ -118,5 +92,40 @@ namespace Akces.Unity.Tests
             }
         }
 
-    }
+	}
 }
+
+
+
+
+//UnityConnection.ConnectionString = "Data Source=..\\..\\Data\\unity.db";
+
+//var accountsManager = new AccountsManager();
+//var operationReportsManager = new OperationReportsManager();
+
+//CreateAcc();
+
+//var account = accountsManager.Get<BaselinkerAccount>(1);
+//var service = account.CreateService();
+
+//var orders = await service.GetOrdersAsync();
+
+////3008690-3013746-QDCOQ0OZC24XRXH9A4IQLNRSK5C93U2DPUJLBGVKDATIVPWIGFKKJP2QIIFS9TK3
+
+//var sfera = UruchomSfere();
+
+//var nexoOrdersManager = new NexoOrdersManager(sfera);
+
+//foreach (var order in orders)
+//{
+//    var operationResult = await nexoOrdersManager.AddIfNotExistsAsync(order, account.NexoConfiguration);
+
+//    using (var reportBO = operationReportsManager.Create(OperationType.ImportZamowien))
+//    {
+//        reportBO.Data.Description = $"Zamówienie {account.AccountType} - {order.Original}";
+//        operationResult.Infos.ForEach(x => reportBO.AddInfo(x, order.Original));
+//        operationResult.Warrnings.ForEach(x => reportBO.AddWarn(x, order.Original));
+//        operationResult.Errors.ForEach(x => reportBO.AddError(x, order.Original));
+//        reportBO.Save();
+//    }
+//}

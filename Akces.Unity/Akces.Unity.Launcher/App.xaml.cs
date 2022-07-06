@@ -10,7 +10,7 @@ namespace Akces.Unity.Launcher
     public partial class App : Application
     {
         public static string LicenseKey;
-        public const string ProductCode = "ABC";                          // PRODUCT CODE POWINIEN BYC INNY DLA KAZDEJ APLIKACJI
+        public const string ProductCode = "UNT";                          // PRODUCT CODE POWINIEN BYC INNY DLA KAZDEJ APLIKACJI
         private const string MainAppPath = "app";                         // LOKALIZACJA APLIKACJI WLASCIWEJ, KTORA MA ZOSTA URUCHOMIONA
         private const string MainAppName = "Akces.Unity.App.exe";   // NAZWA PLIKU KTORY MA ZOSTAC URUCHOMIONY
 
@@ -21,7 +21,10 @@ namespace Akces.Unity.Launcher
             ViewsManager.AddViews();
 
             // TESTOWY KLUCZ:
-            // 23443-15475-62860-694Z1-73825-XABCP-31393-0Z677-662N851
+            // 23443-15475-62860-694Z1-73825-XUNTP-30353-0Z677-262N941
+
+            // ScrawMet:
+            // 23443-55878-67981-501Z2-85235-XUNTP-30353-0Z677-262N551
 
             // GENEROWANIE KLUCZA:
             var lickey = new License()
@@ -29,7 +32,7 @@ namespace Akces.Unity.Launcher
                 AccountingOffice = false,
                 Expire = System.DateTime.Now.AddYears(50),
                 IsDemo = true,
-                Nip = "5542963074",
+                Nip = "1111111111",
                 ProductCode = ProductCode
             }.ToLicenseKey();
         }

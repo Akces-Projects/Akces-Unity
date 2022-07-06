@@ -69,11 +69,14 @@ GODZINY OTWARCIA :    Poniedziałek – Piątek 8:00 – 16:00";
             ServicesProvider.AddSingleton(nexoDatabase);
 
             var lickey = File.ReadAllText("..\\lickey");
-            var licenseIsValid = nexoDatabase.TryCheckLicense("ABC", lickey, out _, out _);
+            var licenseIsValid = nexoDatabase.TryCheckLicense("UNT", lickey, out _, out _);
             if (!licenseIsValid)
                 Current.Shutdown();
 
-            UnityConnection.ConnectionString = "Data Source=..\\..\\..\\..\\..\\Akces.Unity.Tests\\Data\\unity.db";
+            var t = Directory.GetCurrentDirectory();
+            var connectionString = File.ReadAllText("connectionString.txt");
+            //UnityConnection.ConnectionString = "Data Source=Data\\unity.db";
+            UnityConnection.ConnectionString = connectionString;
         }
     }
 }

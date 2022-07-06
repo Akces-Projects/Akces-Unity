@@ -81,5 +81,6 @@ namespace Akces.Unity.App.Operations
                 OnOperationExecuted.Invoke(reportBO.Data, harmonogramPosition);
             }
         }
+        public void Dispose() { }
     }
 }

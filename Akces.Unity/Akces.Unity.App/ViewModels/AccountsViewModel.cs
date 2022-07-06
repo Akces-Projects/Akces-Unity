@@ -6,6 +6,7 @@ using Akces.Wpf.Extensions;
 using Akces.Unity.Models;
 using Akces.Unity.Models.SaleChannels;
 using Akces.Unity.DataAccess.Managers;
+using Akces.Unity.Models.SaleChannels.Olx;
 
 namespace Akces.Unity.App.ViewModels
 {
@@ -53,6 +54,9 @@ namespace Akces.Unity.App.ViewModels
                 case AccountType.Allegro:
                     OpenAccountEditor<AllegroAccount, AllegroAccountViewModel>();
                     break;
+                case AccountType.Olx:
+                    OpenAccountEditor<OlxAccount, OlxAccountViewModel>();
+                    break;
                 default:
                     break;
             }
@@ -77,6 +81,9 @@ namespace Akces.Unity.App.ViewModels
                     break;
                 case AccountType.Allegro:
                     OpenAccountEditor<AllegroAccount, AllegroAccountViewModel>(account);
+                    break;
+                case AccountType.Olx:
+                    OpenAccountEditor<OlxAccount, OlxAccountViewModel>(account);
                     break;
                 default:
                     break;

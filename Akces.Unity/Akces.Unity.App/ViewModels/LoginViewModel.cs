@@ -79,7 +79,7 @@ namespace Akces.Unity.App.ViewModels
             var navbar = (Host as MainViewModel).NavbarViewModel;
             Host.Window.Title = $"{nexoDatabase.Name} - {nexoContext.NexoUser.Name} - {App.AppName}";
             navbar.Logged = true;
-            Host.UpdateView<ActiveHarmonogramViewModel>();
+            Host.UpdateView<ReportsViewModel>();
         }
         private void OnAutoLoginChanged(bool value)
         {

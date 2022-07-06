@@ -173,6 +173,7 @@
     <Compile Include="ViewModels\AccountsViewModel.cs" />
     <Compile Include="ViewModels\Accounts\AllegroAccountViewModel.cs" />
     <Compile Include="ViewModels\Accounts\BaselinkerAccountViewModel.cs" />
+    <Compile Include="ViewModels\Accounts\OlxAccountViewModel.cs" />
     <Compile Include="ViewModels\ActiveHarmonogramViewModel.cs" />
     <Compile Include="ViewModels\HarmonogramViewModel.cs" />
     <Compile Include="ViewModels\Accounts\AccountViewModel.cs" />
@@ -197,6 +198,9 @@
     </Compile>
     <Compile Include="Views\Accounts\BaselinkerAccountView.xaml.cs">
       <DependentUpon>BaselinkerAccountView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\OlxAccountView.xaml.cs">
+      <DependentUpon>OlxAccountView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Accounts\ShoperAccountView.xaml.cs">
       <DependentUpon>ShoperAccountView.xaml</DependentUpon>
@@ -265,6 +269,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Accounts\BaselinkerAccountView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\OlxAccountView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
