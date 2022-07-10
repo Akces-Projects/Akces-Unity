@@ -216,10 +216,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Akces.Unity.DataAccess\Akces.Unity.DataAccess.csproj">
-      <Project>{c1705b0e-f48b-469e-ad8b-cb2936549a33}</Project>
-      <Name>Akces.Unity.DataAccess</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Akces.Unity.Models\Akces.Unity.Models.csproj">
       <Project>{517ff070-4bea-4655-b954-49b3c2c0d232}</Project>
       <Name>Akces.Unity.Models</Name>

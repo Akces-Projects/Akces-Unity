@@ -19,6 +19,13 @@ namespace Akces.Unity.Tests
         static void Main(string[] args)
         {
 
+            var mgr = new UnityUsersManager();
+
+            using (var ob = mgr.Create()) 
+            {
+                //ob.Data.
+            }
+
             while (true)
             {
                 Console.ReadKey();

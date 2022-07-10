@@ -1,4 +1,5 @@
-﻿namespace Akces.Unity.Models.SaleChannels.Olx
+﻿
+namespace Akces.Unity.Models.SaleChannels
 {
     public class OlxConfiguration
     {

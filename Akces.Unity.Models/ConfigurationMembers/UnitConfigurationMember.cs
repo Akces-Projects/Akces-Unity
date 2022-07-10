@@ -6,7 +6,7 @@ namespace Akces.Unity.Models.ConfigurationMembers
         public int Id { get; set; }
         public string CountriesCodes { get; set; }
         public string ChannelUnit { get; set; }
-        public string ErpUnitSymbol { get; set; }
+        public string NexoUnitSymbol { get; set; }
         public bool Default { get; set; }
     }
 }

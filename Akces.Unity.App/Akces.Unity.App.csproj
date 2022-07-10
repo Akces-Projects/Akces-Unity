@@ -1,0 +1,304 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A9048C5E-F47C-40F2-B1ED-6B52CA1C3113}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Akces.Unity.App</RootNamespace>
+    <AssemblyName>Akces.Unity.App</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>akces_icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Akces.Core.Nexo">
+      <HintPath>..\..\..\..\..\Desktop\Akces\Akces.Core.Nexo.dll</HintPath>
+    </Reference>
+    <Reference Include="Akces.Wpf">
+      <HintPath>..\..\..\..\..\Desktop\Akces\Akces.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="FontAwesome.WPF">
+      <HintPath>..\..\..\..\..\Desktop\Akces\FontAwesome.WPF.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="BindingProxy.cs" />
+    <Compile Include="Converters\BoolToVisibility.cs" />
+    <Compile Include="Converters\IsHarmonogramPositionNotWorking.cs" />
+    <Compile Include="Converters\IsHarmonogramPositionWorking.cs" />
+    <Compile Include="ExtraWindow.xaml.cs">
+      <DependentUpon>ExtraWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="HarmonogramWorker.cs" />
+    <Compile Include="UnityTasks\ImportOrdersTask.cs" />
+    <Compile Include="UnityTasks\IUnityTask.cs" />
+    <Compile Include="UnityTasks\UpdateProductsPricesTask.cs" />
+    <Compile Include="ViewModels\AccountsViewModel.cs" />
+    <Compile Include="ViewModels\Accounts\AccountViewModel.cs" />
+    <Compile Include="ViewModels\Accounts\AllegroAccountViewModel.cs" />
+    <Compile Include="ViewModels\Accounts\BaselinkerAccountViewModel.cs" />
+    <Compile Include="ViewModels\Accounts\OlxAccountViewModel.cs" />
+    <Compile Include="ViewModels\Accounts\ShoperAccountViewModel.cs" />
+    <Compile Include="ViewModels\Accounts\ShopgoldAccountViewModel.cs" />
+    <Compile Include="ViewModels\ActiveHarmonogramViewModel.cs" />
+    <Compile Include="ViewModels\HarmonogramsViewModel.cs" />
+    <Compile Include="ViewModels\HarmonogramViewModel.cs" />
+    <Compile Include="ViewModels\HomeViewModel.cs" />
+    <Compile Include="ViewModels\IndexViewModel.cs" />
+    <Compile Include="ViewModels\LoginViewModel.cs" />
+    <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\NavbarViewModel.cs" />
+    <Compile Include="ViewModels\OperationsProgressViewModel.cs" />
+    <Compile Include="ViewModels\PricesModificationViewModel.cs" />
+    <Compile Include="ViewModels\ProductsPrizesUpdateViewModel.cs" />
+    <Compile Include="ViewModels\ReportsViewModel.cs" />
+    <Compile Include="ViewModels\ReportViewModel.cs" />
+    <Compile Include="ViewModels\SidebarViewModel.cs" />
+    <Compile Include="Views\AccountsView.xaml.cs">
+      <DependentUpon>AccountsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\AllegroAccountView.xaml.cs">
+      <DependentUpon>AllegroAccountView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\BaselinkerAccountView.xaml.cs">
+      <DependentUpon>BaselinkerAccountView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\OlxAccountView.xaml.cs">
+      <DependentUpon>OlxAccountView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\ShoperAccountView.xaml.cs">
+      <DependentUpon>ShoperAccountView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\ShopgoldAccountView.xaml.cs">
+      <DependentUpon>ShopgoldAccountView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ActiveHarmonogramView.xaml.cs">
+      <DependentUpon>ActiveHarmonogramView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HarmonogramsView.xaml.cs">
+      <DependentUpon>HarmonogramsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HarmonogramView.xaml.cs">
+      <DependentUpon>HarmonogramView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HomeView.xaml.cs">
+      <DependentUpon>HomeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\IndexView.xaml.cs">
+      <DependentUpon>IndexView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LoginView.xaml.cs">
+      <DependentUpon>LoginView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\NavbarView.xaml.cs">
+      <DependentUpon>NavbarView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\OperationsProgressView.xaml.cs">
+      <DependentUpon>OperationsProgressView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PricesModificationView.xaml.cs">
+      <DependentUpon>PricesModificationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ProductsPricesUpdateView.xaml.cs">
+      <DependentUpon>ProductsPricesUpdateView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ReportsView.xaml.cs">
+      <DependentUpon>ReportsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ReportView.xaml.cs">
+      <DependentUpon>ReportView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SidebarView.xaml.cs">
+      <DependentUpon>SidebarView.xaml</DependentUpon>
+    </Compile>
+    <Page Include="ExtraWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="Views\AccountsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Accounts\AllegroAccountView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Accounts\BaselinkerAccountView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Accounts\OlxAccountView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Accounts\ShoperAccountView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Accounts\ShopgoldAccountView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ActiveHarmonogramView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\HarmonogramsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\HarmonogramView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\HomeView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\IndexView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\LoginView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\NavbarView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\OperationsProgressView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PricesModificationView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ProductsPricesUpdateView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ReportsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ReportView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SidebarView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\akces_icon.ico" />
+    <Resource Include="Assets\Images\logo_akces.png" />
+    <Resource Include="Assets\Images\logo_akces_back.png" />
+    <Resource Include="Assets\Images\nazwa_akces.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="akces_icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Akces.Unity.DataAccessOld\Akces.Unity.DataAccessOld.csproj">
+      <Project>{c1705b0e-f48b-469e-ad8b-cb2936549a33}</Project>
+      <Name>Akces.Unity.DataAccessOld</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Akces.Unity.Models\Akces.Unity.Models.csproj">
+      <Project>{444a2a8d-c280-437d-a117-721e6251f4c4}</Project>
+      <Name>Akces.Unity.Models</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

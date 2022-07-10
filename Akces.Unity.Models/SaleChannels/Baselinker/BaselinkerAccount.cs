@@ -1,6 +1,4 @@
 ﻿
-using Akces.Unity.Models.SaleChannels.Baselinker;
-
 namespace Akces.Unity.Models.SaleChannels
 {
     public class BaselinkerAccount : Account

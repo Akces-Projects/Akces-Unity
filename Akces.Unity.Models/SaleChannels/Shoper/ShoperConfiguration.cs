@@ -1,4 +1,5 @@
-﻿namespace Akces.Unity.Models.SaleChannels.Shoper
+﻿
+namespace Akces.Unity.Models.SaleChannels
 {
     public class ShoperConfiguration 
     {

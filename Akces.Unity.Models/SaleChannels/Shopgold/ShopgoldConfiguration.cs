@@ -1,5 +1,5 @@
 ﻿
-namespace Akces.Unity.Models.SaleChannels.Shopgold
+namespace Akces.Unity.Models.SaleChannels
 {
     public class ShopgoldConfiguration
     {

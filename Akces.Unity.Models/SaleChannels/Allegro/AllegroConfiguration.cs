@@ -1,5 +1,5 @@
 ﻿
-namespace Akces.Unity.Models.SaleChannels.Allegro
+namespace Akces.Unity.Models.SaleChannels
 {
     public class AllegroConfiguration
     {

@@ -1,4 +1,5 @@
-﻿namespace Akces.Unity.Models.Nexo
+﻿
+namespace Akces.Unity.Models.Nexo
 {
     public class Country
     {

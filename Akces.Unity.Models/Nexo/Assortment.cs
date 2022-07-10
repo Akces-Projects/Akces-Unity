@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace Akces.Unity.Models.Nexo
 {
     public class Assortment
