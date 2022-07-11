@@ -7,6 +7,8 @@ using Akces.Unity.DataAccess;
 using Akces.Unity.DataAccess.Managers;
 using Akces.Wpf.Helpers;
 using Akces.Wpf.Extensions.Style;
+using System.Globalization;
+using System.Threading;
 
 namespace Akces.Unity.App
 {
@@ -26,7 +28,7 @@ namespace Akces.Unity.App
                 }
             }
         }
-        public const bool AllowChangeNexoProduct = true;
+        public const bool AllowChangeNexoProduct = false;
 
         public static string ErpName = $"{NexoProduct} nexo";
         public const string AppName = "Aplikacja Testowa";
@@ -58,19 +60,21 @@ GODZINY OTWARCIA :    Poniedziałek – Piątek 8:00 – 16:00";
             //var nexoDatabase = ServicesProvider.AddSingleton(NexoDatabase.FromString(e.Args[0]));
 
             ServicesProvider.AddSingleton(nexoDatabase);
+            UnityConnection.ConnectionString = 
+                nexoDatabase.NexoConnectionData.GetConnectionString(useInitialCatalog: false) + "Database=Unity.DataCenter;";
+
             CheckLicense(nexoDatabase);
-            LoadUnityUsers(nexoDatabase);
-            UnityConnection.ConnectionString = File.ReadAllText("connectionString.txt");
+            InitUnityUsers(nexoDatabase);
         }
 
         private void CheckLicense(NexoDatabase nexoDatabase) 
         {
             var lickey = File.ReadAllText("..\\lickey");
-            var licenseIsValid = nexoDatabase.TryCheckLicense("UNT", lickey, out _, out _);
+            var licenseIsValid = nexoDatabase.TryCheckLicense("ABC", lickey, out _, out _);
             if (!licenseIsValid)
                 Current.Shutdown();
         }
-        private void LoadUnityUsers(NexoDatabase nexoDatabase) 
+        private void InitUnityUsers(NexoDatabase nexoDatabase) 
         {
             var nexoUsers = nexoDatabase.GetNexoUsers();
             var unityUsersManager = new UnityUsersManager();
@@ -78,12 +82,13 @@ GODZINY OTWARCIA :    Poniedziałek – Piątek 8:00 – 16:00";
 
             foreach (var nexoUser in nexoUsers)
             {
-                if (unityUsers.Any(x => x.UserName == nexoUser.Login))
+                if (unityUsers.Any(x => x.Login == nexoUser.Login))
                     continue;
 
                 using (var userBO = unityUsersManager.Create())
                 {
-                    userBO.Data.UserName = nexoUser.Login;
+                    userBO.Data.Login = nexoUser.Login;
+                    userBO.Data.Name = nexoUser.Name;
                     userBO.Save();
                 }
             }
@@ -98,6 +103,12 @@ GODZINY OTWARCIA :    Poniedziałek – Piątek 8:00 – 16:00";
             AkcesStyle.SetStyle(akcesStyleTheme);
             var mw = Current.MainWindow as MainWindow;
             mw?.RebuildAsync();
+
+            // Global DateTime format
+            FrameworkElement.LanguageProperty.OverrideMetadata(
+                typeof(FrameworkElement),
+                new FrameworkPropertyMetadata(
+                    System.Windows.Markup.XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag)));
         }
     }
 }

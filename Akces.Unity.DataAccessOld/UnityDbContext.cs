@@ -9,7 +9,7 @@ namespace Akces.Unity.DataAccess
 { 
     public static class UnityConnection
     {
-        public static string ConnectionString { get; set; } = "Data Source=Data\\unity.db";
+        public static string ConnectionString { get; set; } = "Server=DESKTOP-KD0D5SK\\INSERTNEXO;Database=Unity.DataCenter;Trusted_Connection=True;";
     }
 
     public class UnityDbContext : DbContext

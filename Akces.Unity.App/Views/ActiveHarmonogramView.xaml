@@ -17,22 +17,19 @@
         <converters:IsHarmonogramPositionNotWorking x:Key="isHarmonogramPositionNotWorking"/>
         <converters:IsHarmonogramPositionWorking x:Key="isHarmonogramPositionWorking"/>
         <local:BindingProxy x:Key="Proxy" Data="{Binding}" />
-
-        <Style TargetType="Button" x:Key="menuButton">
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Margin" Value="5"/>
-        </Style>
-
-        <Style TargetType="TextBlock" x:Key="rowText">
-            <Setter Property="FontSize" Value="18"/>
-            <Setter Property="Padding" Value="5"/>
-        </Style>
     </UserControl.Resources>
 
-    <StackPanel>
-        <TextBlock Text="Lista aktywnych zadań">
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="46"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Lista aktywnych zadań">
             <TextBlock.Style>
                 <Style TargetType="TextBlock">
                     <Setter Property="FontSize" Value="22"/>
@@ -46,6 +43,7 @@
         </TextBlock>
 
         <Grid Margin="20,0,0,0"
+              Grid.Row="1"
               Background="White"
               Height="40">
 
@@ -144,16 +142,40 @@
                        VerticalAlignment="Center"
                        Text="Aktywny harmonogram: "/>
 
-            <ComboBox Grid.Column="8"
-                      ItemsSource="{Binding Harmonograms}"
-                      SelectedItem="{Binding ActiveHarmonogram, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+            <TextBlock Grid.Column="8"
+                      Text="{Binding ActiveHarmonogram.Name}"
                       Height="30"
-                      FontSize="16"
-                      DisplayMemberPath="Name">
-            </ComboBox>
+                      FontSize="16">
+            </TextBlock>
+        </Grid>
+
+        <Grid Grid.Row="2" Background="#eeeeee">
+            <TextBox Text="{Binding Searchstring, UpdateSourceTrigger=PropertyChanged}" 
+                         FontSize="18"
+                         Height="30"
+                         VerticalContentAlignment="Center"
+                         Padding="5,0,0,0"
+                         VerticalAlignment="Center"
+                         HorizontalAlignment="Stretch" 
+                         x:Name="SearchTermTextBox" 
+                         Margin="5"/>
+
+            <TextBlock IsHitTestVisible="False" Text="Wyszukaj..." FontSize="16" Padding="5,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="DarkGray">
+                <TextBlock.Style>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Text, ElementName=SearchTermTextBox}" Value="">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
         </Grid>
 
         <DataGrid ItemsSource="{Binding Positions}" 
+                  Grid.Row="3"
                   SelectedItem="{Binding SelectedPosition}"
                   AutoGenerateColumns="False" 
                   CanUserAddRows="False"
@@ -163,33 +185,28 @@
                 <DataGridTemplateColumn Header="Typ operacji" Width="220" SortMemberPath="HarmonogramOperation">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding HarmonogramOperation, UpdateSourceTrigger=PropertyChanged}" 
-                                       FontSize="16"
-                                       Style="{StaticResource rowText}"/>
+                            <TextBlock Text="{Binding HarmonogramOperation}" Padding="30,4,4,4"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Konto" Width="150" SortMemberPath="Account.Name">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Account.Name, UpdateSourceTrigger=PropertyChanged}" 
-                                       Style="{StaticResource rowText}"/>
+                            <TextBlock Text="{Binding Account.Name}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Opis" Width="*" SortMemberPath="Description">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" 
-                                       Style="{StaticResource rowText}"/>
+                            <TextBlock Text="{Binding Description}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Pierwsze uruchomienie" Width="190" SortMemberPath="StartTime">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding StartTime, UpdateSourceTrigger=PropertyChanged}" 
-                                       Style="{StaticResource rowText}"/>
+                            <TextBlock Text="{Binding StartTime}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -197,8 +214,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>
-                                <TextBlock Text="{Binding LastLaunchTime, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
-                                           Style="{StaticResource rowText}">
+                                <TextBlock Text="{Binding LastLaunchTime, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                                     <TextBlock.Visibility>
                                         <MultiBinding Converter="{StaticResource isHarmonogramPositionNotWorking}">
                                             <Binding Path="Id"/>
@@ -215,7 +231,7 @@
                                         </MultiBinding>
                                     </StackPanel.Visibility>
 
-                                    <TextBlock Text="W trakcie..." Style="{StaticResource rowText}" FontWeight="SemiBold"/>
+                                    <TextBlock Text="W trakcie..." FontWeight="SemiBold"/>
                                     <Control Style="{style:AkcesStyle ResourceKey=BusyAnimationStyle}" Width="60" Height="60">
                                         <Control.LayoutTransform>
                                             <ScaleTransform ScaleX="0.7" ScaleY="0.7"/>
@@ -242,12 +258,12 @@
                 <DataGridTemplateColumn Header="Po ( min.)" Width="60" SortMemberPath="RepeatAfterMinutes">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock FontSize="17" Text="{Binding RepeatAfterMinutes, UpdateSourceTrigger=PropertyChanged}" 
-                                       Style="{StaticResource rowText}"/>
+                            <TextBlock FontSize="17" Text="{Binding RepeatAfterMinutes, UpdateSourceTrigger=PropertyChanged}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-    </StackPanel>
+        <Grid Grid.Row="4" Background="#eeeeee"/>
+    </Grid>
 </UserControl>

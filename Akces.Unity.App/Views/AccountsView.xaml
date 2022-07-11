@@ -14,22 +14,18 @@
     
     <UserControl.Resources>
         <local:BindingProxy x:Key="Proxy" Data="{Binding}" />
-        
-        <Style TargetType="Button" x:Key="menuButton">
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Margin" Value="5"/>
-        </Style>
-
-        <Style TargetType="TextBlock" x:Key="rowText">
-            <Setter Property="FontSize" Value="18"/>
-            <Setter Property="Padding" Value="5"/>
-        </Style>
     </UserControl.Resources>
-    
-    <StackPanel>
-        <TextBlock Text="Konta kanałów sprzedaży">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="46"/>
+        </Grid.RowDefinitions>
+        
+        <TextBlock Text="Konta kanałów sprzedaży" Grid.Row="0">
             <TextBlock.Style>
                 <Style TargetType="TextBlock">
                     <Setter Property="FontSize" Value="22"/>
@@ -44,6 +40,7 @@
 
         <StackPanel Orientation="Horizontal"
                         Margin="20,0,0,0"
+                    Grid.Row="1"
                         Background="White"
                         Height="40">
 
@@ -87,6 +84,7 @@
                 </Button>
                 <fa:ImageAwesome Margin="5,0,0,0" Icon="Plus" Width="15" Foreground="Green" VerticalAlignment="Center"/>
             </StackPanel>
+
             <StackPanel Orientation="Horizontal" Margin="0,0,10,0">
                 <StackPanel.Style>
                     <Style TargetType="StackPanel">
@@ -97,9 +95,24 @@
                         </Style.Triggers>
                     </Style>
                 </StackPanel.Style>
-                <Button Style="{StaticResource menuButton}" Content="Pokaż" Command="{Binding EditAccountCommand}"/>
+                <Button Style="{StaticResource menuButton}" Content="Pokaż" Command="{Binding ShowAccountCommand}"/>
+                <fa:ImageAwesome Margin="5,0,0,0" Icon="InfoCircle" Width="18" Foreground="{style:AkcesStyle ResourceKey=ThemeColor}" VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,10,0">
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#bee6fd"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+                <Button Style="{StaticResource menuButton}" Content="Popraw" Command="{Binding EditAccountCommand}"/>
                 <fa:ImageAwesome Margin="5,0,0,0" Icon="Edit" Width="18" Foreground="{style:AkcesStyle ResourceKey=ThemeColor}" VerticalAlignment="Center"/>
             </StackPanel>
+
             <StackPanel Orientation="Horizontal" Margin="0,0,10,0">
                 <StackPanel.Style>
                     <Style TargetType="StackPanel">
@@ -115,45 +128,82 @@
             </StackPanel>
 
         </StackPanel>
+        
+        <Grid Grid.Row="2" Background="#eeeeee">
+            <TextBox Text="{Binding Searchstring, UpdateSourceTrigger=PropertyChanged}" 
+                     FontSize="18"
+                     Height="30"
+                     VerticalContentAlignment="Center"
+                     Padding="5,0,0,0"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Stretch" 
+                     x:Name="SearchTermTextBox" 
+                     Margin="5"/>
 
+            <TextBlock IsHitTestVisible="False" Text="Wyszukaj..." FontSize="16" Padding="5,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="DarkGray">
+                <TextBlock.Style>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Text, ElementName=SearchTermTextBox}" Value="">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+        </Grid>
+        
         <DataGrid ItemsSource="{Binding Accounts}"
-                      SelectedItem="{Binding SelectedAccount, UpdateSourceTrigger=PropertyChanged}"
-                      CanUserAddRows="False"
-                      CanUserDeleteRows="False"
-                      CanUserReorderColumns="False"
-                      AutoGenerateColumns="False">
+                  Grid.Row="3"
+                  SelectedItem="{Binding SelectedAccount, UpdateSourceTrigger=PropertyChanged}"
+                  IsReadOnly="True"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  CanUserReorderColumns="False"
+                  AutoGenerateColumns="False"
+                  EnableRowVirtualization="True" 
+                  EnableColumnVirtualization="True"
+                  VirtualizingStackPanel.VirtualizationMode="Standard"
+                  VirtualizingStackPanel.IsVirtualizing="True"
+                  IsSynchronizedWithCurrentItem="True">
+
+            <DataGrid.InputBindings>
+                <MouseBinding MouseAction="LeftDoubleClick"
+                              Command="{Binding ShowAccountCommand}"/>
+            </DataGrid.InputBindings>
 
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Typ konta" Width="150" SortMemberPath="AccountType" CanUserSort="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding AccountType}" Style="{StaticResource rowText}"/>
+                            <TextBlock Text="{Binding AccountType}" Padding="30,5,5,5"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Nazwa" Width="*" SortMemberPath="Name" CanUserSort="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Name}" Style="{StaticResource rowText}"/>
+                            <TextBlock Text="{Binding Name}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Utworzono" Width="200" SortMemberPath="Created" CanUserSort="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Created}" Style="{StaticResource rowText}"/>
+                            <TextBlock Text="{Binding Created}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Modyfikowano" Width="200" SortMemberPath="Modified" CanUserSort="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Modified}" Style="{StaticResource rowText}"/>
+                            <TextBlock Text="{Binding Modified}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
-
         </DataGrid>
-    </StackPanel>
+        <Grid Grid.Row="4" Background="#eeeeee"/>
+    </Grid>
 </UserControl>

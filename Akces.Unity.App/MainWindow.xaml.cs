@@ -1,11 +1,11 @@
-﻿using Akces.Core.Nexo;
-using Akces.Unity.App.ViewModels;
-using Akces.Wpf.Extensions;
-using Akces.Wpf.Helpers;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using Akces.Core.Nexo;
+using Akces.Wpf.Extensions;
+using Akces.Wpf.Helpers;
+using Akces.Unity.App.ViewModels;
 
 namespace Akces.Unity.App
 {
@@ -14,6 +14,7 @@ namespace Akces.Unity.App
         public MainWindow()
         {
             InitializeComponent();
+
             var nexoDatabase = ServicesProvider.GetService<NexoDatabase>();
             Title = $"{nexoDatabase.Name} - {App.AppName}";
             DataContext = new MainViewModel(this);
@@ -36,11 +37,10 @@ namespace Akces.Unity.App
             var dc = DataContext;
             loadingOverlay.Visibility = Visibility.Hidden;
             DataContext = null;
-            await Task.Delay(10);
+            await Task.Delay(50);
             DataContext = dc;
             loadingOverlay.Visibility = Visibility.Visible;
         }
-
         private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             var uc = sender as UserControl;

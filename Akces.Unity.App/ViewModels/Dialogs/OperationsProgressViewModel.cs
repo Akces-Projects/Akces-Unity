@@ -39,7 +39,7 @@ namespace Akces.Unity.App.ViewModels
         public async Task RunOperationsAsync()
         {
             PositionsCount = Operation.Processes;
-            Operation.OnOperationProgress += OnOperationProgress;
+            Operation.OnTaskProgress += OnOperationProgress;
             await Operation.ExecuteAsync(cancellationTokenSource.Token);   
             Host.Window.Close();
         }

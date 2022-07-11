@@ -13,7 +13,7 @@ namespace Akces.Unity.Models
         public string Description { get; set; }
         public DateTime StartTime { get; set; } = DateTime.Now.AddMinutes(15);
         public DateTime? LastLaunchTime { get; set; }
-        public OperationType HarmonogramOperation { get; set; }
+        public TaskType HarmonogramOperation { get; set; }
         public virtual Account Account { get; set; }
 
         public bool ShouldRun() 
@@ -34,7 +34,7 @@ namespace Akces.Unity.Models
         }
     }
 
-    public enum OperationType
+    public enum TaskType
     {
         ImportZamowien,
         PobranieStatusowZamowien,

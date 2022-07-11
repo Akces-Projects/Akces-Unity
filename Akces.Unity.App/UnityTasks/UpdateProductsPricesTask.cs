@@ -17,9 +17,9 @@ namespace Akces.Unity.App.Operations
         private readonly List<Product> products;
         private readonly ISaleChannelService saleChannelService;
 
-        public OnOperationFinished OnOperationExecuted { get; set; }
-        public OnOperationProgress OnOperationProgress { get; set; }
-        public OnOperationStarted OnOperationStarted { get; set; }
+        public OnTaskFinished OnTaskExecuted { get; set; }
+        public OnTaskProgress OnTaskProgress { get; set; }
+        public OnTaskStarted OnTaskStarted { get; set; }
         public TaskReport TaskReport { get; private set; }
         public int Processes { get; private set; }
 
@@ -29,9 +29,9 @@ namespace Akces.Unity.App.Operations
             this.products = products;
             this.harmonogramPosition = harmonogramPosition;
             reportsManager = new TaskReportsManager();
-            OnOperationStarted = new OnOperationStarted((e) => { });
-            OnOperationProgress = new OnOperationProgress((e,s) => { });
-            OnOperationExecuted = new OnOperationFinished((e,s) => { });
+            OnTaskStarted = new OnTaskStarted((e) => { });
+            OnTaskProgress = new OnTaskProgress((e,s) => { });
+            OnTaskExecuted = new OnTaskFinished((e,s) => { });
             Processes = products.Count;
             saleChannelService = account.CreateService();
         }
@@ -41,9 +41,9 @@ namespace Akces.Unity.App.Operations
             if (harmonogramPosition != null)
                 harmonogramPosition.LastLaunchTime = DateTime.Now;
 
-            OnOperationStarted.Invoke(harmonogramPosition);
+            OnTaskStarted.Invoke(harmonogramPosition);
 
-            using (var reportBO = reportsManager.Create(OperationType.WyslanieCen))
+            using (var reportBO = reportsManager.Create(TaskType.WyslanieCen))
             {
                 reportBO.Data.HarmonogramPositionId = harmonogramPosition?.Id;
                 reportBO.Data.Description = $"Aktualizacja cen {account.Name} ({account.AccountType})";
@@ -68,12 +68,12 @@ namespace Akces.Unity.App.Operations
                     }
 
                     progress++;
-                    OnOperationProgress.Invoke(progress, description);
+                    OnTaskProgress.Invoke(progress, description);
                 }
 
                 reportBO.Save();
                 TaskReport = reportBO.Data;
-                OnOperationExecuted.Invoke(reportBO.Data, harmonogramPosition);
+                OnTaskExecuted.Invoke(reportBO.Data, harmonogramPosition);
             }
         }
         public void Dispose() 

@@ -12,7 +12,6 @@ using Akces.Unity.App.Operations;
 
 namespace Akces.Unity.App
 {
-
     internal class HarmonogramWorker : IDisposable
     {
         private const int WORKER_RUN_INTERVAL_SECONDS = 10;
@@ -20,88 +19,55 @@ namespace Akces.Unity.App
         private bool isRunning;
         private readonly Timer timer;
         private readonly HarmonogramsManager harmonogramsManager;
-        private readonly TaskReportsManager reportsManager;
+        private readonly TaskReportsManager taskReportsManager;
+        private readonly WorkerStatusesManager workerStatusesManager;
+        private readonly UnityUser loggedUnityUser;
 
         public bool Enabled { get; set; }
-        public Harmonogram ActiveHarmonogram { get; private set; }
-        public OnOperationStarted OnOperationStarted { get; set; }
-        public OnOperationFinished OnOperationFinished { get; set; }
-
-        private string loggedUser;
+        public OnTaskStarted OnOperationStarted { get; set; }
+        public OnTaskFinished OnOperationFinished { get; set; }
 
         public HarmonogramWorker()
         {
-            loggedUser = ServicesProvider.GetService<NexoContext>().NexoUser?.Name;
-
+            workerStatusesManager = new WorkerStatusesManager();
             harmonogramsManager = new HarmonogramsManager();
-            reportsManager = new TaskReportsManager();
-
-            ActiveHarmonogram = GetActiveHarmonogram();
-            Enabled = ActiveHarmonogram?.WorkerEnabled ?? false;
-
-            timer = new Timer();
-            timer.Enabled = true;
-            timer.Enabled = true;
-            timer.Interval = 1000 * WORKER_RUN_INTERVAL_SECONDS;
-            timer.Elapsed += OnTimerElapsed;
+            taskReportsManager = new TaskReportsManager();
+            loggedUnityUser = GetLoggedUnityUser();
+            
+            if (loggedUnityUser.IsWorker) 
+            {
+                timer = new Timer();
+                timer.Enabled = true;
+                timer.Enabled = true;
+                timer.Interval = 1000 * WORKER_RUN_INTERVAL_SECONDS;
+                timer.Elapsed += OnTimerElapsed;
+            }
         }
 
-        private Harmonogram GetActiveHarmonogram()
+        public void Start() 
         {
-            var harmonogramsManager = new HarmonogramsManager();
-            var harmonogram = harmonogramsManager.Get().FirstOrDefault(x => x.Active);
-
-            if (harmonogram == null)
-                return null;
-
-            var fullHarmonogram = harmonogramsManager.Get(harmonogram.Id);
-            return fullHarmonogram;
+            workerStatusesManager.StartWorker(loggedUnityUser);
         }
-        public void SetActiveHarmonogram(Harmonogram harmonogram)
+        public void Stop()
         {
-            Enabled = false;
-
-            if (ActiveHarmonogram != null)
-            {
-                using (var harmonogramBO = harmonogramsManager.Find(ActiveHarmonogram))
-                {
-                    harmonogramBO.Data.Active = false;
-                    harmonogramBO.Save();
-                }
-            }
-
-            using (var harmonogramBO = harmonogramsManager.Find(harmonogram))
-            {
-                harmonogramBO.Data.Active = true;
-                harmonogramBO.Save();
-                ActiveHarmonogram = harmonogramBO.Data;
-                Enabled = ActiveHarmonogram.WorkerEnabled;
-            }
+            workerStatusesManager.StopWorker(loggedUnityUser);
         }
 
         private async void OnTimerElapsed(object sender, ElapsedEventArgs e)
         {
-            if (!loggedUser.Contains("Import"))
+            var activeHarmonogram = GetActiveHarmonogram();
+
+            if (activeHarmonogram?.Positions == null || !activeHarmonogram.Positions.Any())
                 return;
 
-            if (ActiveHarmonogram?.Positions == null || !ActiveHarmonogram.Positions.Any())
-                return;
-
-            var enabled = harmonogramsManager.Get(ActiveHarmonogram.Id).WorkerEnabled;
-
-            if (enabled)
-                ActiveHarmonogram = GetActiveHarmonogram();
+            Enabled = activeHarmonogram?.WorkerEnabled ?? false;
 
             if (isRunning)
                 return;
 
             isRunning = true;
 
-            var positionsToRun = ActiveHarmonogram.Positions
-                .Where(x => x.ShouldRun())
-                .ToArray();
-
-            foreach (var harmonogramPosition in positionsToRun)
+            foreach (var harmonogramPosition in activeHarmonogram.Positions.Where(x => x.ShouldRun()))
             {
                 if (!Enabled)
                     break;
@@ -118,12 +84,12 @@ namespace Akces.Unity.App
 
             isRunning = false;
         }
-        public async Task RunHarmonogramPositionAsync(HarmonogramPosition harmonogramPosition)
+        private async Task RunHarmonogramPositionAsync(HarmonogramPosition harmonogramPosition)
         {
             IUnityTask unityOperation = null;
 
-            if (harmonogramPosition.HarmonogramOperation == OperationType.ImportZamowien)
-                unityOperation = new ImportOrdersTask(harmonogramPosition.Account, true, harmonogramPosition);
+            if (harmonogramPosition.HarmonogramOperation == TaskType.ImportZamowien)
+                unityOperation = new ImportOrdersTask(harmonogramPosition.Account, harmonogramPosition);
 
             if (unityOperation == null)
                 return;
@@ -135,10 +101,26 @@ namespace Akces.Unity.App
             await unityOperation.ExecuteAsync();
             OnOperationFinished.Invoke(unityOperation.TaskReport, harmonogramPosition);
         }
-
-        public void CreateErrorReport(HarmonogramPosition harmonogramPosition, string error) 
+        private Harmonogram GetActiveHarmonogram()
         {
-            using (var reportBO = reportsManager.Create(harmonogramPosition.HarmonogramOperation))
+            var harmonogram = harmonogramsManager.Get().FirstOrDefault(x => x.Active);
+
+            if (harmonogram == null)
+                return null;
+
+            var fullHarmonogram = harmonogramsManager.Get(harmonogram.Id);
+            return fullHarmonogram;
+        }
+        private UnityUser GetLoggedUnityUser()
+        {
+            var nexoContext = ServicesProvider.GetService<NexoContext>();
+            var unityUsersManager = new UnityUsersManager();
+            var unityUser = unityUsersManager.Get().FirstOrDefault(x => x.Login == nexoContext.NexoUser.Login);
+            return unityUser;
+        }
+        private void CreateErrorReport(HarmonogramPosition harmonogramPosition, string error) 
+        {
+            using (var reportBO = taskReportsManager.Create(harmonogramPosition.HarmonogramOperation))
             {
                 reportBO.Data.HarmonogramPositionId = harmonogramPosition.Id;
                 reportBO.Data.Description = $"{harmonogramPosition.HarmonogramOperation} {harmonogramPosition.Account.Name} ({harmonogramPosition.Account.AccountType})";

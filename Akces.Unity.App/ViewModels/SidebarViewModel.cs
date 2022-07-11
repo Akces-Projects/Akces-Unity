@@ -1,6 +1,9 @@
-﻿using System.Windows.Input;
+﻿using System;
+using System.Linq;
+using System.Windows.Input;
 using Akces.Core.Nexo;
 using Akces.Unity.DataAccess.Managers;
+using Akces.Unity.Models;
 using Akces.Wpf.Helpers;
 using Akces.Wpf.Models;
 
@@ -13,24 +16,34 @@ namespace Akces.Unity.App.ViewModels
         public ICommand GoToHarmonogramsCommand { get; set; }
         public ICommand GoToTasks { get; set; }
         public ICommand GoToProductsPrizesUpdateCommand { get; set; }
+        public ICommand GoToUnityUsersCommand { get; set; }
 
         public SidebarViewModel(HostViewModel host) : base(host)
         {
-            GoToAccountsCommand = CreateCommand(() => host.UpdateView<AccountsViewModel>());
-            GoToReportsCommand = CreateCommand(() => host.UpdateView<ReportsViewModel>());
-            GoToHarmonogramsCommand = CreateCommand(() => host.UpdateView<HarmonogramsViewModel>());
-            GoToTasks = CreateCommand(() => host.UpdateView<ActiveHarmonogramViewModel>());
-            GoToProductsPrizesUpdateCommand = CreateCommand(() => host.UpdateView<ProductsPricesUpdateViewModel>());
+            GoToAccountsCommand = CreateCommand(() => GoTo<AccountsViewModel>(Modules.Accounts), (err) => Host.ShowError(err));
+            GoToReportsCommand = CreateCommand(() => GoTo<ReportsViewModel>(Modules.Reports), (err) => Host.ShowError(err));
+            GoToHarmonogramsCommand = CreateCommand(() => GoTo<HarmonogramsViewModel>(Modules.Harmonograms), (err) => Host.ShowError(err));
+            GoToTasks = CreateCommand(() => GoTo<ActiveHarmonogramViewModel>(Modules.Tasks), (err) => Host.ShowError(err));
+            GoToProductsPrizesUpdateCommand = CreateCommand(() => GoTo<ProductsPricesUpdateViewModel>(Modules.Prizes), (err) => Host.ShowError(err));
+            GoToUnityUsersCommand = CreateCommand(() => GoTo<UnityUsersViewModel>(Modules.Users), (err) => Host.ShowError(err));
         }
 
-        public void GoToAccounts() 
+        private void GoTo<T>(string module) where T : ControlViewModel
         {
+            var unityUser = GetLoggedUnityUser();
+            var authorisation = unityUser.Authorisations.First(x => x.Module == module);
 
+            if (authorisation.AuthorisationType == AuthorisationType.Deny)
+                throw new Exception("Brak uprawnień do wybranego zasobu");
+
+            Host.UpdateView<T>();
         }
-
-        private void ShowError() 
+        private UnityUser GetLoggedUnityUser() 
         {
-            Host.ShowWarning("Brak uprawnień");
+            var nexoContext = ServicesProvider.GetService<NexoContext>();
+            var unityUsersManager = new UnityUsersManager();
+            var unityUser = unityUsersManager.Get().FirstOrDefault(x => x.Login == nexoContext.NexoUser.Login);
+            return unityUser;
         }
     }
 }

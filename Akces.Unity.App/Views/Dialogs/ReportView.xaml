@@ -14,18 +14,6 @@
 
     <UserControl.Resources>
         <local:BindingProxy x:Key="Proxy" Data="{Binding}" />
-
-        <Style TargetType="Button" x:Key="menuButton">
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Margin" Value="5"/>
-        </Style>
-
-        <Style TargetType="TextBlock" x:Key="rowText">
-            <Setter Property="FontSize" Value="18"/>
-            <Setter Property="Padding" Value="5"/>
-        </Style>
     </UserControl.Resources>
 
     <DockPanel>

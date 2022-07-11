@@ -19,7 +19,7 @@ namespace Akces.Unity.App.ViewModels
 
         public ObservableCollection<HarmonogramPosition> Positions { get; set; }
         public List<Account> Accounts { get; set; }
-        public List<OperationType> OperationTypes { get; set; }
+        public List<TaskType> OperationTypes { get; set; }
         public ICommand SaveCommand { get; set; }
         public ICommand CancelCommand { get; set; }
         public ICommand AddHarmonogramPositionCommand { get; set; }
@@ -31,7 +31,7 @@ namespace Akces.Unity.App.ViewModels
             CancelCommand = CreateCommand(Cancel, (err) => Host.ShowError(err));
             AddHarmonogramPositionCommand = CreateCommand(AddHarmonogramPosition, (err) => Host.ShowError(err));
             RemoveHarmonogramPositionCommand = CreateCommand<HarmonogramPosition>(RemoveHarmonogramPosition, (err) => Host.ShowError(err));
-            OperationTypes = Enum.GetValues(typeof(OperationType)).Cast<OperationType>().ToList();
+            OperationTypes = Enum.GetValues(typeof(TaskType)).Cast<TaskType>().ToList();
             Accounts = (new AccountsManager()).Get();
         }
 
@@ -46,15 +46,12 @@ namespace Akces.Unity.App.ViewModels
         }
         private void Save()
         {
-            harmonogram?.Save();
+            if (harmonogram.Data.Active)
+                harmonogram.Activate();
+
+            harmonogram.Save();
             Host.Window.Close();
             (Host.Window.Owner.GetHost().ControlViewModel as HarmonogramsViewModel).LoadHarmonograms();
-
-            if (harmonogram.Data.Active)
-            {
-                var harmonogramWorker = ServicesProvider.GetService<HarmonogramWorker>();
-                harmonogramWorker.SetActiveHarmonogram(harmonogram.Data);
-            }
         }
         private void Cancel()
         {

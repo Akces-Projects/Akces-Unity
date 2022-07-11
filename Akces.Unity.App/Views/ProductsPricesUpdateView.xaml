@@ -17,18 +17,6 @@
         <converters:IsHarmonogramPositionNotWorking x:Key="isHarmonogramPositionNotWorking"/>
         <converters:IsHarmonogramPositionWorking x:Key="isHarmonogramPositionWorking"/>
         <local:BindingProxy x:Key="Proxy" Data="{Binding}" />
-
-        <Style TargetType="Button" x:Key="menuButton">
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Margin" Value="5"/>
-        </Style>
-
-        <Style TargetType="TextBlock" x:Key="rowText">
-            <Setter Property="FontSize" Value="12"/>
-            <Setter Property="Padding" Value="4"/>
-        </Style>
     </UserControl.Resources>
 
     <Grid>
@@ -62,8 +50,10 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="10"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="54"/>
+                <ColumnDefinition Width="60"/>
                 <ColumnDefinition Width="10"/>
                 <ColumnDefinition Width="180"/>
                 <ColumnDefinition Width="30"/>
@@ -90,8 +80,7 @@
 
                 <Button Style="{StaticResource menuButton}" Content="Pobierz produkty" Command="{Binding LoadProductsCommand}"/>
                 <fa:ImageAwesome Margin="5,0,0,0" Icon="ArrowCircleDown" Width="20" Foreground="{style:AkcesStyle ResourceKey=ThemeColor}" VerticalAlignment="Center"/>
-            </StackPanel>
-          
+            </StackPanel>          
 
             <StackPanel Grid.Column="2"
                         Orientation="Horizontal" 
@@ -111,7 +100,7 @@
                 <fa:ImageAwesome Margin="5,0,0,0" Icon="ArrowCircleUp" Width="20" Foreground="{style:AkcesStyle ResourceKey=ThemeColor}" VerticalAlignment="Center"/>
             </StackPanel>
 
-            <StackPanel Grid.Column="3"
+            <StackPanel Grid.Column="4"
                         Orientation="Horizontal" 
                         Margin="0,0,10,0">
 
@@ -130,13 +119,13 @@
             </StackPanel>
 
 
-            <TextBlock Grid.Column="4"
+            <TextBlock Grid.Column="6"
                        FontSize="18"
                        Margin="0,0,0,2"
                        VerticalAlignment="Center"
                        Text="Konto: "/>
 
-            <ComboBox Grid.Column="6"
+            <ComboBox Grid.Column="8"
                       ItemsSource="{Binding Accounts}"
                       SelectedItem="{Binding SelectedAccount, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                       Height="30"
@@ -144,13 +133,13 @@
                       DisplayMemberPath="Name">
             </ComboBox>
 
-            <TextBlock Grid.Column="8"
+            <TextBlock Grid.Column="10"
                        FontSize="18"
                        Margin="0,0,0,2"
                        VerticalAlignment="Center"
                        Text="Cennik: "/>
 
-            <ComboBox Grid.Column="10"
+            <ComboBox Grid.Column="12"
                       ItemsSource="{Binding PriceLists}"
                       SelectedItem="{Binding SelectedPriceList, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                       Height="30"
@@ -164,7 +153,6 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-
 
             <Grid>
                 <TextBox Text="{Binding Searchstring, UpdateSourceTrigger=PropertyChanged}" 
@@ -233,7 +221,7 @@
                 <DataGridTemplateColumn Header="Id produktu" SortMemberPath="SaleChannelId">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding SaleChannelId}" Style="{StaticResource rowText}"/>
+                            <TextBlock Text="{Binding SaleChannelId}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -241,7 +229,7 @@
                 <DataGridTemplateColumn Header="Nazwa" Width="*" SortMemberPath="SaleChannelName">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding SaleChannelName}" Style="{StaticResource rowText}"/>
+                            <TextBlock Text="{Binding SaleChannelName}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -249,7 +237,7 @@
                 <DataGridTemplateColumn Header="Symbol" Width="100" SortMemberPath="SaleChannelSymbol">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding SaleChannelSymbol}" Style="{StaticResource rowText}"/>
+                            <TextBlock Text="{Binding SaleChannelSymbol}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -257,7 +245,7 @@
                 <DataGridTemplateColumn Header="EAN" Width="100" SortMemberPath="SaleChannelEan">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding SaleChannelEan}" Style="{StaticResource rowText}"/>
+                            <TextBlock Text="{Binding SaleChannelEan}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -268,7 +256,7 @@
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding SaleChannelPrice}" FontSize="14" Style="{StaticResource rowText}"/>
+                            <TextBlock Text="{Binding SaleChannelPrice}" FontSize="14"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -276,7 +264,7 @@
                 <DataGridTemplateColumn Header="Waluta" Width="100" SortMemberPath="ErpEan">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding SaleChannelCurrency}" Style="{StaticResource rowText}"/>
+                            <TextBlock Text="{Binding SaleChannelCurrency}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -298,7 +286,7 @@
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding ErpRegistrationPrice}" FontSize="14" Style="{StaticResource rowText}"/>
+                            <TextBlock Text="{Binding ErpRegistrationPrice}" FontSize="14"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -309,93 +297,95 @@
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding ErpPriceText}" FontSize="14" Style="{StaticResource rowText}"/>
+                            <TextBlock Text="{Binding ErpPriceText}" FontSize="14"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
 
-        <StackPanel Grid.Row="4" Margin="10,10,60,8" Orientation="Horizontal" HorizontalAlignment="Center">
-            <TextBlock Text="Strona:" FontSize="18" FontWeight="DemiBold" VerticalAlignment="Center" Padding="8,0,8,6"/>
+        <Grid Grid.Row="4" Background="#eeeeee">
+            <StackPanel Grid.Row="4" Height="28" Margin="10,10,60,8" Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBlock Text="Strona:" FontSize="18" FontWeight="DemiBold" VerticalAlignment="Center" Padding="8,0,8,6"/>
 
-            <Button BorderThickness="0" Background="Transparent" Margin="5,0,2,0" VerticalAlignment="Center"
+                <Button BorderThickness="0" Background="Transparent" Margin="5,0,2,0" VerticalAlignment="Center"
                     x:Name="firstButton"
                     Command="{Binding FirstPageCommand}">
-                <fa:ImageAwesome Icon="ArrowCircleOutlineLeft" Width="21" IsEnabled="{Binding ElementName=firstButton, Path=IsEnabled, UpdateSourceTrigger=PropertyChanged}">
-                    <fa:ImageAwesome.Style>
-                        <Style TargetType="fa:ImageAwesome">
-                            <Style.Triggers>
-                                <Trigger Property="IsEnabled" Value="False">
-                                    <Setter Property="Foreground" Value="LightGray"/>
-                                </Trigger>
-                                <Trigger Property="IsEnabled" Value="True">
-                                    <Setter Property="Foreground" Value="{style:AkcesStyle ResourceKey=ThemeColor}"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </fa:ImageAwesome.Style>
-                </fa:ImageAwesome>
-            </Button>
-            <Button BorderThickness="0" Background="Transparent" Margin="5,0,5,0" VerticalAlignment="Center"
+                    <fa:ImageAwesome Icon="ArrowCircleOutlineLeft" Width="21" IsEnabled="{Binding ElementName=firstButton, Path=IsEnabled, UpdateSourceTrigger=PropertyChanged}">
+                        <fa:ImageAwesome.Style>
+                            <Style TargetType="fa:ImageAwesome">
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Foreground" Value="LightGray"/>
+                                    </Trigger>
+                                    <Trigger Property="IsEnabled" Value="True">
+                                        <Setter Property="Foreground" Value="{style:AkcesStyle ResourceKey=ThemeColor}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </fa:ImageAwesome.Style>
+                    </fa:ImageAwesome>
+                </Button>
+                <Button BorderThickness="0" Background="Transparent" Margin="5,0,5,0" VerticalAlignment="Center"
                     Command="{Binding PreviousPageCommand}"
                     x:Name="previousButton">
-                <fa:ImageAwesome Icon="ArrowLeft" Width="21" IsEnabled="{Binding ElementName=previousButton, Path=IsEnabled, UpdateSourceTrigger=PropertyChanged}">
-                    <fa:ImageAwesome.Style>
-                        <Style TargetType="fa:ImageAwesome">
-                            <Style.Triggers>
-                                <Trigger Property="IsEnabled" Value="False">
-                                    <Setter Property="Foreground" Value="LightGray"/>
-                                </Trigger>
-                                <Trigger Property="IsEnabled" Value="True">
-                                    <Setter Property="Foreground" Value="{style:AkcesStyle ResourceKey=ThemeColor}"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </fa:ImageAwesome.Style>
-                </fa:ImageAwesome>
-            </Button>
+                    <fa:ImageAwesome Icon="ArrowLeft" Width="21" IsEnabled="{Binding ElementName=previousButton, Path=IsEnabled, UpdateSourceTrigger=PropertyChanged}">
+                        <fa:ImageAwesome.Style>
+                            <Style TargetType="fa:ImageAwesome">
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Foreground" Value="LightGray"/>
+                                    </Trigger>
+                                    <Trigger Property="IsEnabled" Value="True">
+                                        <Setter Property="Foreground" Value="{style:AkcesStyle ResourceKey=ThemeColor}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </fa:ImageAwesome.Style>
+                    </fa:ImageAwesome>
+                </Button>
 
-            <TextBox IsReadOnly="False" Height="25" Text="{Binding CurrentPage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="18" VerticalAlignment="Center" Padding="8,0,8,2"/>
-            <TextBlock Text="/" FontSize="18" VerticalAlignment="Center" Padding="8,0,8,2"/>
-            <TextBox IsReadOnly="True" Text="{Binding PageCount, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Height="25" FontSize="18" VerticalAlignment="Center" Padding="8,0,8,2"/>
+                <TextBox IsReadOnly="False" Height="25" Text="{Binding CurrentPage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="18" VerticalAlignment="Center" Padding="8,0,8,2"/>
+                <TextBlock Text="/" FontSize="18" VerticalAlignment="Center" Padding="8,0,8,2"/>
+                <TextBox IsReadOnly="True" Text="{Binding PageCount, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Height="25" FontSize="18" VerticalAlignment="Center" Padding="8,0,8,2"/>
 
-            <Button BorderThickness="0" Background="Transparent" Margin="5,0,5,0" VerticalAlignment="Center"
+                <Button BorderThickness="0" Background="Transparent" Margin="5,0,5,0" VerticalAlignment="Center"
                     Command="{Binding NextPageCommand}"
                     x:Name="nextButton">
-                <fa:ImageAwesome Icon="ArrowRight" Width="21" IsEnabled="{Binding ElementName=nextButton, Path=IsEnabled, UpdateSourceTrigger=PropertyChanged}">
-                    <fa:ImageAwesome.Style>
-                        <Style TargetType="fa:ImageAwesome">
-                            <Style.Triggers>
-                                <Trigger Property="IsEnabled" Value="False">
-                                    <Setter Property="Foreground" Value="LightGray"/>
-                                </Trigger>
-                                <Trigger Property="IsEnabled" Value="True">
-                                    <Setter Property="Foreground" Value="{style:AkcesStyle ResourceKey=ThemeColor}"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </fa:ImageAwesome.Style>
-                </fa:ImageAwesome>
-            </Button>
-            <Button BorderThickness="0" Background="Transparent" Margin="2,0,5,0" VerticalAlignment="Center"
+                    <fa:ImageAwesome Icon="ArrowRight" Width="21" IsEnabled="{Binding ElementName=nextButton, Path=IsEnabled, UpdateSourceTrigger=PropertyChanged}">
+                        <fa:ImageAwesome.Style>
+                            <Style TargetType="fa:ImageAwesome">
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Foreground" Value="LightGray"/>
+                                    </Trigger>
+                                    <Trigger Property="IsEnabled" Value="True">
+                                        <Setter Property="Foreground" Value="{style:AkcesStyle ResourceKey=ThemeColor}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </fa:ImageAwesome.Style>
+                    </fa:ImageAwesome>
+                </Button>
+                <Button BorderThickness="0" Background="Transparent" Margin="2,0,5,0" VerticalAlignment="Center"
                     Command="{Binding LastPageCommand}"
                     x:Name="lastButton">
-                <fa:ImageAwesome Icon="ArrowCircleOutlineRight" Width="21" IsEnabled="{Binding ElementName=lastButton, Path=IsEnabled, UpdateSourceTrigger=PropertyChanged}">
-                    <fa:ImageAwesome.Style>
-                        <Style TargetType="fa:ImageAwesome">
-                            <Style.Triggers>
-                                <Trigger Property="IsEnabled" Value="False">
-                                    <Setter Property="Foreground" Value="LightGray"/>
-                                </Trigger>
-                                <Trigger Property="IsEnabled" Value="True">
-                                    <Setter Property="Foreground" Value="{style:AkcesStyle ResourceKey=ThemeColor}"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </fa:ImageAwesome.Style>
-                </fa:ImageAwesome>
-            </Button>
-        </StackPanel>
+                    <fa:ImageAwesome Icon="ArrowCircleOutlineRight" Width="21" IsEnabled="{Binding ElementName=lastButton, Path=IsEnabled, UpdateSourceTrigger=PropertyChanged}">
+                        <fa:ImageAwesome.Style>
+                            <Style TargetType="fa:ImageAwesome">
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Foreground" Value="LightGray"/>
+                                    </Trigger>
+                                    <Trigger Property="IsEnabled" Value="True">
+                                        <Setter Property="Foreground" Value="{style:AkcesStyle ResourceKey=ThemeColor}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </fa:ImageAwesome.Style>
+                    </fa:ImageAwesome>
+                </Button>
+            </StackPanel>
+        </Grid>
     </Grid>
 </UserControl>

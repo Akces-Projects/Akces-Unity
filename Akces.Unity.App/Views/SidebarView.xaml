@@ -43,7 +43,7 @@
 
             <TextBlock Style="{StaticResource mainText}" Text="Procesy"/>
 
-            <Button Click="Button_Click" Content="Aktywne zadania" Style="{StaticResource mainButton}" Command="{Binding GoToActiveHarmonogramCommand}"/>
+            <Button Click="Button_Click" Content="Aktywne zadania" Style="{StaticResource mainButton}" Command="{Binding GoToTasks}"/>
             <Button Click="Button_Click" Content="Harmonogramy" Style="{StaticResource mainButton}" Command="{Binding GoToHarmonogramsCommand}"/>
             <Button Click="Button_Click" Content="Raporty" Style="{StaticResource mainButton}" Command="{Binding GoToReportsCommand}"/>
 
@@ -54,8 +54,8 @@
 
             <TextBlock Style="{StaticResource mainText}" VerticalAlignment="Bottom" Text="Konfiguracja"/>
             <Button Click="Button_Click" Content="Konta" Style="{StaticResource mainButton}" Command="{Binding GoToAccountsCommand}"/>
-            <!--<Button Click="Button_Click" Content="Użytkownicy" Style="{StaticResource mainButton}"/>
-            <Button Click="Button_Click" Content="Połączenie" Style="{StaticResource mainButton}"/>-->
+            <Button Click="Button_Click" Content="Użytkownicy" Style="{StaticResource mainButton}" Command="{Binding GoToUnityUsersCommand}"/>
+           
 
         </StackPanel>
         

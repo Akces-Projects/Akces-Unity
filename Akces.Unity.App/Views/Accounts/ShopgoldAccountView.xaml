@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:style="clr-namespace:Akces.Wpf.Extensions.Style;assembly=Akces.Wpf"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
+             xmlns:views="clr-namespace:Akces.Unity.App.Views"
              xmlns:local="clr-namespace:Akces.Unity.App" 
              xmlns:viewmodels="clr-namespace:Akces.Unity.App.ViewModels" 
              d:DataContext="{d:DesignInstance Type=viewmodels:ShopgoldAccountViewModel}"
@@ -14,18 +15,6 @@
 
     <UserControl.Resources>
         <local:BindingProxy x:Key="Proxy" Data="{Binding}" />
-
-        <Style TargetType="Button" x:Key="menuButton">
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Margin" Value="5"/>
-        </Style>
-
-        <Style TargetType="TextBlock" x:Key="rowText">
-            <Setter Property="FontSize" Value="18"/>
-            <Setter Property="Padding" Value="5"/>
-        </Style>
     </UserControl.Resources>
 
     <StackPanel>
@@ -35,38 +24,12 @@
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="0,0,10,0">
-                <StackPanel.Style>
-                    <Style TargetType="StackPanel">
-                        <Style.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#bee6fd"/>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </StackPanel.Style>
-                <Button Style="{StaticResource menuButton}" Content="Zapisz" Command="{Binding SaveCommand}"/>
-                <fa:ImageAwesome Margin="5,0,0,0" Icon="Save" Width="17" Foreground="ForestGreen" VerticalAlignment="Center"/>
-            </StackPanel>
-            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,10,0">
-                <StackPanel.Style>
-                    <Style TargetType="StackPanel">
-                        <Style.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#bee6fd"/>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </StackPanel.Style>
-                <Button Style="{StaticResource menuButton}" Content="Anuluj" Command="{Binding CancelCommand}"/>
-                <fa:ImageAwesome Margin="5,0,0,0" Icon="Times" Width="15" Foreground="OrangeRed" VerticalAlignment="Center"/>
-            </StackPanel>
+            <views:DialogNavbarView/>
 
             <StackPanel Grid.Column="3" Orientation="Horizontal" Margin="0,0,10,0">
                 <StackPanel.Style>

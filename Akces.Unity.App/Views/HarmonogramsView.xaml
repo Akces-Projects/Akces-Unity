@@ -14,22 +14,18 @@
 
     <UserControl.Resources>
         <local:BindingProxy x:Key="Proxy" Data="{Binding}" />
-
-        <Style TargetType="Button" x:Key="menuButton">
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Margin" Value="5"/>
-        </Style>
-
-        <Style TargetType="TextBlock" x:Key="rowText">
-            <Setter Property="FontSize" Value="18"/>
-            <Setter Property="Padding" Value="5"/>
-        </Style>
     </UserControl.Resources>
-    
-    <StackPanel>
-        <TextBlock Text="Harmonogramy zadań">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="46"/>
+        </Grid.RowDefinitions>
+        
+        <TextBlock Text="Harmonogramy zadań" Grid.Row="0">
             <TextBlock.Style>
                 <Style TargetType="TextBlock">
                     <Setter Property="FontSize" Value="22"/>
@@ -44,6 +40,7 @@
 
         <StackPanel Orientation="Horizontal"
                         Margin="20,0,0,0"
+                    Grid.Row="1"
                         Background="White"
                         Height="40">
 
@@ -88,8 +85,33 @@
             </StackPanel>
 
         </StackPanel>
+        <Grid Grid.Row="2" Background="#eeeeee">
+            <TextBox Text="{Binding Searchstring, UpdateSourceTrigger=PropertyChanged}" 
+                         FontSize="18"
+                         Height="30"
+                         VerticalContentAlignment="Center"
+                         Padding="5,0,0,0"
+                         VerticalAlignment="Center"
+                         HorizontalAlignment="Stretch" 
+                         x:Name="SearchTermTextBox" 
+                         Margin="5"/>
+
+            <TextBlock IsHitTestVisible="False" Text="Wyszukaj..." FontSize="16" Padding="5,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="DarkGray">
+                <TextBlock.Style>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Text, ElementName=SearchTermTextBox}" Value="">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+        </Grid>
 
         <DataGrid ItemsSource="{Binding Harmonograms}"
+                  Grid.Row="3"
                       SelectedItem="{Binding SelectedHarmonogram, UpdateSourceTrigger=PropertyChanged}"
                       CanUserAddRows="False"
                       CanUserDeleteRows="False"
@@ -100,40 +122,41 @@
                 <DataGridTemplateColumn Header="Aktywny" Width="150">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding IsActive}" Style="{StaticResource rowText}"/>
+                            <TextBlock Text="{Binding IsActive}" Padding="30,4,4,4"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Nazwa" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Name}" Style="{StaticResource rowText}"/>
+                            <TextBlock Text="{Binding Name}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Utworzono" Width="200">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Created}" Style="{StaticResource rowText}"/>
+                            <TextBlock Text="{Binding Created}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Modyfikowano" Width="200">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Modified}" Style="{StaticResource rowText}"/>
+                            <TextBlock Text="{Binding Modified}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Liczba zadań" Width="200">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Positions.Count}" Style="{StaticResource rowText}"/>
+                            <TextBlock Text="{Binding Positions.Count}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
 
         </DataGrid>
-    </StackPanel>
+        <Grid Grid.Row="4" Background="#eeeeee"/>
+    </Grid>
 </UserControl>

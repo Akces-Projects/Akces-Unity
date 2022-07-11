@@ -5,15 +5,15 @@ using System;
 
 namespace Akces.Unity.App.Operations
 {
-    public delegate void OnOperationFinished(TaskReport operationReport, HarmonogramPosition harmonogramPosition = null);
-    public delegate void OnOperationStarted(HarmonogramPosition harmonogramPosition = null);
-    public delegate void OnOperationProgress(int progress, string description);
+    public delegate void OnTaskFinished(TaskReport taskReport, HarmonogramPosition harmonogramPosition = null);
+    public delegate void OnTaskStarted(HarmonogramPosition harmonogramPosition = null);
+    public delegate void OnTaskProgress(int progress, string description);
 
     public interface IUnityTask : IDisposable
     {
-        OnOperationFinished OnOperationExecuted { get; set; }
-        OnOperationStarted OnOperationStarted { get; set; }
-        OnOperationProgress OnOperationProgress { get; set; }
+        OnTaskFinished OnTaskExecuted { get; set; }
+        OnTaskStarted OnTaskStarted { get; set; }
+        OnTaskProgress OnTaskProgress { get; set; }
         TaskReport TaskReport { get; }
         int Processes { get; }
         Task ExecuteAsync(CancellationToken? cancellationToken = null);

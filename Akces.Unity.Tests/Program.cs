@@ -54,44 +54,44 @@ namespace Akces.Unity.Tests
 
                 accountBO.Data.NexoConfiguration.Warehouses.Add(new WarehouseConfigurationMember()
                 {
-                    ErpDocumentStatus = "B",
-                    ErpWarehouseSymbol = "MAG",
+                    NexoDocumentStatus = "B",
+                    NexoWarehouseSymbol = "MAG",
                     Default = true
                 });
 
                 accountBO.Data.NexoConfiguration.Branches.Add(new BranchConfigurationMember
                 {
-                    ErpBranchSymbol = "CENTRALA",
+                    NexoBranchSymbol = "CENTRALA",
                     Default = true
                 });
 
                 accountBO.Data.NexoConfiguration.PaymentMethods.Add(new PaymentMethodConfigurationMember()
                 {
-                    ErpPaymentMethod = "Gotówka",
+                    NexoPaymentMethod = "Gotówka",
                     Default = true
                 });
 
                 accountBO.Data.NexoConfiguration.TaxRates.Add(new TaxRateConfigurationMember()
                 {
-                    ErpTaxRateSymbol = "8",
+                    NexoTaxRateSymbol = "8",
                     Default = true
                 });
 
                 accountBO.Data.NexoConfiguration.Units.Add(new UnitConfigurationMember()
                 {
-                    ErpUnitSymbol = "kg",
+                    NexoUnitSymbol = "kg",
                     Default = true
                 });
 
                 accountBO.Data.NexoConfiguration.DeliveryMethods.Add(new DeliveryMethodConfigurationMember()
                 {
-                    ErpDeliveryMethodName = "Kurier",
+                    NexoDeliveryMethodName = "Kurier",
                     Default = true
                 });
 
                 accountBO.Data.NexoConfiguration.Transactions.Add(new TransactionConfigurationMember()
                 {
-                    ErpTranstactionSymbol = "WDT",
+                    NexoTranstactionSymbol = "WDT",
                     Default = true
                 });
 

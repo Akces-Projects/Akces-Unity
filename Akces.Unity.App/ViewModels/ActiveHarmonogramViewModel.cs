@@ -15,28 +15,13 @@ namespace Akces.Unity.App.ViewModels
     internal class ActiveHarmonogramViewModel : ControlViewModel
     {
         private readonly HarmonogramWorker harmonogramWorker;
-        private readonly HarmonogramsManager harmonogramsManager;
-        private readonly TaskReportsManager reportsManager;
+        private readonly HarmonogramsManager harmonogramsManager = new HarmonogramsManager();
+        private readonly TaskReportsManager reportsManager = new TaskReportsManager();
         private int? currentWorkingPositionId;
         private bool isWorkerEnabled;
 
-        private Harmonogram activeHarmonogram;
-        public Harmonogram ActiveHarmonogram 
-        { 
-            get => activeHarmonogram;
-            set 
-            {
-                if (value != activeHarmonogram)
-                {
-                    OnActiveHarmonogramSelected(value);
-                    OnPropertyChanged();
-                }
-            } 
-        }
-
-        public ObservableCollection<HarmonogramPosition> Positions { get; set; }
+        public ObservableCollection<HarmonogramPosition> Positions { get; set; } = new ObservableCollection<HarmonogramPosition>();
         public HarmonogramPosition  SelectedPosition { get; set; }
-        public ObservableCollection<Harmonogram> Harmonograms { get; set; }
         public int? CurrentWorkingPositionId { get => currentWorkingPositionId; set { currentWorkingPositionId = value; OnPropertyChanged(); } }
         public bool IsWorkerEnabled
         { 
@@ -49,6 +34,7 @@ namespace Akces.Unity.App.ViewModels
             } 
         }
         public bool IsWorkerNotEnabled { get => !isWorkerEnabled; }
+        public Harmonogram ActiveHarmonogram { get; set; }
         public ICommand StartWorkerCommand { get; set; }
         public ICommand StopWorkerCommand { get; set; }
         public ICommand ShowReportCommand { get; set; }
@@ -57,72 +43,34 @@ namespace Akces.Unity.App.ViewModels
         {
             (Host as MainViewModel).SidebarVisable = true;
             harmonogramWorker = ServicesProvider.GetService<HarmonogramWorker>();
+            IsWorkerEnabled = harmonogramWorker.Enabled;
+
             harmonogramWorker.OnOperationStarted += OnOperationStarted;
             harmonogramWorker.OnOperationFinished += OnOperationFinished;
-            harmonogramsManager = new HarmonogramsManager();
-            reportsManager = new TaskReportsManager();
-            Positions = new ObservableCollection<HarmonogramPosition>();
-            Harmonograms = new ObservableCollection<Harmonogram>(harmonogramsManager.Get());
-            activeHarmonogram = Harmonograms.FirstOrDefault(x => x.Active);
-            IsWorkerEnabled = harmonogramWorker.Enabled;
             StartWorkerCommand = CreateCommand(StartWorker, (err) => host.ShowError(err));
             StopWorkerCommand = CreateCommand(StopWorker, (err) => host.ShowError(err));
             ShowReportCommand = CreateCommand(ShowReport, (err) => host.ShowError(err));
-            LoadHarmonogramPositions(activeHarmonogram);
+
+            LoadHarmonogramPositions();
         }
 
-        private void LoadHarmonogramPositions(Harmonogram harmonogram)
+        private void LoadHarmonogramPositions()
         {
-            if (harmonogram == null)
+            ActiveHarmonogram = harmonogramsManager.GetActive();
+
+            if (ActiveHarmonogram == null)
                 return;
 
-            var fullHarmonogram = harmonogramsManager.Get(harmonogram.Id);
-            var activePositions = fullHarmonogram.Positions.Where(x => x.Active).ToList();
+            var activePositions = ActiveHarmonogram.Positions.Where(x => x.Active).ToList();
             RefreshCollection(Positions, activePositions);
-        }
-        private void OnActiveHarmonogramSelected(Harmonogram harmonogram) 
-        {
-            var result = MessageBox.Show(
-                $"Czy ustawić harmonogram {harmonogram.Name} jako aktywny?",
-                "Aktywny harmonogram",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question);
-
-            if (result == MessageBoxResult.No)
-                return;
-
-            harmonogramWorker.SetActiveHarmonogram(harmonogram);
-
-            LoadHarmonogramPositions(harmonogram);
-            activeHarmonogram = harmonogram;
-            harmonogramWorker.Enabled = activeHarmonogram.WorkerEnabled;
-            IsWorkerEnabled = harmonogramWorker.Enabled;
         }
         private void StartWorker()
         {
-            harmonogramWorker.Enabled = true;
-            activeHarmonogram.WorkerEnabled = true;
-
-            using (var harmonogramBO = harmonogramsManager.Find(activeHarmonogram))
-            {
-                harmonogramBO.Data.WorkerEnabled = true;
-                harmonogramBO.Save();
-            }
-
-            IsWorkerEnabled = true;
+            harmonogramWorker.Start();
         }
         private void StopWorker()
         {
-            harmonogramWorker.Enabled = false;
-            activeHarmonogram.WorkerEnabled = false;
-
-            using (var harmonogramBO = harmonogramsManager.Find(activeHarmonogram))
-            {
-                harmonogramBO.Data.WorkerEnabled = false;
-                harmonogramBO.Save();
-            }
-
-            IsWorkerEnabled = false;
+            harmonogramWorker.Stop();
         }
         private void ShowReport()
         {
@@ -148,18 +96,17 @@ namespace Akces.Unity.App.ViewModels
         }
         private void OnOperationFinished(TaskReport report, HarmonogramPosition harmonogramPosition) 
         {
-            if (CurrentWorkingPositionId == harmonogramPosition.Id) 
-                CurrentWorkingPositionId = null;
+            CurrentWorkingPositionId = null;
 
             var position = Positions.FirstOrDefault(x => x.Id == harmonogramPosition.Id);
 
-            if (position != null) 
-            {
-                position.LastLaunchTime = harmonogramPosition.LastLaunchTime;
+            if (position == null)
+                return;
+            
+            position.LastLaunchTime = harmonogramPosition.LastLaunchTime;
 
-                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => 
-                    RefreshCollection(Positions)));
-            }
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+                RefreshCollection(Positions)));
         }
     }
 }

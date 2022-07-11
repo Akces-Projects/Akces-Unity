@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Windows.Input;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
@@ -11,12 +12,21 @@ using Akces.Unity.Models.ConfigurationMembers;
 using Akces.Unity.DataAccess;
 using Akces.Unity.DataAccess.NexoManagers;
 using Akces.Unity.DataAccess.Managers.BusinessObjects;
-using System;
+using Akces.Unity.DataAccess.Managers;
 
 namespace Akces.Unity.App.ViewModels
 {
-    internal abstract class AccountViewModel<T> : ControlViewModel where T : Account
+    internal abstract class AccountViewModel<T> : ControlViewModel where T : Account, new()
     {
+        private ObservableCollection<WarehouseConfigurationMember> warehouseConfigurationMembers;
+        private ObservableCollection<DeliveryMethodConfigurationMember> deliveryMethodConfigurationMembers;
+        private ObservableCollection<PaymentMethodConfigurationMember> paymentMethodConfigurationMembers;
+        private ObservableCollection<TransactionConfigurationMember> transactionConfigurationMembers;
+        private ObservableCollection<BranchConfigurationMember> branchConfigurationMembers;
+        private ObservableCollection<TaxRateConfigurationMember> taxRateConfigurationMembers;
+        private ObservableCollection<UnitConfigurationMember> unitConfigurationMembers;
+        private bool editMode;
+
         public ICommand AddUnitCommand { get; set; }
         public ICommand AddBranchCommand { get; set; }
         public ICommand AddTaxRateCommand { get; set; }
@@ -33,13 +43,13 @@ namespace Akces.Unity.App.ViewModels
         public ICommand RemovePaymentMethodCommand { get; set; }
         public ICommand RemoveDeliveryMethodCommand { get; set; }
 
-        public ObservableCollection<WarehouseConfigurationMember> WarehouseConfigurationMembers { get; set; }
-        public ObservableCollection<DeliveryMethodConfigurationMember> DeliveryMethodConfigurationMembers { get; set; }
-        public ObservableCollection<PaymentMethodConfigurationMember> PaymentMethodConfigurationMembers { get; set; }
-        public ObservableCollection<TransactionConfigurationMember> TransactionConfigurationMembers { get; set; }
-        public ObservableCollection<BranchConfigurationMember> BranchConfigurationMembers { get; set; }
-        public ObservableCollection<TaxRateConfigurationMember> TaxRateConfigurationMembers { get; set; }
-        public ObservableCollection<UnitConfigurationMember> UnitConfigurationMembers { get; set; }
+        public ObservableCollection<WarehouseConfigurationMember> WarehouseConfigurationMembers { get => warehouseConfigurationMembers; set { warehouseConfigurationMembers = value; OnPropertyChanged(); } }
+        public ObservableCollection<DeliveryMethodConfigurationMember> DeliveryMethodConfigurationMembers { get => deliveryMethodConfigurationMembers; set { deliveryMethodConfigurationMembers = value; OnPropertyChanged(); } }
+        public ObservableCollection<PaymentMethodConfigurationMember> PaymentMethodConfigurationMembers { get => paymentMethodConfigurationMembers; set { paymentMethodConfigurationMembers = value; OnPropertyChanged(); } }
+        public ObservableCollection<TransactionConfigurationMember> TransactionConfigurationMembers { get => transactionConfigurationMembers; set { transactionConfigurationMembers = value; OnPropertyChanged(); } }
+        public ObservableCollection<BranchConfigurationMember> BranchConfigurationMembers { get => branchConfigurationMembers; set { branchConfigurationMembers = value; OnPropertyChanged(); } }
+        public ObservableCollection<TaxRateConfigurationMember> TaxRateConfigurationMembers { get => taxRateConfigurationMembers; set { taxRateConfigurationMembers = value; OnPropertyChanged(); } }
+        public ObservableCollection<UnitConfigurationMember> UnitConfigurationMembers { get => unitConfigurationMembers; set { unitConfigurationMembers = value; OnPropertyChanged(); } }
 
         public ObservableCollection<string> Branches { get; set; }
         public ObservableCollection<string> Warehouses { get; set; }
@@ -51,8 +61,11 @@ namespace Akces.Unity.App.ViewModels
         public ObservableCollection<string> Statuses { get; set; }
 
         public abstract IAccount<T> Account { get; set; }
-        public  ICommand SaveCommand { get; set; }
-        public  ICommand CancelCommand { get; set; }
+        public bool EditMode { get => editMode; set { editMode = value; OnPropertyChanged(); } }
+        public ICommand SaveCommand { get; set; }
+        public ICommand CancelCommand { get; set; }
+        public ICommand CloseCommand { get; set; }
+        public ICommand EditCommand { get; set; }
         public  ICommand AuthenticateCommand { get; set; }
         public  ICommand TestConnectionCommand { get; set; }
 
@@ -60,6 +73,8 @@ namespace Akces.Unity.App.ViewModels
         {
             SaveCommand = CreateCommand(Save, (err) => Host.ShowError(err));
             CancelCommand = CreateCommand(Cancel, (err) => Host.ShowError(err));
+            CloseCommand = CreateCommand(Close, (err) => Host.ShowError(err));
+            EditCommand = CreateCommand(() => EditMode = true, (err) => Host.ShowError(err));
             AuthenticateCommand = CreateAsyncCommand(AuthenticateAsync, (err) => Host.ShowError(err));
             TestConnectionCommand = CreateAsyncCommand(TestConnectionAsync, (err) => Host.ShowError(err));
 
@@ -113,18 +128,35 @@ namespace Akces.Unity.App.ViewModels
             BranchConfigurationMembers = new ObservableCollection<BranchConfigurationMember>(Account.Data.NexoConfiguration.Branches);
             UnitConfigurationMembers = new ObservableCollection<UnitConfigurationMember>(Account.Data.NexoConfiguration.Units);
         }
-
         private void Save()
         {
-            Account?.Save();
+            Account.Save();
+            Account.Dispose();
             Host.Window.Close();
             (Host.Window.Owner.GetHost().ControlViewModel as AccountsViewModel).LoadAccounts();
         }
         private void Cancel()
         {
-            Account?.Dispose();
+            var accountsManager = new AccountsManager();
+            var original = accountsManager.Find<T>(Account.Data);
+            Account.Dispose();
+
+            if (original?.Data == null)
+            {
+                Host.Window.Close();
+                return;
+            }
+
+            Account = original;
+            LoadConfigurationMembers();
+            EditMode = false;
+        }
+        private void Close()
+        {
+            Account.Dispose();
             Host.Window.Close();
         }
+
         protected virtual async Task AuthenticateAsync()
         {
             ISaleChannelService service = null;

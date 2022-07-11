@@ -9,7 +9,6 @@ using Akces.Unity.DataAccess.Managers;
 
 namespace Akces.Unity.App.ViewModels
 {
-
     public class AccountsViewModel : ControlViewModel 
     {
         private readonly AccountsManager accountsManager;
@@ -17,6 +16,7 @@ namespace Akces.Unity.App.ViewModels
         public ObservableCollection<Account>Accounts { get; set; }
         public Account SelectedAccount { get; set; }
         public ICommand CreateAccountCommand { get; set; }
+        public ICommand ShowAccountCommand { get; set; }
         public ICommand EditAccountCommand { get; set; }
         public ICommand DeleteAccountCommand { get; set; }
 
@@ -26,7 +26,8 @@ namespace Akces.Unity.App.ViewModels
             this.accountsManager = new AccountsManager();
             Accounts = new ObservableCollection<Account>();
             CreateAccountCommand = CreateCommand<AccountType>(CreateAccount, (err) => Host.ShowError(err));
-            EditAccountCommand = CreateCommand(EditAccount, (err) => Host.ShowError(err));
+            EditAccountCommand = CreateCommand(() => OpenEditor(editMode: true), (err) => Host.ShowError(err));
+            ShowAccountCommand = CreateCommand(() => OpenEditor(editMode: false), (err) => Host.ShowError(err));
             DeleteAccountCommand = CreateCommand(DeleteAccount, (err) => Host.ShowError(err));
 
             LoadAccounts();
@@ -42,25 +43,25 @@ namespace Akces.Unity.App.ViewModels
             switch (accountType)
             {
                 case AccountType.Shoper:
-                    OpenAccountEditor<ShoperAccount, ShoperAccountViewModel>();
+                    OpenAccountEditor<ShoperAccount, ShoperAccountViewModel>(true);
                     break;
                 case AccountType.shopGold:
-                    OpenAccountEditor<ShopgoldAccount, ShopgoldAccountViewModel>();
+                    OpenAccountEditor<ShopgoldAccount, ShopgoldAccountViewModel>(true);
                     break;
                 case AccountType.Baselinker:
-                    OpenAccountEditor<BaselinkerAccount, BaselinkerAccountViewModel>();
+                    OpenAccountEditor<BaselinkerAccount, BaselinkerAccountViewModel>(true);
                     break;
                 case AccountType.Allegro:
-                    OpenAccountEditor<AllegroAccount, AllegroAccountViewModel>();
+                    OpenAccountEditor<AllegroAccount, AllegroAccountViewModel>(true);
                     break;
                 case AccountType.Olx:
-                    OpenAccountEditor<OlxAccount, OlxAccountViewModel>();
+                    OpenAccountEditor<OlxAccount, OlxAccountViewModel>(true);
                     break;
                 default:
                     break;
             }
         }
-        private void EditAccount()
+        private void OpenEditor(bool editMode)
         {
             if (SelectedAccount == null)
                 return;
@@ -70,19 +71,19 @@ namespace Akces.Unity.App.ViewModels
             switch (account.AccountType)
             {
                 case AccountType.Shoper:
-                    OpenAccountEditor<ShoperAccount, ShoperAccountViewModel>(account);
+                    OpenAccountEditor<ShoperAccount, ShoperAccountViewModel>(editMode, account);
                     break;
                 case AccountType.shopGold:
-                    OpenAccountEditor<ShopgoldAccount, ShopgoldAccountViewModel>(account);
+                    OpenAccountEditor<ShopgoldAccount, ShopgoldAccountViewModel>(editMode, account);
                     break;
                 case AccountType.Baselinker:
-                    OpenAccountEditor<BaselinkerAccount, BaselinkerAccountViewModel>(account);
+                    OpenAccountEditor<BaselinkerAccount, BaselinkerAccountViewModel>(editMode, account);
                     break;
                 case AccountType.Allegro:
-                    OpenAccountEditor<AllegroAccount, AllegroAccountViewModel>(account);
+                    OpenAccountEditor<AllegroAccount, AllegroAccountViewModel>(editMode, account);
                     break;
                 case AccountType.Olx:
-                    OpenAccountEditor<OlxAccount, OlxAccountViewModel>(account);
+                    OpenAccountEditor<OlxAccount, OlxAccountViewModel>(editMode, account);
                     break;
                 default:
                     break;
@@ -110,15 +111,16 @@ namespace Akces.Unity.App.ViewModels
 
             LoadAccounts();
         }
-        private void OpenAccountEditor<T,U>(Account account = null) 
+        private void OpenAccountEditor<T,U>(bool editMode, Account account = null) 
             where T : Account, new()
             where U : AccountViewModel<T> 
         {
             var accountBO = account == null ? accountsManager.Create<T>() : accountsManager.Find<T>(account);
-            var window = Host.CreateWindow<ExtraWindow, MainViewModel>(900, 700);
+            var window = Host.CreateWindow<ExtraWindow, MainViewModel>(1100, 700);
             var host = window.GetHost();
             var vm = host.UpdateView<U>();
             vm.Account = accountBO;
+            vm.EditMode = editMode;
             vm.LoadNexoOptions();
             vm.LoadConfigurationMembers();
             window.Show();

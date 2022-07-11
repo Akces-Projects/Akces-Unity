@@ -14,25 +14,23 @@ namespace Akces.Unity.App.Operations
     public class ImportOrdersTask : IUnityTask
     {
         private readonly Account account;
-        private readonly TaskReportsManager reportsManager;
+        private readonly TaskReportsManager taskReportsManager;
         private readonly HarmonogramPosition harmonogramPosition;
 
-        public OnOperationFinished OnOperationExecuted { get; set; }
-        public OnOperationProgress OnOperationProgress { get; set; }
-        public OnOperationStarted OnOperationStarted { get; set; }
+        public OnTaskFinished OnTaskExecuted { get; set; }
+        public OnTaskProgress OnTaskProgress { get; set; }
+        public OnTaskStarted OnTaskStarted { get; set; }
         public TaskReport TaskReport { get; private set; }
-        public bool SaveReport { get; private set; }
         public int Processes { get; private set; }
 
-        public ImportOrdersTask(Account account, bool saveReport, HarmonogramPosition harmonogramPosition = null)
+        public ImportOrdersTask(Account account, HarmonogramPosition harmonogramPosition = null)
         {
-            SaveReport = saveReport;
             this.account = account;
             this.harmonogramPosition = harmonogramPosition;
-            reportsManager = new TaskReportsManager();
-            OnOperationStarted = new OnOperationStarted((e) => { });
-            OnOperationProgress = new OnOperationProgress((e, s) => { });
-            OnOperationExecuted = new OnOperationFinished((e, s) => { });
+            taskReportsManager = new TaskReportsManager();
+            OnTaskStarted = new OnTaskStarted((e) => { });
+            OnTaskProgress = new OnTaskProgress((e, s) => { });
+            OnTaskExecuted = new OnTaskFinished((e, s) => { });
         }
 
         public async Task ExecuteAsync(CancellationToken? cancellationToken = null)
@@ -40,7 +38,7 @@ namespace Akces.Unity.App.Operations
             if (harmonogramPosition != null)
                 harmonogramPosition.LastLaunchTime = DateTime.Now;
 
-            OnOperationStarted.Invoke(harmonogramPosition);
+            OnTaskStarted.Invoke(harmonogramPosition);
 
             var saleChannelService = account.CreateService();
             var orders = await saleChannelService.GetOrdersAsync();
@@ -53,7 +51,7 @@ namespace Akces.Unity.App.Operations
             var warns = 0;
             var failed = 0;
 
-            using (var reportBO = reportsManager.Create(OperationType.ImportZamowien))
+            using (var reportBO = taskReportsManager.Create(TaskType.ImportZamowien))
             {
                 reportBO.Data.HarmonogramPositionId = harmonogramPosition?.Id;
                 reportBO.Data.Description = $"Import zamówień {account.Name} ({account.AccountType})";
@@ -79,11 +77,10 @@ namespace Akces.Unity.App.Operations
                         succeeded++;
                 }
 
-                if (SaveReport)
-                    reportBO.Save();
+                reportBO.Save();
 
                 TaskReport = reportBO.Data;
-                OnOperationExecuted.Invoke(reportBO.Data, harmonogramPosition);
+                OnTaskExecuted.Invoke(reportBO.Data, harmonogramPosition);
             }
         }
         public void Dispose() 

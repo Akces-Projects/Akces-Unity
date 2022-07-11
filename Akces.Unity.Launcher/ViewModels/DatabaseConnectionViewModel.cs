@@ -42,7 +42,7 @@ namespace Akces.Unity.Launcher.ViewModels
         {
             var nexoDatabases = ServicesProvider.GetService<SqlServer>().GetNexoDatabases();
             NexoDatabases = new ObservableCollection<NexoDatabase>(nexoDatabases);
-            var savedDatabase = nexoDatabases.FirstOrDefault(x => x.Name == selectedNexoDatabase.Name);
+            var savedDatabase = nexoDatabases.FirstOrDefault(x => selectedNexoDatabase != null && x.Name == selectedNexoDatabase.Name);
 
             if (selectedNexoDatabase != null && savedDatabase != null)
             {
