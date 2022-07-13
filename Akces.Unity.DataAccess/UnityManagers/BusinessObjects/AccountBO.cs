@@ -44,6 +44,18 @@ namespace Akces.Unity.DataAccess.Managers.BusinessObjects
         }
         public bool Delete()
         {
+            var harmonograms = unityDbContext.Harmonograms
+                .Where(h => h.Positions.Any(p => p.Account.Id == Data.Id))
+                .Select(x => x.Name)
+                .ToArray();
+
+            if (harmonograms.Any())
+                throw new Exception($"Wskazane konto jest wykorzystywane przez harmonogram: " +
+                    $"{Environment.NewLine}{Environment.NewLine}" +
+                    $"{string.Join(", ", harmonograms)} " +
+                    $"{Environment.NewLine }{Environment.NewLine}" +
+                    "Przed usunięciem konta, należy usunąć wszystkie jego wystąpienia");
+
             unityDbContext.Accounts.Remove(Data).State = EntityState.Deleted;
             return unityDbContext.SaveChanges() > 0;
         }

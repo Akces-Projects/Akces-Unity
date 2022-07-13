@@ -74,7 +74,34 @@ namespace Akces.Unity.DataAccess.Services
         {
             throw new NotImplementedException();
         }
-        public async Task<ProductsContainer> GetProductsAsync(int pageIndex)
+        public async Task<ProductsContainer> GetProductsAsync(bool all, int pageIndex = 0)
+        {
+            if (all)
+            {
+                var container = new ProductsContainer();
+
+                while (true)
+                {
+                    var part = await GetProductsPageAsync(pageIndex);
+                    container.Products.AddRange(part.Products);
+                    pageIndex++;
+
+                    if (part.Products.Count < 1000)
+                        break;
+                }
+
+                container.PageSize = container.Products.Count;
+                container.PageIndex = 0;
+                container.PageCount = 1;
+
+                return container;
+            }
+            else
+            {
+                return await GetProductsPageAsync(pageIndex);
+            }
+        }
+        private async Task<ProductsContainer> GetProductsPageAsync(int pageIndex) 
         {
             var pageSize = 1000;
             var offset = pageIndex * pageSize;
@@ -98,7 +125,7 @@ namespace Akces.Unity.DataAccess.Services
                     .Select(x => new Product()
                     {
                         Id = x.id.ToString(),
-                        Symbol = x.title == null ? null : new string (x.title.Reverse().Where(c => char.IsDigit(c)).Take(4).Reverse().ToArray()),
+                        Symbol = x.title == null ? null : new string(x.title.Reverse().Where(c => char.IsDigit(c)).Take(4).Reverse().ToArray()),
                         EAN = "",
                         Currency = x.price?.currency,
                         Price = x.price?.value ?? 0,
@@ -107,19 +134,11 @@ namespace Akces.Unity.DataAccess.Services
                     })
                     .ToList();
 
-
-                var pages = 100;
-
-                if(products.Count < 1000) 
-                {
-                    pages = pageIndex + 1;
-                }
-
                 var container = new ProductsContainer()
                 {
                     PageSize = pageSize,
                     PageIndex = pageIndex,
-                    PageCount = pages, // olx nie zwraca info o ilości
+                    PageCount = 100, // olx nie zwraca info o ilości
                     Products = products
                 };
 
@@ -163,7 +182,7 @@ namespace Akces.Unity.DataAccess.Services
                 return response.IsSuccessStatusCode;                    
             }
         }
-        public async Task<bool> TestConnectionAsync()
+        public async Task<bool> ValidateConnectionAsync()
         {
             return await RefreshTokenAsync();
         }

@@ -13,7 +13,6 @@ namespace Akces.Unity.DataAccess.Services
         private readonly ShopgoldConfiguration shopgoldConfiguration;
         public AccountType SaleChannelType { get => AccountType.shopGold; }
 
-
         public ShopgoldService(ShopgoldConfiguration shopgoldConfiguration)
         {
             this.shopgoldConfiguration = shopgoldConfiguration;
@@ -31,13 +30,41 @@ namespace Akces.Unity.DataAccess.Services
         {
             throw new NotImplementedException();
         }
-        public async Task<ProductsContainer> GetProductsAsync(int pageIndex)
+
+        public async Task<ProductsContainer> GetProductsAsync(bool all, int pageIndex = 0)
         {
+            if (all)
+            {
+                var container = new ProductsContainer();
+
+                while (true)
+                {
+                    var part = await GetProductsPageAsync(pageIndex);
+                    container.Products.AddRange(part.Products);
+                    pageIndex++;
+
+                    if (part.Products.Count < 1000)
+                        break;
+                }
+
+                container.PageSize = container.Products.Count;
+                container.PageIndex = 0;
+                container.PageCount = 1;
+
+                return container;
+            }
+            else
+            {
+                return await GetProductsPageAsync(pageIndex);
+            }
+        }
+        private async Task<ProductsContainer> GetProductsPageAsync(int pageIndex)
+        {
+            var pageSize = 1000;
+            var offset = pageIndex * pageSize;
+
             using (var sqlConnection = new MySqlConnection(shopgoldConfiguration.ConnectionString))
             {
-                var pageSize = 1000;
-                var offset = pageIndex * pageSize;
-
                 await sqlConnection.OpenAsync();
                 var countCommand = sqlConnection.CreateCommand();
                 countCommand.CommandText = "select count(products_id) FROM products";
@@ -65,7 +92,7 @@ namespace Akces.Unity.DataAccess.Services
 
                 var products = new List<Product>();
 
-                while (reader.Read()) 
+                while (reader.Read())
                 {
                     var product = new Product
                     {
@@ -91,6 +118,7 @@ namespace Akces.Unity.DataAccess.Services
                 return container;
             }
         }
+
         public async Task<bool> UpdateProductPriceAsync(object id, string currency, decimal newPrice)
         {
             return await Task.Run(async () => 
@@ -148,7 +176,7 @@ namespace Akces.Unity.DataAccess.Services
                 return counter > 0;
             }
         }
-        public async Task<bool> TestConnectionAsync()
+        public async Task<bool> ValidateConnectionAsync()
         {
             using (var sqlConnection = new MySqlConnection(shopgoldConfiguration.ConnectionString))
             {

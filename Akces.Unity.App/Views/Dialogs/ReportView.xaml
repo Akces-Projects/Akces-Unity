@@ -106,17 +106,37 @@
                   VirtualizingPanel.VirtualizationMode="Standard"
                   VirtualizingPanel.IsVirtualizing="True"
                   ScrollViewer.CanContentScroll="True">
+
+            <DataGrid.Resources>
+                <Style TargetType="DataGrid">
+                    <Setter Property="GridLinesVisibility" Value="All"/>
+                    <Setter Property="Background" Value="#FFF" />
+                    <Setter Property="AlternationCount" Value="2" />
+                </Style>
+            </DataGrid.Resources>
             
             <DataGrid.Columns>
-                <DataGridTextColumn FontSize="17" Header="Obiekt" Width="110" Binding="{Binding ObjectName, Mode=OneTime, UpdateSourceTrigger=PropertyChanged}">
-                    <DataGridTextColumn.CellStyle>
-                        <Style TargetType="DataGridCell">
-                            <Setter Property="Padding" Value="15"/>
-                        </Style>
-                    </DataGridTextColumn.CellStyle>
-                </DataGridTextColumn>
-                <DataGridTextColumn FontSize="17" FontWeight="DemiBold" Header="Typ" Width="110" Binding="{Binding Type, Mode=OneTime, UpdateSourceTrigger=PropertyChanged}"/>
-                <DataGridTextColumn FontSize="17" FontStyle="Italic" Header="Opis" Width="*" Binding="{Binding Description, Mode=OneTime, UpdateSourceTrigger=PropertyChanged}"/>               
+                <DataGridTemplateColumn Header="Obiekt" Width="110" SortMemberPath="ObjectName">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock FontSize="16" Padding="25,8,8,8" Text="{Binding ObjectName, Mode=OneTime, UpdateSourceTrigger=PropertyChanged}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Typ" Width="110" SortMemberPath="Type">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock FontSize="16" FontWeight="DemiBold" Padding="8" Text="{Binding Type, Mode=OneTime, UpdateSourceTrigger=PropertyChanged}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Opis" Width="*" SortMemberPath="Description">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock FontSize="16" Padding="8" Text="{Binding Description, Mode=OneTime, UpdateSourceTrigger=PropertyChanged}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
     </DockPanel>

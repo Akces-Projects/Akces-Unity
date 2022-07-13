@@ -67,7 +67,8 @@ namespace Akces.Unity.DataAccess.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserName = table.Column<string>(nullable: true),
+                    Login = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: true),
                     IsWorker = table.Column<bool>(nullable: false),
                     Created = table.Column<DateTime>(nullable: false),
                     Modified = table.Column<DateTime>(nullable: false)
@@ -75,6 +76,21 @@ namespace Akces.Unity.DataAccess.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UnityUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WorkerStatuses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Created = table.Column<DateTime>(nullable: false),
+                    CreatedBy = table.Column<int>(nullable: false),
+                    Enabled = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WorkerStatuses", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -271,7 +287,7 @@ namespace Akces.Unity.DataAccess.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Module = table.Column<string>(nullable: true),
                     AuthorisationType = table.Column<int>(nullable: false),
-                    UnityUserId = table.Column<int>(nullable: true)
+                    UnityUserId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -281,7 +297,7 @@ namespace Akces.Unity.DataAccess.Migrations
                         column: x => x.UnityUserId,
                         principalTable: "UnityUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -587,6 +603,9 @@ namespace Akces.Unity.DataAccess.Migrations
 
             migrationBuilder.DropTable(
                 name: "WarehouseConfigurationMember");
+
+            migrationBuilder.DropTable(
+                name: "WorkerStatuses");
 
             migrationBuilder.DropTable(
                 name: "UnityUsers");

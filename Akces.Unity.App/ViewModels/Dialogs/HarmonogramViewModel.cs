@@ -22,6 +22,7 @@ namespace Akces.Unity.App.ViewModels
         public List<TaskType> OperationTypes { get; set; }
         public ICommand SaveCommand { get; set; }
         public ICommand CancelCommand { get; set; }
+        public ICommand ActivateHarmonogramCommand { get; set; }
         public ICommand AddHarmonogramPositionCommand { get; set; }
         public ICommand RemoveHarmonogramPositionCommand { get; set; }
 
@@ -29,6 +30,7 @@ namespace Akces.Unity.App.ViewModels
         {
             SaveCommand = CreateCommand(Save, (err) => Host.ShowError(err));
             CancelCommand = CreateCommand(Cancel, (err) => Host.ShowError(err));
+            ActivateHarmonogramCommand = CreateCommand(ActivateHarmonogram, (err) => Host.ShowError(err));
             AddHarmonogramPositionCommand = CreateCommand(AddHarmonogramPosition, (err) => Host.ShowError(err));
             RemoveHarmonogramPositionCommand = CreateCommand<HarmonogramPosition>(RemoveHarmonogramPosition, (err) => Host.ShowError(err));
             OperationTypes = Enum.GetValues(typeof(TaskType)).Cast<TaskType>().ToList();
@@ -57,6 +59,11 @@ namespace Akces.Unity.App.ViewModels
         {
             harmonogram?.Dispose();
             Host.Window.Close();
+        }
+        private void ActivateHarmonogram() 
+        {
+            Harmonogram.Activate();
+            Host.ShowInfo("Harmonogram został aktywowany");
         }
         private void AddHarmonogramPosition()
         {

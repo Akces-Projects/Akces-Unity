@@ -47,8 +47,8 @@ namespace Akces.Unity.Models
 
         static Modules()
         {
-            List = typeof(Modules).GetProperties()
-                .Select(x => x.GetValue(x, null))
+            List = typeof(Modules).GetFields()
+                .Select(x => x.GetValue(null))
                 .Where(x => x != null)  
                 .Cast<string>()
                 .ToList();

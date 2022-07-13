@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Akces.Unity.DataAccess.Migrations
 {
     [DbContext(typeof(UnityDbContext))]
-    [Migration("20220710132751_init")]
+    [Migration("20220713110748_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -64,7 +64,7 @@ namespace Akces.Unity.DataAccess.Migrations
                     b.Property<string>("Module")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UnityUserId")
+                    b.Property<int>("UnityUserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -598,15 +598,39 @@ namespace Akces.Unity.DataAccess.Migrations
                     b.Property<bool>("IsWorker")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Login")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("Modified")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserName")
+                    b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("UnityUsers");
+                });
+
+            modelBuilder.Entity("Akces.Unity.Models.WorkerStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WorkerStatuses");
                 });
 
             modelBuilder.Entity("Akces.Unity.Models.SaleChannels.AllegroAccount", b =>
@@ -648,7 +672,9 @@ namespace Akces.Unity.DataAccess.Migrations
                 {
                     b.HasOne("Akces.Unity.Models.UnityUser", null)
                         .WithMany("Authorisations")
-                        .HasForeignKey("UnityUserId");
+                        .HasForeignKey("UnityUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Akces.Unity.Models.ConfigurationMembers.BranchConfigurationMember", b =>

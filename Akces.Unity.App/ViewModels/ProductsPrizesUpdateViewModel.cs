@@ -25,15 +25,15 @@ namespace Akces.Unity.App.ViewModels
     public class ProductsPricesUpdateViewModel : ControlViewModel
     {
         private readonly NexoAssortmentManager nexoAssortmentManager;
-        private readonly TaskReportsManager reportsManager;
         private readonly AccountsManager accountsManager;
-        private List<ProductAssortmentModel> downloadedProducts;
+        private readonly List<ProductAssortmentModel> downloadedProducts;
         private ObservableCollection<ProductAssortmentModel> products;
 
         private bool selectAll;
         private int currentPage = 1;
         private int pageCount = 1;
         private string searchstring;
+        private SearchMethod searchMethod;
 
         public bool SelectAll
         {
@@ -76,15 +76,20 @@ namespace Akces.Unity.App.ViewModels
                 OnSearchstringChanged();
             }
         }
+        public SearchMethod SearchMethod
+        {
+            get { return searchMethod; }
+            set { searchMethod = value; OnPropertyChanged(); }
+        }
 
-
+        public ObservableCollection<SearchMethod> SearchMethods { get; set; }
         public ObservableCollection<PriceList> PriceLists { get; set; }
-        public ObservableCollection<Account> Accounts { get; set; }
+        public ObservableCollection<SelectableItem<Account>> Accounts { get; set; }
         public ObservableCollection<ProductAssortmentModel> Products { get => products; set { products = value; OnPropertyChanged(); } }
         public PriceList SelectedPriceList { get; set; }
-        public Account SelectedAccount { get; set; }
 
         public ICommand LoadProductsCommand { get; set; }
+        public ICommand LoadPricesCommand { get; set; }
         public ICommand OpenModificationWindowCommand { get; set; }
         public ICommand ModifyPricesCommand { get; set; }
         public ICommand FirstPageCommand { get; set; }
@@ -96,51 +101,49 @@ namespace Akces.Unity.App.ViewModels
         {
             accountsManager = new AccountsManager();
             nexoAssortmentManager = ServicesProvider.GetService<NexoContext>().GetManager<NexoAssortmentManager>();
-            var accounts = accountsManager.Get();
+            var accounts = accountsManager.Get().Select(x => new SelectableItem<Account>() { Item = x }).ToList();
             var priceLists = nexoAssortmentManager.GetPriceLists();
-            Accounts = new ObservableCollection<Account>(accounts);
+            Accounts = new ObservableCollection<SelectableItem<Account>>(accounts);
             PriceLists = new ObservableCollection<PriceList>(priceLists);
             Products = new ObservableCollection<ProductAssortmentModel>();
             downloadedProducts = new List<ProductAssortmentModel>();
-            SelectedAccount = Accounts.FirstOrDefault();
             SelectedPriceList = PriceLists.FirstOrDefault();
             LoadProductsCommand = CreateAsyncCommand(LoadProductsAsync, (err) => Host.ShowError(err), null, true, "Ładowanie produktów...");
             ModifyPricesCommand = CreateAsyncCommand(ModifyPricesAsync, (err) => Host.ShowError(err), null, true, "Aktualizacja cen produktów...");
             OpenModificationWindowCommand = CreateCommand(OpenModificationWindow, (err) => Host.ShowError(err));
+            SearchMethods = new ObservableCollection<SearchMethod>(Enum.GetValues(typeof(SearchMethod)).Cast<SearchMethod>());
 
+            LoadPricesCommand = CreateAsyncCommand(LoadPricesAsync, (err) => Host.ShowError(err), null, true, "Pobieranie cen...");
             FirstPageCommand = CreateAsyncCommand(async () => { CurrentPage = 1; await LoadProductsAsync(); }, (err) => Host.ShowError(err), (a) => { return CurrentPage > 1; }, true, "Ładowanie produktów...");
             PreviousPageCommand = CreateAsyncCommand(async () => { CurrentPage--; await LoadProductsAsync(); }, (err) => Host.ShowError(err), (a) => { return CurrentPage > 1; }, true, "Ładowanie produktów...");
             NextPageCommand = CreateAsyncCommand(async () => { CurrentPage++; await LoadProductsAsync(); }, (err) => Host.ShowError(err), (a) => { return CurrentPage < PageCount; }, true, "Ładowanie produktów...");
             LastPageCommand = CreateAsyncCommand(async () => { CurrentPage = PageCount; await LoadProductsAsync(); }, (err) => Host.ShowError(err), (a) => { return CurrentPage < PageCount; }, true, "Ładowanie produktów...");
         }
 
-        private async Task LoadProductsAsync() 
+        private async Task LoadProductsAsync()
         {
-            var saleChannelService = SelectedAccount.CreateService();
             var assortments = await nexoAssortmentManager.GetAssortmentsAsync(SelectedPriceList);
-            var productsContainer = await saleChannelService.GetProductsAsync(CurrentPage - 1);
-
-            CurrentPage = productsContainer.PageIndex + 1;
-            PageCount = productsContainer.PageCount;
-
             downloadedProducts.Clear();
 
-            foreach (var product in productsContainer.Products)
+            var selectedAccounts = Accounts.Where(x => x.Selected).Select(x => x.Item);
+
+            foreach (var selectedAccount in selectedAccounts)
             {
-                var correctSymbol = product.Symbol;
+                var saleChannelService = selectedAccount.CreateService();
+                var productsContainer = await saleChannelService.GetProductsAsync(all: true);
+                CurrentPage = productsContainer.PageIndex + 1;
+                PageCount = productsContainer.PageCount;
 
-                if (correctSymbol != null) 
+                foreach (var product in productsContainer.Products)
                 {
-                    correctSymbol = new string(product.Symbol.Where(c => char.IsDigit(c)).Take(4).ToArray());
+                    var correctSymbol = product.Symbol == null ? "" : new string(product.Symbol.Where(c => char.IsDigit(c)).Take(4).ToArray());
+                    var assortment = assortments.FirstOrDefault(x => x.Symbol == correctSymbol || x.Name == product.Name || x.Ean == product.EAN);
+                    var model = new ProductAssortmentModel(product, assortment, selectedAccount.Name);
+                    downloadedProducts.Add(model);
                 }
-
-                var assortment = assortments.FirstOrDefault(x => x.Symbol == correctSymbol || x.Name == product.Name || x.Ean == product.EAN);
-
-                var model = new ProductAssortmentModel(product, assortment);
-
-                downloadedProducts.Add(model);
-                Products = new ObservableCollection<ProductAssortmentModel>(downloadedProducts);
             }
+
+            Products = new ObservableCollection<ProductAssortmentModel>(downloadedProducts.OrderBy(x => x.SaleChannelSymbol));
         }
         private async Task ModifyPricesAsync()
         {
@@ -149,28 +152,37 @@ namespace Akces.Unity.App.ViewModels
             if (result == MessageBoxResult.No)
                 return;
 
-            var saleChannelService = SelectedAccount.CreateService();
+            var selectedAccounts = Accounts.Where(x => x.Selected).Select(x => x.Item);
 
-            var productsToModify = Products.Where(x => x.Selected).Select(x => new Product() 
+            foreach (var selectedAccount in selectedAccounts)
             {
-                Id = x.SaleChannelId,
-                Name = x.SaleChannelName,
-                Currency = x.SaleChannelCurrency,
-                Price = x.CurrentPrice
-            }).ToList();
+                var saleChannelService = selectedAccount.CreateService();
 
-            var updateProductPricesOperation = new UpdateProductsPricesTask(SelectedAccount, productsToModify);
+                var productsToModify = Products
+                    .Where(x => x.Selected && x.SourceName == selectedAccount.Name)
+                    .Select(x => new Product()
+                    {
+                        Id = x.SaleChannelId,
+                        Name = x.SaleChannelName,
+                        Currency = x.SaleChannelCurrency,
+                        Price = x.CurrentPrice
+                    }).ToList();
 
-            var window = Host.CreateWindow<ExtraWindow, MainViewModel>(500, 120);
-            var vm = window.GetHost().UpdateView<OperationsProgressViewModel>();
-            vm.Operation = updateProductPricesOperation;
-            window.WindowStyle = System.Windows.WindowStyle.None;
-            window.Show();
-            await vm.RunOperationsAsync();
+                var updateProductPricesOperation = new UpdateProductsPricesTask(selectedAccount, productsToModify);
+
+                var window = Host.CreateWindow<ExtraWindow, MainViewModel>(500, 120);
+                var vm = window.GetHost().UpdateView<OperationsProgressViewModel>();
+                vm.Operation = updateProductPricesOperation;
+                window.Title = $"Modyfikacja cen - {selectedAccount.Name} ({selectedAccount.AccountType})";
+                window.WindowStyle = WindowStyle.None;
+                window.Show();
+                await vm.RunOperationsAsync();
+            }
         }
         private void OpenModificationWindow() 
         {
-            var window = Host.CreateWindow<ExtraWindow, MainViewModel>(450,425);
+            var window = Host.CreateWindow<ExtraWindow, MainViewModel>(450,455);
+            window.Title = "Zbiorcza modyfikacja cen";
             var vm = window.GetHost().UpdateView<PricesModificationViewModel>();
             vm.Products = Products.Where(x => x.Selected).ToList();
             window.Show();
@@ -182,32 +194,76 @@ namespace Akces.Unity.App.ViewModels
                 product.Selected = SelectAll;
             }
         }
-        private void OnSearchstringChanged() 
+        private void OnSearchstringChanged()
         {
             if (downloadedProducts == null)
                 return;
 
-            var searchstring = Searchstring?.ToLower();
-            var filteredProducts = downloadedProducts
-                .Where(x => string.IsNullOrEmpty(searchstring) || x.FullName.Contains(searchstring))
-                .ToList();
+            List<ProductAssortmentModel> filteredProducts = null;
+
+            switch (SearchMethod)
+            {
+                case SearchMethod.Wszystko:
+                    var searchstring = Searchstring?.ToLower();
+                    filteredProducts = downloadedProducts.Where(x => string.IsNullOrEmpty(searchstring) || x.FullName.Contains(searchstring)).ToList();
+                    break;
+                case SearchMethod.Nazwa:
+                    filteredProducts = downloadedProducts.Where(x => string.IsNullOrEmpty(Searchstring) || x.SaleChannelName.Contains(Searchstring)).ToList();
+                    break;
+                case SearchMethod.EAN:
+                    filteredProducts = downloadedProducts.Where(x => string.IsNullOrEmpty(Searchstring) || x.SaleChannelEan.Contains(Searchstring)).ToList();
+                    break;
+                case SearchMethod.Id:
+                    filteredProducts = downloadedProducts.Where(x => string.IsNullOrEmpty(Searchstring) || x.SaleChannelId.Contains(Searchstring)).ToList();
+                    break;
+                case SearchMethod.Symbol:
+                    filteredProducts = downloadedProducts.Where(x => string.IsNullOrEmpty(Searchstring) || x.SaleChannelSymbol.Contains(Searchstring)).ToList();
+                    break;
+                case SearchMethod.Konto:
+                    filteredProducts = downloadedProducts.Where(x => string.IsNullOrEmpty(Searchstring) || x.SourceName.Contains(Searchstring)).ToList();
+                    break;
+                default:
+                    break;
+            }
 
             if (filteredProducts == null)
                 return;
 
-            Products = new ObservableCollection<ProductAssortmentModel>(filteredProducts);
+            Products = new ObservableCollection<ProductAssortmentModel>(filteredProducts.OrderBy(x => x.SaleChannelSymbol));
         }
+        private async Task LoadPricesAsync()
+        {
+            var assortments = await nexoAssortmentManager.GetAssortmentsAsync(SelectedPriceList);
+
+            foreach (var product in Products)
+            {
+                var correctSymbol = product.SaleChannelSymbol == null ? "" : new string(product.SaleChannelSymbol.Where(c => char.IsDigit(c)).Take(4).ToArray());
+                var assortment = assortments.FirstOrDefault(x => x.Symbol == correctSymbol || x.Name == product.SaleChannelName || x.Ean == product.SaleChannelEan);
+
+                product.NexoPrice = assortment?.Price;
+                product.NexoRegistrationPrice = assortment?.Price;
+            }
+        }
+    }
+
+    public class SelectableItem<T> 
+    {
+        public bool Selected { get; set; }
+        public T Item { get; set; }
     }
 
     public class ProductAssortmentModel : INotifyPropertyChanged
     {
         private bool selected;
         private decimal currentPrice;
+        private decimal? nexoPrice;
+        private decimal? nexoRegistrationPrice;
 
         public bool Selected { get => selected; set { selected = value; OnProperyChanged(); } }
         public decimal CurrentPrice { get => currentPrice; set { currentPrice = Math.Round(value, 2, MidpointRounding.AwayFromZero); OnProperyChanged(); } }
         public decimal OriginalPrice { get; set; }
-        public decimal? ErpPrice { get; set; }
+        public decimal? NexoPrice { get => nexoPrice; set { nexoPrice = value; OnProperyChanged(); } }
+        public decimal? NexoRegistrationPrice { get => nexoRegistrationPrice; set { nexoRegistrationPrice = value; OnProperyChanged(); } }
         public string SaleChannelId { get; set; }
         public string SaleChannelName { get; set; }
         public string SaleChannelSymbol { get; set; }
@@ -215,12 +271,11 @@ namespace Akces.Unity.App.ViewModels
         public string SaleChannelQuantity { get; set; }
         public string SaleChannelPrice { get; set; }
         public string SaleChannelCurrency { get; set; }
-        public string ErpRegistrationPrice { get; set; }
-        public string ErpPriceText { get; set; }
+        public string SourceName { get; private set; }
         public string FullName { get; private set; }
 
 
-        public ProductAssortmentModel(Product product, Assortment assortment)
+        public ProductAssortmentModel(Product product, Assortment assortment, string sourceName)
         {
             SaleChannelId = product.Id;
             SaleChannelName = product.Name;
@@ -229,13 +284,15 @@ namespace Akces.Unity.App.ViewModels
             SaleChannelPrice = product.Price.ToString("F2");
             SaleChannelQuantity = product.Quantity.ToString("F2");
             SaleChannelCurrency = product.Currency;
-            ErpPrice = assortment?.Price;
-            ErpPriceText = assortment?.Price.ToString("F2") ?? "Nie znaleziono";
-            ErpRegistrationPrice = assortment?.RegistrationPrice.ToString("F2") ?? "Nie znaleziono";
             OriginalPrice = product.Price;
             CurrentPrice = product.Price;
+            SourceName = sourceName;
 
-            FullName = ("" + product.Id + product.Name + product.Symbol + product.EAN).ToLower();
+            NexoPrice = assortment?.Price;
+            NexoRegistrationPrice = assortment?.RegistrationPrice;
+
+            FullName = ("" + sourceName + product.Id + product.Name + product.Symbol + product.EAN).ToLower();
+            SourceName = sourceName;
         }
 
 
@@ -244,5 +301,10 @@ namespace Akces.Unity.App.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+    }
+
+    public enum SearchMethod 
+    {
+        Wszystko, Nazwa, EAN, Id, Symbol, Konto
     }
 }

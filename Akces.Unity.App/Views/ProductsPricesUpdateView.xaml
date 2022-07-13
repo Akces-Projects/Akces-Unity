@@ -54,15 +54,14 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="60"/>
-                <ColumnDefinition Width="10"/>
-                <ColumnDefinition Width="180"/>
-                <ColumnDefinition Width="30"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="230"/>
+                <ColumnDefinition Width="20"/>
                 <ColumnDefinition Width="60"/>
                 <ColumnDefinition Width="10"/>
                 <ColumnDefinition Width="180"/>
                 <ColumnDefinition Width="10"/>
             </Grid.ColumnDefinitions>
-
             
             <StackPanel Grid.Column="0"
                         Orientation="Horizontal" 
@@ -127,11 +126,42 @@
 
             <ComboBox Grid.Column="8"
                       ItemsSource="{Binding Accounts}"
-                      SelectedItem="{Binding SelectedAccount, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                       Height="30"
-                      FontSize="16"
-                      DisplayMemberPath="Name">
+                      DropDownClosed="ComboBox_DropDownClosed"
+                      FontSize="16">
+
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox IsChecked="{Binding Selected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                      VerticalAlignment="Center">
+                                <CheckBox.LayoutTransform>
+                                    <ScaleTransform ScaleX="1.4" ScaleY="1.48"/>
+                                </CheckBox.LayoutTransform>
+                            </CheckBox>
+                            <TextBlock Margin="6,2,2,2" FontSize="14">
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}{0} ({1})">
+                                        <Binding Path="Item.Name"/>
+                                        <Binding Path="Item.AccountType"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </StackPanel>
+                        
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
             </ComboBox>
+
+            <TextBox Grid.Column="8"
+                     x:Name="accountsFilterText"
+                     Height="30"
+                     Width="212"
+                     Padding="6,0,0,0"
+                     VerticalContentAlignment="Center"
+                     HorizontalAlignment="Left"
+                     IsReadOnly="True"
+                     FontSize="16"/>
 
             <TextBlock Grid.Column="10"
                        FontSize="18"
@@ -144,6 +174,7 @@
                       SelectedItem="{Binding SelectedPriceList, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                       Height="30"
                       FontSize="16"
+                      SelectionChanged="ComboBox_SelectionChanged"
                       DisplayMemberPath="Name">
             </ComboBox>
         </Grid>
@@ -155,6 +186,11 @@
             </Grid.ColumnDefinitions>
 
             <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                
                 <TextBox Text="{Binding Searchstring, UpdateSourceTrigger=PropertyChanged}" 
                          FontSize="18"
                          Height="30"
@@ -163,9 +199,9 @@
                          VerticalAlignment="Center"
                          HorizontalAlignment="Stretch" 
                          x:Name="SearchTermTextBox" 
-                         Margin="5"/>
+                         Margin="5,5,5,0"/>
                 
-                <TextBlock IsHitTestVisible="False" Text="Wyszukaj..." FontSize="16" Padding="5,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="DarkGray">
+                <TextBlock IsHitTestVisible="False" Text="Wyszukaj..." FontSize="16" Padding="5,5,5,0" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="DarkGray">
                     <TextBlock.Style>
                         <Style TargetType="{x:Type TextBlock}">
                             <Setter Property="Visibility" Value="Collapsed"/>
@@ -173,6 +209,43 @@
                                 <DataTrigger Binding="{Binding Text, ElementName=SearchTermTextBox}" Value="">
                                     <Setter Property="Visibility" Value="Visible"/>
                                 </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+
+                <TextBlock Grid.Row="1"
+                           Height="20" Width="200" 
+                           HorizontalAlignment="Left"
+                           Margin="10,4,0,3" FontSize="14"
+                           Background="Transparent" TextDecorations="Underline"
+                           MouseLeftButtonDown="SearchMethodButtonClicked"
+                           Text="{Binding SearchMethod, StringFormat='Wyszukaj po:  {0}'}"
+                           Foreground="{style:AkcesStyle ResourceKey=ThemeColor}">
+
+                    <TextBlock.ContextMenu>
+                        <ContextMenu x:Name="searchMethodContextMenu"
+                                     ItemsSource="{Binding Source={StaticResource Proxy}, Path=Data.SearchMethods, UpdateSourceTrigger=PropertyChanged}"
+                                     Width="120">
+
+                            <ContextMenu.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Content="{Binding .}" 
+                                            Width="120" 
+                                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                                            Click="Button_Click"
+                                            BorderThickness="0" Background="Transparent"/>
+                                </DataTemplate>
+                            </ContextMenu.ItemTemplate>
+                        </ContextMenu>
+                    </TextBlock.ContextMenu>
+                    
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="FontWeight" Value="DemiBold"/>
+                                </Trigger>
                             </Style.Triggers>
                         </Style>
                     </TextBlock.Style>
@@ -205,7 +278,7 @@
                                 <ScaleTransform ScaleX="1.32" ScaleY="1.38"/>
                             </CheckBox.LayoutTransform>
                         </CheckBox>
-                    </DataGridTemplateColumn.Header>
+                    </DataGridTemplateColumn.Header>                   
                     
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -218,10 +291,18 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Id produktu" SortMemberPath="SaleChannelId">
+                <DataGridTemplateColumn Header="Konto" Width="110" SortMemberPath="SourceName">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding SaleChannelId}"/>
+                            <TextBlock Padding="8,0,0,0" Text="{Binding SourceName}" FontSize="14"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Id produktu" SortMemberPath="SaleChannelId" Width="90">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Padding="8,0,0,0" Text="{Binding SaleChannelId}" FontSize="14"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -229,20 +310,20 @@
                 <DataGridTemplateColumn Header="Nazwa" Width="*" SortMemberPath="SaleChannelName">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding SaleChannelName}"/>
+                            <TextBlock Text="{Binding SaleChannelName}" FontSize="14"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Symbol" Width="100" SortMemberPath="SaleChannelSymbol">
+                <DataGridTemplateColumn Header="Symbol" Width="90" SortMemberPath="SaleChannelSymbol">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding SaleChannelSymbol}"/>
+                            <TextBlock Padding="8,0,0,0" Text="{Binding SaleChannelSymbol}" FontSize="14"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="EAN" Width="100" SortMemberPath="SaleChannelEan">
+                <DataGridTemplateColumn Header="EAN" Width="90" SortMemberPath="SaleChannelEan">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding SaleChannelEan}"/>
@@ -250,32 +331,32 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Width="100" SortMemberPath="SaleChannelPrice">
+                <DataGridTemplateColumn Width="93" SortMemberPath="SaleChannelPrice">
                     <DataGridTemplateColumn.Header>
                         <TextBlock Text="Aktualna cena" TextWrapping="WrapWithOverflow"/>
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding SaleChannelPrice}" FontSize="14"/>
+                            <TextBlock Padding="8,0,0,0" Text="{Binding SaleChannelPrice}" FontSize="14"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Waluta" Width="100" SortMemberPath="ErpEan">
+                <DataGridTemplateColumn Header="Waluta" Width="64" SortMemberPath="ErpEan">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding SaleChannelCurrency}"/>
+                            <TextBlock Padding="8,0,0,0" Text="{Binding SaleChannelCurrency}" FontSize="14"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Width="100" SortMemberPath="CurrentPrice">
+                <DataGridTemplateColumn Width="77" SortMemberPath="CurrentPrice">
                     <DataGridTemplateColumn.Header>
                         <TextBlock Text="Nowa cena" TextWrapping="WrapWithOverflow"/>
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBox Text="{Binding CurrentPrice, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat='{}{0:#.00}', ConverterCulture='pl-PL'}" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
+                            <TextBox Padding="3,0,0,0" Text="{Binding CurrentPrice, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat='{}{0:#.00}', ConverterCulture='pl-PL'}" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -286,31 +367,31 @@
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding ErpRegistrationPrice}" FontSize="14"/>
+                            <TextBlock Text="{Binding NexoRegistrationPrice, UpdateSourceTrigger=PropertyChanged, StringFormat='{} #.00', TargetNullValue='Nie znaleziono'}" FontSize="14"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Width="120" SortMemberPath="ErpPriceText">
+                <DataGridTemplateColumn Width="110" SortMemberPath="ErpPriceText">
                     <DataGridTemplateColumn.Header>
                         <TextBlock Text="Cena brutto" TextWrapping="WrapWithOverflow"/>
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding ErpPriceText}" FontSize="14"/>
+                            <TextBlock Text="{Binding NexoPrice, UpdateSourceTrigger=PropertyChanged, StringFormat='{} #.00', TargetNullValue='Nie znaleziono'}" FontSize="14"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
 
-        <Grid Grid.Row="4" Background="#eeeeee">
+        <Grid Grid.Row="4" Background="#eeeeee" IsEnabled="False">
             <StackPanel Grid.Row="4" Height="28" Margin="10,10,60,8" Orientation="Horizontal" HorizontalAlignment="Center">
                 <TextBlock Text="Strona:" FontSize="18" FontWeight="DemiBold" VerticalAlignment="Center" Padding="8,0,8,6"/>
 
                 <Button BorderThickness="0" Background="Transparent" Margin="5,0,2,0" VerticalAlignment="Center"
-                    x:Name="firstButton"
-                    Command="{Binding FirstPageCommand}">
+                        x:Name="firstButton"
+                        Command="{Binding FirstPageCommand}">
                     <fa:ImageAwesome Icon="ArrowCircleOutlineLeft" Width="21" IsEnabled="{Binding ElementName=firstButton, Path=IsEnabled, UpdateSourceTrigger=PropertyChanged}">
                         <fa:ImageAwesome.Style>
                             <Style TargetType="fa:ImageAwesome">
@@ -327,8 +408,8 @@
                     </fa:ImageAwesome>
                 </Button>
                 <Button BorderThickness="0" Background="Transparent" Margin="5,0,5,0" VerticalAlignment="Center"
-                    Command="{Binding PreviousPageCommand}"
-                    x:Name="previousButton">
+                        Command="{Binding PreviousPageCommand}"
+                        x:Name="previousButton">                    
                     <fa:ImageAwesome Icon="ArrowLeft" Width="21" IsEnabled="{Binding ElementName=previousButton, Path=IsEnabled, UpdateSourceTrigger=PropertyChanged}">
                         <fa:ImageAwesome.Style>
                             <Style TargetType="fa:ImageAwesome">
@@ -350,8 +431,8 @@
                 <TextBox IsReadOnly="True" Text="{Binding PageCount, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Height="25" FontSize="18" VerticalAlignment="Center" Padding="8,0,8,2"/>
 
                 <Button BorderThickness="0" Background="Transparent" Margin="5,0,5,0" VerticalAlignment="Center"
-                    Command="{Binding NextPageCommand}"
-                    x:Name="nextButton">
+                        Command="{Binding NextPageCommand}"
+                        x:Name="nextButton">                    
                     <fa:ImageAwesome Icon="ArrowRight" Width="21" IsEnabled="{Binding ElementName=nextButton, Path=IsEnabled, UpdateSourceTrigger=PropertyChanged}">
                         <fa:ImageAwesome.Style>
                             <Style TargetType="fa:ImageAwesome">
@@ -368,8 +449,9 @@
                     </fa:ImageAwesome>
                 </Button>
                 <Button BorderThickness="0" Background="Transparent" Margin="2,0,5,0" VerticalAlignment="Center"
-                    Command="{Binding LastPageCommand}"
-                    x:Name="lastButton">
+                        Command="{Binding LastPageCommand}"
+                        x:Name="lastButton">
+                    
                     <fa:ImageAwesome Icon="ArrowCircleOutlineRight" Width="21" IsEnabled="{Binding ElementName=lastButton, Path=IsEnabled, UpdateSourceTrigger=PropertyChanged}">
                         <fa:ImageAwesome.Style>
                             <Style TargetType="fa:ImageAwesome">

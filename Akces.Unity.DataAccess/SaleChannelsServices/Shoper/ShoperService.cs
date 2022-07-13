@@ -35,7 +35,7 @@ namespace Akces.Unity.DataAccess.Services
         {
             throw new NotImplementedException();
         }
-        public Task<bool> TestConnectionAsync()
+        public Task<bool> ValidateConnectionAsync()
         {
             throw new NotImplementedException();
         }
@@ -55,7 +55,7 @@ namespace Akces.Unity.DataAccess.Services
             throw new NotImplementedException();
         }
 
-        public Task<ProductsContainer> GetProductsAsync(int pageIndex)
+        public Task<ProductsContainer> GetProductsAsync(bool all, int pageIndex = 0)
         {
             throw new NotImplementedException();
         }

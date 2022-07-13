@@ -39,10 +39,10 @@
         </TextBlock>
 
         <StackPanel Orientation="Horizontal"
-                        Margin="20,0,0,0"
+                    Margin="20,0,0,0"
                     Grid.Row="1"
-                        Background="White"
-                        Height="40">
+                    Background="White"
+                    Height="40">
 
             <StackPanel Orientation="Horizontal" Margin="0,0,10,0">
                 <StackPanel.Style>
@@ -126,7 +126,6 @@
                 <Button Style="{StaticResource menuButton}" Content="Usuń" Command="{Binding DeleteAccountCommand}"/>
                 <fa:ImageAwesome Margin="5,0,0,0" Icon="Trash" Width="15" Foreground="OrangeRed" VerticalAlignment="Center"/>
             </StackPanel>
-
         </StackPanel>
         
         <Grid Grid.Row="2" Background="#eeeeee">

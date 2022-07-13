@@ -189,7 +189,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Konto" Width="150" SortMemberPath="Account.Name">
+                <DataGridTemplateColumn Header="Konto" Width="220" SortMemberPath="Account.Name">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Account.Name}"/>
@@ -234,7 +234,7 @@
                                     <TextBlock Text="W trakcie..." FontWeight="SemiBold"/>
                                     <Control Style="{style:AkcesStyle ResourceKey=BusyAnimationStyle}" Width="60" Height="60">
                                         <Control.LayoutTransform>
-                                            <ScaleTransform ScaleX="0.7" ScaleY="0.7"/>
+                                            <ScaleTransform ScaleX="0.5" ScaleY="0.5"/>
                                         </Control.LayoutTransform>
                                     </Control>
                                 </StackPanel>
@@ -242,7 +242,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Powtarzaj" Width="60" SortMemberPath="Repeat">
+                <DataGridTemplateColumn Header="Powtarzaj" Width="80" SortMemberPath="Repeat">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <CheckBox IsChecked="{Binding Repeat, UpdateSourceTrigger=PropertyChanged}"
@@ -255,7 +255,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Po ( min.)" Width="60" SortMemberPath="RepeatAfterMinutes">
+                <DataGridTemplateColumn Header="Po ( min.)" Width="80" SortMemberPath="RepeatAfterMinutes">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock FontSize="17" Text="{Binding RepeatAfterMinutes, UpdateSourceTrigger=PropertyChanged}"/>

@@ -122,14 +122,14 @@
             </DataGrid.InputBindings>
 
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Nazwa" Width="*" SortMemberPath="AccountType" CanUserSort="True">
+                <DataGridTemplateColumn Header="Nazwa" MinWidth="330" Width="*" SortMemberPath="AccountType" CanUserSort="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Name}" Padding="30,5,5,5"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Login" Width="*" SortMemberPath="Name" CanUserSort="True">
+                <DataGridTemplateColumn Header="Login" MinWidth="330" Width="*" SortMemberPath="Name" CanUserSort="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Login}"/>

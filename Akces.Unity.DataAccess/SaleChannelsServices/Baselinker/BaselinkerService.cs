@@ -96,7 +96,7 @@ namespace Akces.Unity.DataAccess.Services
                 return false;
             }
         }
-        public async Task<bool> TestConnectionAsync()
+        public async Task<bool> ValidateConnectionAsync()
         {
             try
             {
@@ -125,7 +125,7 @@ namespace Akces.Unity.DataAccess.Services
             GC.SuppressFinalize(this);
         }
 
-        public Task<ProductsContainer> GetProductsAsync(int pageIndex)
+        public Task<ProductsContainer> GetProductsAsync(bool all, int pageIndex = 0)
         {
             throw new NotImplementedException();
         }

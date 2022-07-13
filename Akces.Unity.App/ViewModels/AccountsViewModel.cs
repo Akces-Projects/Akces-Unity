@@ -28,7 +28,7 @@ namespace Akces.Unity.App.ViewModels
             CreateAccountCommand = CreateCommand<AccountType>(CreateAccount, (err) => Host.ShowError(err));
             EditAccountCommand = CreateCommand(() => OpenEditor(editMode: true), (err) => Host.ShowError(err));
             ShowAccountCommand = CreateCommand(() => OpenEditor(editMode: false), (err) => Host.ShowError(err));
-            DeleteAccountCommand = CreateCommand(DeleteAccount, (err) => Host.ShowError(err));
+            DeleteAccountCommand = CreateCommand(DeleteAccount, (err) => Host.ShowWarning(err));
 
             LoadAccounts();
         }

@@ -33,10 +33,10 @@ namespace Akces.Unity.App.ViewModels
         {
             foreach (var product in Products)
             {
-                if (!product.ErpPrice.HasValue)
+                if (!product.NexoPrice.HasValue)
                     continue;
 
-                var newPrice = product.ErpPrice.Value;
+                var newPrice = product.NexoPrice.Value;
                 product.CurrentPrice = newPrice;
             }
 

@@ -15,6 +15,7 @@ namespace Akces.Unity.App.ViewModels
     internal class ActiveHarmonogramViewModel : ControlViewModel
     {
         private readonly HarmonogramWorker harmonogramWorker;
+        private readonly WorkerStatusesManager workerStatusesManager = new WorkerStatusesManager();
         private readonly HarmonogramsManager harmonogramsManager = new HarmonogramsManager();
         private readonly TaskReportsManager reportsManager = new TaskReportsManager();
         private int? currentWorkingPositionId;
@@ -43,7 +44,7 @@ namespace Akces.Unity.App.ViewModels
         {
             (Host as MainViewModel).SidebarVisable = true;
             harmonogramWorker = ServicesProvider.GetService<HarmonogramWorker>();
-            IsWorkerEnabled = harmonogramWorker.Enabled;
+            IsWorkerEnabled = workerStatusesManager.GetCurrent()?.Enabled ?? false;
 
             harmonogramWorker.OnOperationStarted += OnOperationStarted;
             harmonogramWorker.OnOperationFinished += OnOperationFinished;
@@ -67,10 +68,12 @@ namespace Akces.Unity.App.ViewModels
         private void StartWorker()
         {
             harmonogramWorker.Start();
+            IsWorkerEnabled = harmonogramWorker.Enabled;
         }
         private void StopWorker()
         {
             harmonogramWorker.Stop();
+            IsWorkerEnabled = harmonogramWorker.Enabled;
         }
         private void ShowReport()
         {

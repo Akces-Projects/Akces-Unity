@@ -120,18 +120,22 @@ namespace Akces.Unity.DataAccess.NexoManagers.Operations
                 #region Asortyment
 
                 zkOB.Dane.OperacjePrzeliczaniaPozycji = OperacjePrzeliczaniaPozycji.Brutto_ID;
-                //zkOB.UstawCenyIPrzelicz();
                 zkOB.Dane.StatusDokumentu = DopasujStatusDokumentu(Data.Warehouse, Data.Purchaser.CountryCode);
                 zkOB.Dane.Waluta = waluty.FirstOrDefault(x => x.Symbol == Data.Currency || x.Nazwa == Data.Currency);
 
                 foreach (var product in Data.Products)
                 {
                     var asortyment = DopasujAsortyment(product.Symbol);
-                    var jm = DopasujJednostkeMiary(product.Unit, Data.Purchaser.CountryCode, asortyment.Symbol, product.EAN);
+                    var jm = DopasujJednostkeMiary(product.Unit, Data.Purchaser.CountryCode, asortyment?.Symbol, product.EAN);
+                    JednostkaMiaryAsortymentu jma = null;
 
-                    if (asortyment != null)
+                    if (asortyment != null && jm != null)
                     {
-                        var jma = asortyment.JednostkiMiar.FirstOrDefault(x => x.JednostkaMiary.Symbol == jm.Symbol);
+                        jma = asortyment.JednostkiMiar.FirstOrDefault(x => x.JednostkaMiary.Symbol == jm.Symbol);
+                    }
+
+                    if (jma != null)
+                    {
                         var pozycja = zkOB.Pozycje.Dodaj(asortyment, product.Quantity, jma);
                         pozycja.StawkaVat = DopasujStawkeVAT(product.Tax, Data.Purchaser.CountryCode);
                         pozycja.Cena.BruttoPrzedRabatem = product.Price;
@@ -139,7 +143,8 @@ namespace Akces.Unity.DataAccess.NexoManagers.Operations
                     }
                     else
                     {
-                        var pozycja = zkOB.Pozycje.Dodaj(product.Symbol, product.Name, product.Quantity, jm, jm.Precyzja, null, null);
+                        jm = sfera.PodajObiektTypu<IJednostkiMiar>().DaneDomyslne.Usluga;
+                        var pozycja = zkOB.Pozycje.Dodaj("US", product.Name, product.Quantity, jm, jm.Precyzja, null, null);
                         pozycja.StawkaVat = DopasujStawkeVAT(product.Tax, Data.Purchaser.CountryCode);
                         pozycja.Cena.BruttoPrzedRabatem = product.Price;
                         pozycja.Cena.RabatProcent = product.DiscountPercentage / 100;
@@ -148,8 +153,6 @@ namespace Akces.Unity.DataAccess.NexoManagers.Operations
 
                 if (Data.Delivery.DeliveryCost > 0)
                 {
-                    //var uslugaDostawy = DopasujAsortyment(Data.Delivery.DeliveryMethod);
-
                     var uslugaDostawy = sfera.PodajObiektTypu<IAsortymenty>().Dane.Wszystkie()
                         .Where(x => x.Nazwa.Contains("Przesyłka") && x.PozycjeCennika.Any(p => p.CenaBrutto == Data.Delivery.DeliveryCost))
                         .FirstOrDefault();

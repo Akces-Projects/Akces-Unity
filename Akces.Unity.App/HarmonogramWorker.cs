@@ -18,6 +18,7 @@ namespace Akces.Unity.App
 
         private bool isRunning;
         private readonly Timer timer;
+        private readonly AccountsManager accountsManager;
         private readonly HarmonogramsManager harmonogramsManager;
         private readonly TaskReportsManager taskReportsManager;
         private readonly WorkerStatusesManager workerStatusesManager;
@@ -29,11 +30,13 @@ namespace Akces.Unity.App
 
         public HarmonogramWorker()
         {
+            accountsManager = new AccountsManager();
             workerStatusesManager = new WorkerStatusesManager();
             harmonogramsManager = new HarmonogramsManager();
             taskReportsManager = new TaskReportsManager();
             loggedUnityUser = GetLoggedUnityUser();
-            
+            Enabled = workerStatusesManager.GetCurrent()?.Enabled ?? false;
+
             if (loggedUnityUser.IsWorker) 
             {
                 timer = new Timer();
@@ -47,10 +50,12 @@ namespace Akces.Unity.App
         public void Start() 
         {
             workerStatusesManager.StartWorker(loggedUnityUser);
+            Enabled = workerStatusesManager.GetCurrent()?.Enabled ?? false;
         }
         public void Stop()
         {
             workerStatusesManager.StopWorker(loggedUnityUser);
+            Enabled = workerStatusesManager.GetCurrent()?.Enabled ?? false;
         }
 
         private async void OnTimerElapsed(object sender, ElapsedEventArgs e)
@@ -59,8 +64,6 @@ namespace Akces.Unity.App
 
             if (activeHarmonogram?.Positions == null || !activeHarmonogram.Positions.Any())
                 return;
-
-            Enabled = activeHarmonogram?.WorkerEnabled ?? false;
 
             if (isRunning)
                 return;
@@ -72,34 +75,38 @@ namespace Akces.Unity.App
                 if (!Enabled)
                     break;
 
-                try
-                {
-                    await RunHarmonogramPositionAsync(harmonogramPosition);
-                }
-                catch (Exception ex)
-                {
-                    CreateErrorReport(harmonogramPosition, ex.Message);
-                }
+                await RunHarmonogramPositionAsync(harmonogramPosition);
             }
 
             isRunning = false;
         }
         private async Task RunHarmonogramPositionAsync(HarmonogramPosition harmonogramPosition)
         {
-            IUnityTask unityOperation = null;
+            try
+            {
+                IUnityTask unityOperation = null;
 
-            if (harmonogramPosition.HarmonogramOperation == TaskType.ImportZamowien)
-                unityOperation = new ImportOrdersTask(harmonogramPosition.Account, harmonogramPosition);
+                if (harmonogramPosition.HarmonogramOperation == TaskType.ImportZamowien)
+                {
+                    var account = accountsManager.Get(harmonogramPosition.Account.Id);
+                    unityOperation = new ImportOrdersTask(account, harmonogramPosition);
+                }
 
-            if (unityOperation == null)
-                return;
+                if (unityOperation == null)
+                    return;
 
-            harmonogramPosition.LastLaunchTime = DateTime.Now;
-            harmonogramsManager.SaveHarmonogramPosition(harmonogramPosition);
+                harmonogramPosition.LastLaunchTime = DateTime.Now;
+                harmonogramsManager.SaveHarmonogramPosition(harmonogramPosition);
 
-            OnOperationStarted.Invoke(harmonogramPosition);
-            await unityOperation.ExecuteAsync();
-            OnOperationFinished.Invoke(unityOperation.TaskReport, harmonogramPosition);
+                OnOperationStarted.Invoke(harmonogramPosition);
+                await unityOperation.ExecuteAsync();
+                OnOperationFinished.Invoke(unityOperation.TaskReport, harmonogramPosition);
+            }
+            catch (Exception ex)
+            {
+                var errorReport = CreateErrorReport(harmonogramPosition, ex.Message); 
+                OnOperationFinished.Invoke(errorReport, harmonogramPosition);
+            }
         }
         private Harmonogram GetActiveHarmonogram()
         {
@@ -118,7 +125,7 @@ namespace Akces.Unity.App
             var unityUser = unityUsersManager.Get().FirstOrDefault(x => x.Login == nexoContext.NexoUser.Login);
             return unityUser;
         }
-        private void CreateErrorReport(HarmonogramPosition harmonogramPosition, string error) 
+        private TaskReport CreateErrorReport(HarmonogramPosition harmonogramPosition, string error) 
         {
             using (var reportBO = taskReportsManager.Create(harmonogramPosition.HarmonogramOperation))
             {
@@ -126,6 +133,8 @@ namespace Akces.Unity.App
                 reportBO.Data.Description = $"{harmonogramPosition.HarmonogramOperation} {harmonogramPosition.Account.Name} ({harmonogramPosition.Account.AccountType})";
                 reportBO.AddError("", error);
                 reportBO.Save();
+
+                return reportBO.Data;
             }
         }
         public void Dispose()

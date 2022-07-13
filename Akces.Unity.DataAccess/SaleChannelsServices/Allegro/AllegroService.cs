@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Akces.Unity.Models;
 using Akces.Unity.Models.SaleChannels;
 using Akces.Unity.DataAccess.Services.Allegro.Models;
+using System.Net;
 
 namespace Akces.Unity.DataAccess.Services
 {
@@ -76,12 +77,39 @@ namespace Akces.Unity.DataAccess.Services
         {
             throw new NotImplementedException();
         }
-        public async Task<ProductsContainer> GetProductsAsync(int pageIndex)
+        public async Task<ProductsContainer> GetProductsAsync(bool all, int pageIndex = 0)
+        {
+            if (all)
+            {
+                var container = new ProductsContainer();
+
+                while (true)
+                {
+                    var part = await GetProductsPageAsync(pageIndex);
+                    container.Products.AddRange(part.Products);
+                    pageIndex++;
+
+                    if (part.Products.Count < 1000)
+                        break;
+                }
+
+                container.PageSize = container.Products.Count;
+                container.PageIndex = 0;
+                container.PageCount = 1;
+
+                return container;
+            }
+            else
+            {
+                return await GetProductsPageAsync(pageIndex);
+            }
+        }
+        private async Task<ProductsContainer> GetProductsPageAsync(int pageIndex)
         {
             var pageSize = 1000;
             var offset = pageIndex * pageSize;
 
-            using (var httpClient = new HttpClient()) 
+            using (var httpClient = new HttpClient())
             {
                 var request = BuildGetProductsRequest(offset, pageSize);
                 var response = await httpClient.SendAsync(request);
@@ -139,9 +167,26 @@ namespace Akces.Unity.DataAccess.Services
                 return response.IsSuccessStatusCode;                    
             }
         }
-        public async Task<bool> TestConnectionAsync()
+        public async Task<bool> ValidateConnectionAsync()
         {
-            return await RefreshTokenAsync();
+            using (var httpClient = new HttpClient())
+            {
+                var request = BuildGetProductsRequest(0, 1);
+                var response = await httpClient.SendAsync(request);
+
+                if (response.StatusCode == HttpStatusCode.Unauthorized) 
+                    await RefreshTokenAsync();
+
+                var repeatedRequest = BuildGetProductsRequest(0, 1);
+                var repeatedResponse = await httpClient.SendAsync(repeatedRequest);
+                var content = await response.Content.ReadAsStringAsync();
+
+                if (!repeatedResponse.IsSuccessStatusCode)
+                    throw new Exception("Nie udało się pobrać produktów. Sprawdź poprawność połączenia"
+                        + Environment.NewLine + Environment.NewLine + content);
+
+                return true;
+            }
         }
         public void SaveConfiguration()
         {

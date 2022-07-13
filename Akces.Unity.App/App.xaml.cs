@@ -31,9 +31,9 @@ namespace Akces.Unity.App
         public const bool AllowChangeNexoProduct = false;
 
         public static string ErpName = $"{NexoProduct} nexo";
-        public const string AppName = "Aplikacja Testowa";
+        public const string AppName = "Akces Unity";
         public const string LauncherName = "Akces.Unity.Launcher.exe";
-        public const string Version = "2022.1.0";
+        public const string Version = "2022.1.2";
         public const string HelpFileLocation = "{lokalizacja pliku pomocy [.doc, .pdf, .txt itd.]}";
         public const string WebsiteLink = "https://akces.pro/";
         public const string WebsiteName = "www.akces.pro";
@@ -60,9 +60,8 @@ GODZINY OTWARCIA :    Poniedziałek – Piątek 8:00 – 16:00";
             //var nexoDatabase = ServicesProvider.AddSingleton(NexoDatabase.FromString(e.Args[0]));
 
             ServicesProvider.AddSingleton(nexoDatabase);
-            UnityConnection.ConnectionString = 
-                nexoDatabase.NexoConnectionData.GetConnectionString(useInitialCatalog: false) + "Database=Unity.DataCenter;";
-
+            UnityConnection.ConnectionString = nexoDatabase.NexoConnectionData.GetConnectionString(useInitialCatalog: false) + "Database=Unity.DataCenter;";
+            UnityConnection.EnsureCreated();
             CheckLicense(nexoDatabase);
             InitUnityUsers(nexoDatabase);
         }
@@ -70,7 +69,7 @@ GODZINY OTWARCIA :    Poniedziałek – Piątek 8:00 – 16:00";
         private void CheckLicense(NexoDatabase nexoDatabase) 
         {
             var lickey = File.ReadAllText("..\\lickey");
-            var licenseIsValid = nexoDatabase.TryCheckLicense("ABC", lickey, out _, out _);
+            var licenseIsValid = nexoDatabase.TryCheckLicense("UNT", lickey, out _, out _);
             if (!licenseIsValid)
                 Current.Shutdown();
         }

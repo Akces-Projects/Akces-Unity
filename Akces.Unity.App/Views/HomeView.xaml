@@ -80,7 +80,7 @@
                    HorizontalAlignment="Right">
 
             <Hyperlink NavigateUri="" RequestNavigate="Hyperlink_RequestNavigate" FontStyle="Normal">
-                <TextBlock Foreground="Black" Text="{x:Static local:App.WebsiteName}"/>
+                <TextBlock Foreground="Black" Text="{x:Static local:App.WebsiteName}" Padding="0"/>
             </Hyperlink>
         </TextBlock>
         </StackPanel>

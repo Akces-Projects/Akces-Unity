@@ -12,9 +12,21 @@ namespace Akces.Unity.DataAccess.Managers
         {
             using (var unityDbContext = new UnityDbContext()) 
             {
-                var accounts = unityDbContext.Accounts
-                    .AsNoTracking()
-                    .ToList();
+                var accounts = new List<Account>();
+
+                var entities = unityDbContext.Accounts.AsNoTracking().ToList();
+
+                foreach (var entity in entities)
+                {
+                    var configurationName = entity.GetType().GetProperties().First(x => x.Name.Contains("Configuration")).Name;
+
+                    var account = unityDbContext.Accounts
+                        .Include(configurationName)
+                        .AsNoTracking()
+                        .First(x => x.Id == entity.Id);
+
+                    accounts.Add(account);
+                }
 
                 return accounts;
             }
@@ -23,8 +35,15 @@ namespace Akces.Unity.DataAccess.Managers
         {
             using (var unityDbContext = new UnityDbContext())
             {
+                var entity = unityDbContext.Accounts
+                    .AsNoTracking()
+                    .FirstOrDefault(x => x.Id == (int)id);
+
+                var configurationName = entity.GetType().GetProperties().First(x => x.Name.Contains("Configuration")).Name;
+
                 var account = unityDbContext.Accounts
                     .Include(unityDbContext.GetIncludePaths(typeof(Account)))
+                    .Include(configurationName)
                     .AsNoTracking()
                     .FirstOrDefault(x => x.Id == (int)id);
 

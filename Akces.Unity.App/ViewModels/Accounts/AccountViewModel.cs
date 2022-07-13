@@ -187,7 +187,7 @@ namespace Akces.Unity.App.ViewModels
             try
             {
                 service = Account.Data.CreateService();
-                var result = await service.TestConnectionAsync();
+                var result = await service.ValidateConnectionAsync();
                 Host.ShowInfo("Test połączenia zakończony powodzeniem");
             }
             catch
