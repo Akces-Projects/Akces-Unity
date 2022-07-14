@@ -74,14 +74,14 @@
         </StackPanel>
         <Grid Grid.Row="2" Background="#eeeeee">
             <TextBox Text="{Binding Searchstring, UpdateSourceTrigger=PropertyChanged}" 
-                         FontSize="18"
-                         Height="30"
-                         VerticalContentAlignment="Center"
-                         Padding="5,0,0,0"
-                         VerticalAlignment="Center"
-                         HorizontalAlignment="Stretch" 
-                         x:Name="SearchTermTextBox" 
-                         Margin="5"/>
+                     FontSize="18"
+                     Height="30"
+                     VerticalContentAlignment="Center"
+                     Padding="5,0,0,0"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Stretch" 
+                     x:Name="SearchTermTextBox" 
+                     Margin="5"/>
 
             <TextBlock IsHitTestVisible="False" Text="Wyszukaj..." FontSize="16" Padding="5,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="DarkGray">
                 <TextBlock.Style>
@@ -113,42 +113,42 @@
                   ScrollViewer.CanContentScroll="True">
 
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Typ zadania" Width="180">
+                <DataGridTemplateColumn Header="Typ zadania" Width="180" SortMemberPath="OperationType">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding OperationType}" Padding="30,4,4,4"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Zadanie" Width="*">
+                <DataGridTemplateColumn Header="Zadanie" Width="*" SortMemberPath="Description">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Description}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Utworzono" Width="200">
+                <DataGridTemplateColumn Header="Utworzono" Width="200" SortMemberPath="Created">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Created}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Liczba pozycji" Width="100">
+                <DataGridTemplateColumn Header="Liczba pozycji" Width="100" SortMemberPath="PositionsCount">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding PositionsCount}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Liczba ostrzeżeń" Width="100">
+                <DataGridTemplateColumn Header="Liczba ostrzeżeń" Width="100" SortMemberPath="WarningsCount">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding WarningsCount}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Liczba błędów" Width="100">
+                <DataGridTemplateColumn Header="Liczba błędów" Width="100" SortMemberPath="ErrorsCount">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding ErrorsCount}"/>

@@ -6,33 +6,64 @@ using Akces.Unity.Models.ConfigurationMembers;
 using Akces.Unity.Models.SaleChannels;
 using InsERT.Moria.Sfera;
 using InsERT.Mox.Product;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
+using Microsoft.CSharp;
 using MySql.Data.MySqlClient;
 using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Threading.Tasks;
 
 namespace Akces.Unity.Tests
 {
+    public class A
+    {
+        public int Value { get; set; }
+    }
+    public class B
+    {
+        public int Value { get; set; }
+    }
+
+    public class Vals
+    {
+        public A ValA { get; set; }
+        public B ValB { get; set; }
+    }
     internal class Program
     {
+        
+
         static void Main(string[] args)
         {
+            var acc = new OlxAccount();
 
-            var mgr = new UnityUsersManager();
 
-            using (var ob = mgr.Create()) 
-            {
-                //ob.Data.
-            }
-
-            while (true)
-            {
-                Console.ReadKey();
-            }
+            Test().Wait();
         }
 
-        
+        static async Task Test()
+        {
+            var script = CSharpScript.Create<int>("ValA.Value + ValB.Value", globalsType: typeof(Vals));
+            script.Compile();
+
+            var t = await script.RunAsync(new Vals() { ValA = new A { Value = 5 }, ValB = new B { Value = 10 } });
+            var a = t.ReturnValue;
+
+            for (int i = 0; i < 10; i++)
+            {
+                Stopwatch stopwatch = Stopwatch.StartNew();
+                await script.RunAsync();
+                stopwatch.Stop();
+                Console.WriteLine("TEST:" + stopwatch.ElapsedMilliseconds);
+                stopwatch.Restart();
+                Console.WriteLine("TEST 2");
+                stopwatch.Stop();
+                Console.WriteLine("TEST 2:" + stopwatch.ElapsedMilliseconds);
+            }
+        }
 
         public static Uchwyt UruchomSfere()
         {

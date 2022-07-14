@@ -12,10 +12,23 @@ namespace Akces.Unity.App.ViewModels
 {
     public class ReportsViewModel : ControlViewModel
     {
+        private string searchstring;
         private readonly TaskReportsManager reportsManager;
+        private List<TaskReport> downloadedReports;
+        private ObservableCollection<TaskReport> reports;
 
-        public ObservableCollection<TaskReport> Reports { get; set; }
+        public ObservableCollection<TaskReport> Reports { get => reports; set { reports = value; OnPropertyChanged(); } }
         public List<TaskReport> SelectedReports { get; set; }
+        public string Searchstring
+        {
+            get { return searchstring; }
+            set
+            {
+                searchstring = value;
+                OnPropertyChanged();
+                OnSearchstringChanged();
+            }
+        }
         public ICommand ShowReportCommand { get; set; }
         public ICommand DeleteReportCommand { get; set; }
 
@@ -34,8 +47,8 @@ namespace Akces.Unity.App.ViewModels
 
         private void LoadReports()
         {
-            var reports = reportsManager.Get();
-            RefreshCollection(Reports, reports);
+            downloadedReports = reportsManager.Get();
+            Reports = new ObservableCollection<TaskReport>(downloadedReports.OrderByDescending(x => x.Created));
         }
         private void ShowReport()
         {
@@ -43,7 +56,7 @@ namespace Akces.Unity.App.ViewModels
                 return;
 
             var report = reportsManager.Get(SelectedReports.First().Id);
-            var window = Host.CreateWindow<ExtraWindow, MainViewModel>(1100, 700);
+            var window = Host.CreateWindow<ExtraWindow, MainViewModel>(1300, 700);
             var host = window.GetHost();
             var vm = host.UpdateView<ReportViewModel>();
             vm.Report = report;
@@ -76,6 +89,21 @@ namespace Akces.Unity.App.ViewModels
             {
                 Reports.Remove(report);
             }
+        }
+        private void OnSearchstringChanged()
+        {
+            if (downloadedReports == null)
+                return;
+
+            List<TaskReport> filteredReports = null;
+
+            var searchstring = Searchstring?.ToLower();
+            filteredReports = downloadedReports.Where(x => string.IsNullOrEmpty(searchstring) || x.Description.ToLower().Contains(searchstring)).ToList();
+
+            if (filteredReports == null)
+                return;
+
+            Reports = new ObservableCollection<TaskReport>(filteredReports.OrderByDescending(x => x.Created));
         }
     }
 }

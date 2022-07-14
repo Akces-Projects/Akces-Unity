@@ -91,7 +91,7 @@ namespace Akces.Unity.DataAccess.NexoManagers.Operations
 
                 #endregion                               
 
-                if (zkOB.Dane.SposobDostawy.WidocznyAdresDostawy)
+                if (false)// zkOB.Dane.SposobDostawy.WidocznyAdresDostawy)
                 {
                     var panstwo = sfera.PodajObiektTypu<IPanstwa>().Dane.Wszystkie().FirstOrDefault(x => x.Nazwa == Data.Purchaser.Country || x.KodPanstwaUE == Data.Purchaser.CountryCode);
                     zkOB.Dane.MiejsceDostawyTyp = (byte)MiejsceDostawyTyp.Reczny;

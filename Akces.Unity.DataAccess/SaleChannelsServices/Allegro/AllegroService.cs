@@ -126,6 +126,7 @@ namespace Akces.Unity.DataAccess.Services
                         Symbol = x.external?.id == null ? "" : x.external.id.Split(' ').FirstOrDefault(),
                         EAN = "",
                         Currency = x.sellingMode.price.currency,
+                        OriginalPrice = x.sellingMode.price.amount,
                         Price = x.sellingMode.price.amount,
                         Quantity = x.stock.available,
                         Name = x.name

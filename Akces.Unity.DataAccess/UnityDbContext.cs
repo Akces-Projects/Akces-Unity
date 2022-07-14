@@ -18,6 +18,7 @@ namespace Akces.Unity.DataAccess
             try
             {
                 context.Database.EnsureCreated();
+                context.Database.Migrate();
             }
             catch
             {

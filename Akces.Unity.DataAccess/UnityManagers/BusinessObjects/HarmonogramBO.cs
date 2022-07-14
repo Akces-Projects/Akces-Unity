@@ -105,6 +105,8 @@ namespace Akces.Unity.DataAccess.Managers.BusinessObjects
                 harmonogramBO.Data.Active = true;
                 harmonogramBO.Save();
             }
+
+            Data.Active = true;
         }
         public void Dispose()
         {

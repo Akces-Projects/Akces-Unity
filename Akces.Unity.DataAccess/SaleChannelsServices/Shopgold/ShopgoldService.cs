@@ -99,6 +99,7 @@ namespace Akces.Unity.DataAccess.Services
                         Id = reader.GetValue(0)?.ToString(),
                         EAN = reader.GetValue(1)?.ToString(),
                         Currency = reader.GetValue(2)?.ToString(),
+                        OriginalPrice = decimal.Parse(reader.GetValue(3)?.ToString() ?? "0.0"),
                         Price = decimal.Parse(reader.GetValue(3)?.ToString() ?? "0.0"),
                         Quantity = decimal.Parse(reader.GetValue(4)?.ToString() ?? "0.0"),
                         Name = reader.GetValue(5)?.ToString(),

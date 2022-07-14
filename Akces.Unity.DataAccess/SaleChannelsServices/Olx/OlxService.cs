@@ -128,6 +128,7 @@ namespace Akces.Unity.DataAccess.Services
                         Symbol = x.title == null ? null : new string(x.title.Reverse().Where(c => char.IsDigit(c)).Take(4).Reverse().ToArray()),
                         EAN = "",
                         Currency = x.price?.currency,
+                        OriginalPrice = x.price?.value ?? 0,
                         Price = x.price?.value ?? 0,
                         Quantity = 1,
                         Name = x.title

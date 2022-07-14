@@ -1,27 +1,26 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
+using System.Windows;
+using System.Windows.Input;
+using Akces.Core.Nexo;
+using Akces.Wpf.Helpers;
+using Akces.Wpf.Extensions;
 using Akces.Wpf.Models;
 using Akces.Unity.Models;
 using Akces.Unity.Models.Nexo;
+using Akces.Unity.Models.SaleChannels;
 using Akces.Unity.DataAccess.Managers;
 using Akces.Unity.DataAccess.NexoManagers;
 using Akces.Unity.DataAccess;
-using System.Windows.Input;
-using Akces.Wpf.Helpers;
-using Akces.Core.Nexo;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Linq;
-using Akces.Wpf.Extensions;
-using System.Collections.Generic;
-using Akces.Unity.Models.SaleChannels;
-using System;
 using Akces.Unity.App.Operations;
-using System.Windows;
 
 namespace Akces.Unity.App.ViewModels
 {
-
     public class ProductsPricesUpdateViewModel : ControlViewModel
     {
         private readonly NexoAssortmentManager nexoAssortmentManager;
@@ -130,6 +129,7 @@ namespace Akces.Unity.App.ViewModels
             foreach (var selectedAccount in selectedAccounts)
             {
                 var saleChannelService = selectedAccount.CreateService();
+                await saleChannelService.ValidateConnectionAsync();
                 var productsContainer = await saleChannelService.GetProductsAsync(all: true);
                 CurrentPage = productsContainer.PageIndex + 1;
                 PageCount = productsContainer.PageCount;
@@ -165,6 +165,7 @@ namespace Akces.Unity.App.ViewModels
                         Id = x.SaleChannelId,
                         Name = x.SaleChannelName,
                         Currency = x.SaleChannelCurrency,
+                        OriginalPrice = x.OriginalPrice,
                         Price = x.CurrentPrice
                     }).ToList();
 
@@ -233,15 +234,32 @@ namespace Akces.Unity.App.ViewModels
         }
         private async Task LoadPricesAsync()
         {
+            if (downloadedProducts.Count == 0)
+                return;
+
             var assortments = await nexoAssortmentManager.GetAssortmentsAsync(SelectedPriceList);
+
+            if (assortments == null)
+                return;
 
             foreach (var product in Products)
             {
-                var correctSymbol = product.SaleChannelSymbol == null ? "" : new string(product.SaleChannelSymbol.Where(c => char.IsDigit(c)).Take(4).ToArray());
+                string correctSymbol;
+
+                if (product.SaleChannelSymbol == null) 
+                {
+                    correctSymbol = "";
+                }
+                else 
+                {
+                    var countDigits = product.SaleChannelSymbol.Count(c => char.IsDigit(c));
+                    correctSymbol = new string(product.SaleChannelSymbol.Where(c => char.IsDigit(c)).Take(countDigits < 4 ? countDigits : 4).ToArray());
+                }
+
                 var assortment = assortments.FirstOrDefault(x => x.Symbol == correctSymbol || x.Name == product.SaleChannelName || x.Ean == product.SaleChannelEan);
 
                 product.NexoPrice = assortment?.Price;
-                product.NexoRegistrationPrice = assortment?.Price;
+                product.NexoRegistrationPrice = assortment?.RegistrationPrice;
             }
         }
     }

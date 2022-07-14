@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Akces.Unity.DataAccess.Migrations
 {
     [DbContext(typeof(UnityDbContext))]
-    [Migration("20220713110748_init")]
-    partial class init
+    [Migration("20220714061318_init2")]
+    partial class init2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -31,8 +31,17 @@ namespace Akces.Unity.DataAccess.Migrations
                     b.Property<int>("AccountType")
                         .HasColumnType("int");
 
+                    b.Property<string>("CalculateOrderPositionQuantityScript")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ConcludeProductSymbolScript")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("MatchAssormentScript")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Modified")
                         .HasColumnType("datetime2");

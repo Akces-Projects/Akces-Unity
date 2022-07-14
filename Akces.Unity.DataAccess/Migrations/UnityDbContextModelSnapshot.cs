@@ -29,8 +29,17 @@ namespace Akces.Unity.DataAccess.Migrations
                     b.Property<int>("AccountType")
                         .HasColumnType("int");
 
+                    b.Property<string>("CalculateOrderPositionQuantityScript")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ConcludeProductSymbolScript")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("MatchAssormentScript")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Modified")
                         .HasColumnType("datetime2");

@@ -235,9 +235,9 @@
     <Compile Include="Extensions\EF_Extensions.cs" />
     <Compile Include="Extensions\NexoExtensions.cs" />
     <Compile Include="Extensions\UnityExtensions.cs" />
-    <Compile Include="Migrations\20220713110748_init.cs" />
-    <Compile Include="Migrations\20220713110748_init.designer.cs">
-      <DependentUpon>20220713110748_init.cs</DependentUpon>
+    <Compile Include="Migrations\20220714061318_init2.cs" />
+    <Compile Include="Migrations\20220714061318_init2.designer.cs">
+      <DependentUpon>20220714061318_init2.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\UnityDbContextModelSnapshot.cs" />
     <Compile Include="NexoManagers\NexoAssortmentManager.cs" />

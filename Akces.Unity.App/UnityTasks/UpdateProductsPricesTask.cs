@@ -58,7 +58,7 @@ namespace Akces.Unity.App.Operations
                             break;
 
                         await saleChannelService.UpdateProductPriceAsync(product.Id, product.Currency, product.Price);
-                        description = $"Zaktualizowano cenę produktu {product.Name} ({product.Id}) - {product.Price} {product.Currency}";
+                        description = $"Zaktualizowano cenę produktu: {product.Id} - {product.Name} [{product.Symbol}] - {product.OriginalPrice} => {product.Price} [{product.Currency}]";
                         reportBO.AddInfo(product.Id, description);
                     }
                     catch (Exception e)
