@@ -226,17 +226,7 @@
                     <TextBlock.ContextMenu>
                         <ContextMenu x:Name="searchMethodContextMenu"
                                      ItemsSource="{Binding Source={StaticResource Proxy}, Path=Data.SearchMethods, UpdateSourceTrigger=PropertyChanged}"
-                                     Width="120">
-
-                            <ContextMenu.ItemTemplate>
-                                <DataTemplate>
-                                    <Button Content="{Binding .}" 
-                                            Width="120" 
-                                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
-                                            Click="Button_Click"
-                                            BorderThickness="0" Background="Transparent"/>
-                                </DataTemplate>
-                            </ContextMenu.ItemTemplate>
+                                     MenuItem.Click="SearchMethodContextMenu_Click">
                         </ContextMenu>
                     </TextBlock.ContextMenu>
                     

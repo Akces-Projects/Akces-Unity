@@ -13,7 +13,7 @@ namespace Akces.Unity.DataAccess.Managers.BusinessObjects
         void Validate();
     }
 
-    internal class AccountBO<T> : IAccount<T> where T : Account
+    internal class AccountBO<T>: IAccount<T> where T : Account
     {
         public T Data { get; private set; }
         private readonly UnityDbContext unityDbContext;

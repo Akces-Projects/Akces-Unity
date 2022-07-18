@@ -11,10 +11,11 @@ namespace Akces.Unity.Launcher
     {
         public static string LicenseKey;
         public const string ProductCode = "UNT";                          // PRODUCT CODE POWINIEN BYC INNY DLA KAZDEJ APLIKACJI
-        private const string MainAppPath = "app";                         // LOKALIZACJA APLIKACJI WLASCIWEJ, KTORA MA ZOSTA URUCHOMIONA
-        private const string MainAppName = "Akces.Unity.App.exe";   // NAZWA PLIKU KTORY MA ZOSTAC URUCHOMIONY
-
-
+        public const string MainAppPath = "app";                         // LOKALIZACJA APLIKACJI WLASCIWEJ, KTORA MA ZOSTA URUCHOMIONA
+        public const string MainAppName = "Akces.Unity.App.exe";   // NAZWA PLIKU KTORY MA ZOSTAC URUCHOMIONY
+        public const string GitHubAuthor = "Akces-Projects";
+        public const string GitHubRepository = "Akces-Unity";
+            
         public App()
         {
             Directory.CreateDirectory(MainAppPath);

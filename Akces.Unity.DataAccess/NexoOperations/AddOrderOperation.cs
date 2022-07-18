@@ -136,10 +136,25 @@ namespace Akces.Unity.DataAccess.NexoManagers.Operations
 
                     if (jma != null)
                     {
-                        var pozycja = zkOB.Pozycje.Dodaj(asortyment, product.Quantity, jma);
-                        pozycja.StawkaVat = DopasujStawkeVAT(product.Tax, Data.Purchaser.CountryCode);
-                        pozycja.Cena.BruttoPrzedRabatem = product.Price;
-                        pozycja.Cena.RabatProcent = product.DiscountPercentage;
+                        if (asortyment.Rodzaj.Symbol == "US")
+                        {
+                            var pozycje_z_materialami = zkOB.Pozycje.DodajZPowiazanymi(asortyment, product.Quantity, jma);
+                            var pozycjaGlowna = pozycje_z_materialami.FirstOrDefault(x => x.RodzajAsortymentu.Symbol == "US");
+
+                            if (pozycjaGlowna != null) 
+                            {
+                                pozycjaGlowna.StawkaVat = DopasujStawkeVAT(product.Tax, Data.Purchaser.CountryCode);
+                                pozycjaGlowna.Cena.BruttoPrzedRabatem = product.Price;
+                                pozycjaGlowna.Cena.RabatProcent = product.DiscountPercentage;
+                            }
+                        }
+                        else 
+                        {
+                            var pozycja = zkOB.Pozycje.Dodaj(asortyment, product.Quantity, jma);
+                            pozycja.StawkaVat = DopasujStawkeVAT(product.Tax, Data.Purchaser.CountryCode);
+                            pozycja.Cena.BruttoPrzedRabatem = product.Price;
+                            pozycja.Cena.RabatProcent = product.DiscountPercentage;
+                        }
                     }
                     else
                     {

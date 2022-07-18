@@ -10,7 +10,7 @@ using System.Reflection;
 
 namespace Akces.Unity.Models
 {
-    public class AccountFunctionsManager 
+    public class AccountFunctionsManager
     {
         private readonly Dictionary<int, Script<bool>> matchAssormentScripts;
         private readonly Dictionary<int, Script<string>> concludeProductSymbolScripts;
@@ -51,7 +51,7 @@ namespace Akces.Unity.Models
             };
         }
 
-        private void InitScripts(Account account) 
+        private void InitScripts(Account account)
         {
             var scriptOptions = ScriptOptions.Default;
 
@@ -76,21 +76,28 @@ namespace Akces.Unity.Models
                 scriptOptions = scriptOptions.AddImports("System.Collections.Generic");
 
                 // Initialize script with custom interactive assembly loader
-                var matchAssormentScript = CSharpScript.Create<bool>(account.MatchAssormentScript, scriptOptions, typeof(MatchAssortmentParameters));
-                var concludeProductSymbolScript = CSharpScript.Create<string>(account.ConcludeProductSymbolScript, scriptOptions, typeof(ConcludeProductSymbolParameters));
-                var calculateOrderPositionQuantityScript = CSharpScript.Create<decimal>(account.CalculateOrderPositionQuantityScript, scriptOptions, typeof(CalculateOrderPositionQuantityParameters));
+
+                var accountFunctions = new List<AccountFunction>();
+
+                var matchAssormentFunction = accountFunctions.FirstOrDefault(x => x.AccountFunctionType.Name == "MatchAssormentFunction");
+                var concludeProductSymbolFunction = accountFunctions.FirstOrDefault(x => x.AccountFunctionType.Name == "ConcludeProductSymbolFunction");
+                var calculateOrderPositionQuantityFunction = accountFunctions.FirstOrDefault(x => x.AccountFunctionType.Name == "CalculateOrderPositionQuantityFunction");
+
+                var matchAssormentScript = CSharpScript.Create<bool>(matchAssormentFunction.Script, scriptOptions, typeof(MatchAssortmentParameters));
+                var concludeProductSymbolScript = CSharpScript.Create<string>(concludeProductSymbolFunction.Script, scriptOptions, typeof(ConcludeProductSymbolParameters));
+                var calculateOrderPositionQuantityScript = CSharpScript.Create<decimal>(calculateOrderPositionQuantityFunction.Script, scriptOptions, typeof(CalculateOrderPositionQuantityParameters));
 
                 matchAssormentScript.Compile();
                 concludeProductSymbolScript.Compile();
                 calculateOrderPositionQuantityScript.Compile();
 
-                if (!matchAssormentScripts.ContainsKey(account.Id)) 
+                if (!matchAssormentScripts.ContainsKey(account.Id))
                     matchAssormentScripts.Add(account.Id, matchAssormentScript);
 
-                if (!concludeProductSymbolScripts.ContainsKey(account.Id)) 
+                if (!concludeProductSymbolScripts.ContainsKey(account.Id))
                     concludeProductSymbolScripts.Add(account.Id, concludeProductSymbolScript);
 
-                if (!calculateOrderPositionQuantityScripts.ContainsKey(account.Id)) 
+                if (!calculateOrderPositionQuantityScripts.ContainsKey(account.Id))
                     calculateOrderPositionQuantityScripts.Add(account.Id, calculateOrderPositionQuantityScript);
             }
         }

@@ -32,6 +32,7 @@ namespace Akces.Unity.App.ViewModels
 
         public OperationsProgressViewModel(HostViewModel host) : base(host)
         {
+            Host.Window.Closed += (s, e) => cancellationTokenSource.Cancel();
             cancellationTokenSource = new CancellationTokenSource();
             CancelOperationsCommand = CreateCommand(() => cancellationTokenSource.Cancel());
         }

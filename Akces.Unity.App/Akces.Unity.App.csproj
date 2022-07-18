@@ -197,6 +197,7 @@
       <DependentUpon>ExtraWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="HarmonogramWorker.cs" />
+    <Compile Include="UnityTasks\DeleteTaskReportsTask.cs" />
     <Compile Include="UnityTasks\ImportOrdersTask.cs" />
     <Compile Include="UnityTasks\IUnityTask.cs" />
     <Compile Include="UnityTasks\UpdateProductsPricesTask.cs" />

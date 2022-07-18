@@ -1,4 +1,6 @@
 ﻿using Akces.Unity.Models.SaleChannels;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Akces.Unity.Models.SaleChannels.Baselinker
 {
@@ -25,6 +27,12 @@ namespace Akces.Unity.Models.SaleChannels.Baselinker
 
         public Product ToProduct()
         {
+            var attributes = 
+                string.IsNullOrWhiteSpace(this.attributes) ? new Dictionary<string, object>() : 
+                this.attributes.Split('|')
+                .Select(x => new { Key = x.Split(':')[0].Trim(), Value = (object)x.Split(':')[1].Trim() })
+                .ToDictionary(a => a.Key, a => a.Value);
+
             var product = new Product()
             {
                 Name = name,
@@ -32,7 +40,8 @@ namespace Akces.Unity.Models.SaleChannels.Baselinker
                 Quantity = quantity,
                 Tax = tax_rate.ToString(),
                 EAN = ean,
-                Symbol = sku
+                Symbol = sku,
+                Attributes = attributes
             };
 
             return product; 

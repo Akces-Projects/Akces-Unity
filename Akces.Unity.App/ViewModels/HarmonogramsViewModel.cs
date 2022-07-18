@@ -5,14 +5,30 @@ using Akces.Wpf.Models;
 using Akces.Wpf.Extensions;
 using Akces.Unity.Models;
 using Akces.Unity.DataAccess.Managers;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Akces.Unity.App.ViewModels
 {
     public class HarmonogramsViewModel : ControlViewModel
     {
-        private readonly HarmonogramsManager harmonogramsManager;
+        private readonly HarmonogramsManager harmonogramsManager; 
+        private List<Harmonogram> downloadedHarmonograms;
+        private ObservableCollection<Harmonogram> harmonogram;
 
-        public ObservableCollection<Harmonogram> Harmonograms { get; set; }
+        private string searchstring;
+        public string Searchstring
+        {
+            get { return searchstring; }
+            set
+            {
+                searchstring = value;
+                OnPropertyChanged();
+                OnSearchstringChanged();
+            }
+        }
+
+        public ObservableCollection<Harmonogram> Harmonograms { get => harmonogram; set { harmonogram = value; OnPropertyChanged(); } }
         public Harmonogram SelectedHarmonogram { get; set; }
         public ICommand CreateHarmonogramCommand { get; set; }
         public ICommand EditHarmonogramCommand { get; set; }
@@ -22,18 +38,16 @@ namespace Akces.Unity.App.ViewModels
         {
             (Host as MainViewModel).SidebarVisable = true;
             this.harmonogramsManager = new HarmonogramsManager();
-            Harmonograms = new ObservableCollection<Harmonogram>();
             CreateHarmonogramCommand = CreateCommand(CreateHarmonogram, (err) => Host.ShowError(err));
             EditHarmonogramCommand = CreateCommand(EditHarmonogram, (err) => Host.ShowError(err));
             DeleteHarmonogramCommand = CreateCommand(DeleteHarmonogram, (err) => Host.ShowError(err));
-
             LoadHarmonograms();
         }
 
         public void LoadHarmonograms()
         {
-            var harmonograms = harmonogramsManager.Get();
-            RefreshCollection(Harmonograms, harmonograms);
+            downloadedHarmonograms = harmonogramsManager.Get();
+            Harmonograms = new ObservableCollection<Harmonogram>(downloadedHarmonograms);
         }
         private void CreateHarmonogram()
         {
@@ -77,6 +91,23 @@ namespace Akces.Unity.App.ViewModels
             vm.Harmonogram = harmonogramBO;
             vm.LoadHarmonogramPositions();
             window.Show();
+        }
+        private void OnSearchstringChanged()
+        {
+            if (downloadedHarmonograms == null)
+                return;
+
+            List<Harmonogram> filteredHarmonograms = null;
+
+            var searchstring = Searchstring?.ToLower();
+            filteredHarmonograms = downloadedHarmonograms
+                .Where(x => string.IsNullOrEmpty(searchstring) || $"{x.Name}".ToLower().Contains(searchstring))
+                .ToList();
+
+            if (filteredHarmonograms == null)
+                return;
+
+            Harmonograms = new ObservableCollection<Harmonogram>(filteredHarmonograms.OrderBy(x => x.Name));
         }
     }
 }

@@ -17,8 +17,8 @@ namespace Akces.Unity.DataAccess
 
             try
             {
-                context.Database.EnsureCreated();
-                context.Database.Migrate();
+                //context.Database.EnsureCreated();
+               // context.Database.Migrate();
             }
             catch
             {
@@ -31,8 +31,10 @@ namespace Akces.Unity.DataAccess
         internal DbSet<Account> Accounts { get; set; }
         internal DbSet<Harmonogram> Harmonograms { get; set; }
         internal DbSet<TaskReport> OperationReports { get; set; }
+        //internal DbSet<TaskReport> TaskReports { get; set; }
         internal DbSet<UnityUser> UnityUsers { get; set; }
         internal DbSet<WorkerStatus> WorkerStatuses { get; set; }
+        //internal DbSet<AccountFunction> AccountFunctions { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -48,6 +50,8 @@ namespace Akces.Unity.DataAccess
             modelBuilder.Entity<HarmonogramPosition>().HasOne(x => x.Account).WithMany().IsRequired(false).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<TaskReport>().HasMany(x => x.Positions).WithOne().IsRequired(true).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<UnityUser>().HasMany(x => x.Authorisations).WithOne().IsRequired(true).OnDelete(DeleteBehavior.Cascade);
+            //modelBuilder.Entity<AccountFunction>().HasOne(x => x.AccountFunctionType).WithMany().IsRequired(true).OnDelete(DeleteBehavior.Restrict);
+            //modelBuilder.Entity<AccountFunction>().HasOne(x => x.Account).WithMany().IsRequired(true).OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Account>()
                 .HasDiscriminator<string>("account_type");

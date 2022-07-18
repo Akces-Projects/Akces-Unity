@@ -7,6 +7,8 @@ using Akces.Unity.Models;
 using Akces.Unity.DataAccess.Managers;
 using System.Collections.Generic;
 using System.Linq;
+using Akces.Unity.App.Operations;
+using System.Threading.Tasks;
 
 namespace Akces.Unity.App.ViewModels
 {
@@ -38,10 +40,8 @@ namespace Akces.Unity.App.ViewModels
             this.reportsManager = new TaskReportsManager();
             Reports = new ObservableCollection<TaskReport>();
             SelectedReports = new List<TaskReport>();
-
             ShowReportCommand = CreateCommand(ShowReport, (err) => Host.ShowError(err));
-            DeleteReportCommand = CreateCommand(DeleteReport, (err) => Host.ShowError(err));
-
+            DeleteReportCommand = CreateAsyncCommand(DeleteReportsAsync, (err) => Host.ShowError(err), null, true, "Usuwanie raportów...");
             LoadReports();
         }
 
@@ -62,15 +62,15 @@ namespace Akces.Unity.App.ViewModels
             vm.Report = report;
             window.Show();
         }
-        private void DeleteReport()
+        private async Task DeleteReportsAsync()
         {
             if (SelectedReports == null || !SelectedReports.Any())
                 return;
 
-            var reports = SelectedReports.ToArray();
+            var reports = SelectedReports.ToList();
 
             var result = MessageBox.Show(
-                $"Czy na pewno chcesz usunąć ({reports.Length}) raporty?",
+                $"Czy na pewno chcesz usunąć ({reports.Count}) raporty?",
                 $"Raporty",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Warning);
@@ -78,17 +78,17 @@ namespace Akces.Unity.App.ViewModels
             if (result == MessageBoxResult.No)
                 return;
 
-            foreach (var report in reports)
-            {
-                var reportBO = reportsManager.Find(report);
-                reportBO.Delete();
-                reportBO.Dispose();
-            }
+            var deleteTaskReportsTask = new DeleteTaskReportsTask(reports);
 
-            foreach (var report in reports)
-            {
-                Reports.Remove(report);
-            }
+            var window = Host.CreateWindow<ExtraWindow, MainViewModel>(700, 150);
+            var vm = window.GetHost().UpdateView<OperationsProgressViewModel>();
+            vm.Operation = deleteTaskReportsTask;
+            window.Title = $"Usuwanie raportów";
+            window.WindowStyle = WindowStyle.SingleBorderWindow;
+            window.ResizeMode = ResizeMode.NoResize;
+            window.Show();
+            await vm.RunOperationsAsync();
+            LoadReports();
         }
         private void OnSearchstringChanged()
         {

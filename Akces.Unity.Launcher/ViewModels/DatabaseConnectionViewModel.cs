@@ -4,7 +4,9 @@ using Akces.Wpf.Models;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Net;
 using System.Windows;
 using System.Windows.Input;
 
@@ -80,7 +82,7 @@ namespace Akces.Unity.Launcher.ViewModels
         }
         private void LaunchMainApp()
         {
-            var t = ServicesProvider.RemoveInstance<NexoDatabase>();
+            ServicesProvider.RemoveInstance<NexoDatabase>();
             ServicesProvider.AddSingleton(SelectedNexoDatabase);
             CheckNexoFilesLocation(SelectedNexoDatabase);
 

@@ -9,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using System;
 using Akces.Wpf.Extensions;
+using System.Collections.Generic;
 
 namespace Akces.Unity.App.ViewModels
 {
@@ -21,7 +22,22 @@ namespace Akces.Unity.App.ViewModels
         private int? currentWorkingPositionId;
         private bool isWorkerEnabled;
 
-        public ObservableCollection<HarmonogramPosition> Positions { get; set; } = new ObservableCollection<HarmonogramPosition>();
+        private List<HarmonogramPosition> downloadedHarmonogramPositions;
+        private ObservableCollection<HarmonogramPosition> harmonogramPositions;
+
+        private string searchstring;
+        public string Searchstring
+        {
+            get { return searchstring; }
+            set
+            {
+                searchstring = value;
+                OnPropertyChanged();
+                OnSearchstringChanged();
+            }
+        }
+
+        public ObservableCollection<HarmonogramPosition> HarmonogramPositions { get => harmonogramPositions; set { harmonogramPositions = value; OnPropertyChanged(); } }
         public HarmonogramPosition  SelectedPosition { get; set; }
         public int? CurrentWorkingPositionId { get => currentWorkingPositionId; set { currentWorkingPositionId = value; OnPropertyChanged(); } }
         public bool IsWorkerEnabled
@@ -62,8 +78,8 @@ namespace Akces.Unity.App.ViewModels
             if (ActiveHarmonogram == null)
                 return;
 
-            var activePositions = ActiveHarmonogram.Positions.Where(x => x.Active).ToList();
-            RefreshCollection(Positions, activePositions);
+            downloadedHarmonogramPositions = ActiveHarmonogram.Positions.Where(x => x.Active).ToList();
+            HarmonogramPositions = new ObservableCollection<HarmonogramPosition>(downloadedHarmonogramPositions);
         }
         private void StartWorker()
         {
@@ -101,7 +117,7 @@ namespace Akces.Unity.App.ViewModels
         {
             CurrentWorkingPositionId = null;
 
-            var position = Positions.FirstOrDefault(x => x.Id == harmonogramPosition.Id);
+            var position = HarmonogramPositions.FirstOrDefault(x => x.Id == harmonogramPosition.Id);
 
             if (position == null)
                 return;
@@ -109,7 +125,24 @@ namespace Akces.Unity.App.ViewModels
             position.LastLaunchTime = harmonogramPosition.LastLaunchTime;
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
-                RefreshCollection(Positions)));
+                RefreshCollection(HarmonogramPositions)));
+        }
+        private void OnSearchstringChanged()
+        {
+            if (downloadedHarmonogramPositions == null)
+                return;
+
+            List<HarmonogramPosition> filteredHarmonogramPositions = null;
+
+            var searchstring = Searchstring?.ToLower();
+            filteredHarmonogramPositions = downloadedHarmonogramPositions
+                .Where(x => string.IsNullOrEmpty(searchstring) || $"{x.Account}{x.HarmonogramOperation}{x.Description}".ToLower().Contains(searchstring))
+                .ToList();
+
+            if (filteredHarmonogramPositions == null)
+                return;
+
+            HarmonogramPositions = new ObservableCollection<HarmonogramPosition>(filteredHarmonogramPositions.OrderBy(x => x.StartTime));
         }
     }
 }

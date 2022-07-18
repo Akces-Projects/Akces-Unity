@@ -108,12 +108,7 @@ namespace Akces.Unity.DataAccess.Services
 
             using (var httpClient = new HttpClient())
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, $"{olxConfiguration.BaseAddress}api/partner/adverts?offset={offset}&limit={pageSize}");
-
-                request.Headers.TryAddWithoutValidation("Authorization", "Bearer " + olxConfiguration.AccessToken);
-                request.Headers.TryAddWithoutValidation("Content-Type", "application/json");
-                request.Headers.TryAddWithoutValidation("Version", "2.0");
-
+                var request = BuildGetProductsRequest(offset, pageSize);
                 var response = await httpClient.SendAsync(request);
 
                 if (!response.IsSuccessStatusCode)
@@ -161,6 +156,14 @@ namespace Akces.Unity.DataAccess.Services
             olxProduct.price.currency = currency;
             olxProduct.salary = olxProduct.salary == null ? new string[0] : olxProduct.salary;
 
+            if (olxProduct.attributes != null) 
+            {
+                foreach (var attribute in olxProduct.attributes)
+                {
+                    attribute.values = attribute.values == null ? new string[0] : attribute.values;
+                }
+            }
+
             using (var httpClient = new HttpClient()) 
             {
                 var request = new HttpRequestMessage(HttpMethod.Put, $"{olxConfiguration.BaseAddress}api/partner/adverts/{id}");
@@ -185,7 +188,24 @@ namespace Akces.Unity.DataAccess.Services
         }
         public async Task<bool> ValidateConnectionAsync()
         {
-            return await RefreshTokenAsync();
+            using (var httpClient = new HttpClient())
+            {
+                var request = BuildGetProductsRequest(0, 1);
+                var response = await httpClient.SendAsync(request);
+
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    await RefreshTokenAsync();
+
+                var repeatedRequest = BuildGetProductsRequest(0, 1);
+                var repeatedResponse = await httpClient.SendAsync(repeatedRequest);
+                var content = await response.Content.ReadAsStringAsync();
+
+                if (!repeatedResponse.IsSuccessStatusCode)
+                    throw new Exception("Nie udało się pobrać produktów. Sprawdź poprawność połączenia"
+                        + Environment.NewLine + Environment.NewLine + content);
+
+                return true;
+            }
         }
         public void SaveConfiguration()
         {
@@ -203,6 +223,17 @@ namespace Akces.Unity.DataAccess.Services
             listener?.Stop();
             listener?.Close();
             listener = null;
+        }
+
+        private HttpRequestMessage BuildGetProductsRequest(int offset, int pageSize) 
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{olxConfiguration.BaseAddress}api/partner/adverts?offset={offset}&limit={pageSize}");
+
+            request.Headers.TryAddWithoutValidation("Authorization", "Bearer " + olxConfiguration.AccessToken);
+            request.Headers.TryAddWithoutValidation("Content-Type", "application/json");
+            request.Headers.TryAddWithoutValidation("Version", "2.0");
+
+            return request;
         }
 
         private async Task<bool> RefreshTokenAsync() 

@@ -10,8 +10,7 @@
         xmlns:viewmodels="clr-namespace:Akces.Unity.App.ViewModels" 
         d:DataContext="{d:DesignInstance Type=viewmodels:MainViewModel}"
         mc:Ignorable="d"
-        Height="{Binding SystemParameters.PrimaryScreenHeight}" 
-        Width="{Binding SystemParameters.PrimaryScreenWidth}"
+        
         Title="{x:Static local:App.AppName}"
         Icon="Assets/akces_icon.ico" 
         WindowStyle="SingleBorderWindow"

@@ -1,4 +1,6 @@
 ﻿
+using System.Collections.Generic;
+
 namespace Akces.Unity.Models.SaleChannels
 {
     public class Product
@@ -15,5 +17,6 @@ namespace Akces.Unity.Models.SaleChannels
         public string Currency { get; set; }
         public string Unit { get; set; }
         public decimal DiscountPercentage { get; set; }
+        public Dictionary<string, object> Attributes { get; set; }
     }
 }

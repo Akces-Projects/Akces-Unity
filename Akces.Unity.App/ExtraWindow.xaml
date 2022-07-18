@@ -6,7 +6,6 @@
         xmlns:controls="clr-namespace:Akces.Wpf.Controls;assembly=Akces.Wpf"
         xmlns:style="clr-namespace:Akces.Wpf.Extensions.Style;assembly=Akces.Wpf"
         xmlns:vm="clr-namespace:Akces.Unity.App.ViewModels"
-        xmlns:local="clr-namespace:Akces.Unity.App"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
         Height="450" Width="800">

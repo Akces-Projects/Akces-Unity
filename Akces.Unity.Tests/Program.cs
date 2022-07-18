@@ -14,7 +14,10 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
+using System.IO.Compression;
+using System.IO;
 
 namespace Akces.Unity.Tests
 {
@@ -34,34 +37,18 @@ namespace Akces.Unity.Tests
     }
     internal class Program
     {
-        
-
         static void Main(string[] args)
         {
-            var acc = new OlxAccount();
-
-
             Test().Wait();
         }
-
         static async Task Test()
         {
-            var script = CSharpScript.Create<int>("ValA.Value + ValB.Value", globalsType: typeof(Vals));
-            script.Compile();
-
-            var t = await script.RunAsync(new Vals() { ValA = new A { Value = 5 }, ValB = new B { Value = 10 } });
-            var a = t.ReturnValue;
-
-            for (int i = 0; i < 10; i++)
+            using (var client = new HttpClient())
             {
-                Stopwatch stopwatch = Stopwatch.StartNew();
-                await script.RunAsync();
-                stopwatch.Stop();
-                Console.WriteLine("TEST:" + stopwatch.ElapsedMilliseconds);
-                stopwatch.Restart();
-                Console.WriteLine("TEST 2");
-                stopwatch.Stop();
-                Console.WriteLine("TEST 2:" + stopwatch.ElapsedMilliseconds);
+                var request = new HttpRequestMessage(HttpMethod.Get, "https://api.github.com/repos/Akces-Projects/Akces-Unity/releases");
+                request.Headers.TryAddWithoutValidation("User-Agent", "Updater");
+                var response = await client.SendAsync(request);
+                var content = await response.Content.ReadAsStringAsync();
             }
         }
 

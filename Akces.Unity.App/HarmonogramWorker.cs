@@ -30,6 +30,8 @@ namespace Akces.Unity.App
 
         public HarmonogramWorker()
         {
+            OnOperationStarted = new OnTaskStarted((p) => { });
+            OnOperationFinished = new OnTaskFinished((r,p) => { });
             accountsManager = new AccountsManager();
             workerStatusesManager = new WorkerStatusesManager();
             harmonogramsManager = new HarmonogramsManager();

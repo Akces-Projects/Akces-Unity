@@ -4,14 +4,30 @@ using Akces.Wpf.Models;
 using Akces.Wpf.Extensions;
 using Akces.Unity.Models;
 using Akces.Unity.DataAccess.Managers;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Akces.Unity.App.ViewModels
 {
     public class UnityUsersViewModel : ControlViewModel
     {
         private readonly UnityUsersManager unityUserManager;
+        private readonly List<UnityUser> downloadedUnityUsers;
+        private ObservableCollection<UnityUser> harmonogramUnityUsers;
 
-        public ObservableCollection<UnityUser> UnityUsers { get; set; }
+        private string searchstring;
+        public string Searchstring
+        {
+            get { return searchstring; }
+            set
+            {
+                searchstring = value;
+                OnPropertyChanged();
+                OnSearchstringChanged();
+            }
+        }
+
+        public ObservableCollection<UnityUser> UnityUsers { get => harmonogramUnityUsers; set { harmonogramUnityUsers = value; OnPropertyChanged(); } }
         public UnityUser SelectedUnityUser { get; set; }
         public ICommand EditUnityUserCommand { get; set; }
         public ICommand ShowUnityUserCommand { get; set; }
@@ -20,18 +36,12 @@ namespace Akces.Unity.App.ViewModels
         {
             (Host as MainViewModel).SidebarVisable = true;
             unityUserManager = new UnityUsersManager();
-            UnityUsers = new ObservableCollection<UnityUser>();
+            downloadedUnityUsers = unityUserManager.Get();
+            UnityUsers = new ObservableCollection<UnityUser>(downloadedUnityUsers);
             EditUnityUserCommand = CreateCommand(() => OpenEditor(editMode: true), (err) => Host.ShowError(err));
             ShowUnityUserCommand = CreateCommand(() => OpenEditor(editMode: false), (err) => Host.ShowError(err));
-
-            LoadUnityUsers();
         }
 
-        public void LoadUnityUsers()
-        {
-            var unityUsers = unityUserManager.Get();
-            RefreshCollection(UnityUsers, unityUsers);
-        }
         private void OpenEditor(bool editMode)
         {
             if (SelectedUnityUser == null)
@@ -44,6 +54,23 @@ namespace Akces.Unity.App.ViewModels
             vm.UnityUser = unityUserBO;
             vm.EditMode = editMode;
             window.Show();
+        }
+        private void OnSearchstringChanged()
+        {
+            if (downloadedUnityUsers == null)
+                return;
+
+            List<UnityUser> filteredUnityUsers = null;
+
+            var searchstring = Searchstring?.ToLower();
+            filteredUnityUsers = downloadedUnityUsers
+                .Where(x => string.IsNullOrEmpty(searchstring) || $"{x.Name}{x.Login}".ToLower().Contains(searchstring))
+                .ToList();
+
+            if (filteredUnityUsers == null)
+                return;
+
+            UnityUsers = new ObservableCollection<UnityUser>(filteredUnityUsers.OrderBy(x => x.Name));
         }
     }
 }

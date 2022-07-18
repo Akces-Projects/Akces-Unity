@@ -37,18 +37,19 @@ namespace Akces.Unity.App.Views
             searchMethodContextMenu.IsOpen = !searchMethodContextMenu.IsOpen;
         }
 
-        private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-            var searchMethod = (SearchMethod)(sender as Button).DataContext;
-            var vm = DataContext as ProductsPricesUpdateViewModel;
-            vm.SearchMethod = searchMethod;
-            searchMethodContextMenu.IsOpen = !searchMethodContextMenu.IsOpen;
-        }
-
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var vm = DataContext as ProductsPricesUpdateViewModel;
             vm?.LoadPricesCommand.Execute(null);
+        }
+
+        private void SearchMethodContextMenu_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            var contextMenu = sender as ContextMenu;
+            var menuItem = e.OriginalSource as MenuItem;
+            var searchMethod = (SearchMethod)menuItem.DataContext;
+            var vm = DataContext as ProductsPricesUpdateViewModel;
+            vm.SearchMethod = searchMethod;
         }
     }
 }

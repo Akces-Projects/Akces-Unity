@@ -169,11 +169,11 @@ namespace Akces.Unity.App.ViewModels
                         Price = x.CurrentPrice
                     }).ToList();
 
-                var updateProductPricesOperation = new UpdateProductsPricesTask(selectedAccount, productsToModify);
+                var updateProductPricesTask = new UpdateProductsPricesTask(selectedAccount, productsToModify);
 
                 var window = Host.CreateWindow<ExtraWindow, MainViewModel>(500, 120);
                 var vm = window.GetHost().UpdateView<OperationsProgressViewModel>();
-                vm.Operation = updateProductPricesOperation;
+                vm.Operation = updateProductPricesTask;
                 window.Title = $"Modyfikacja cen - {selectedAccount.Name} ({selectedAccount.AccountType})";
                 window.WindowStyle = WindowStyle.None;
                 window.Show();
