@@ -13,6 +13,7 @@ using System.IO;
 using System.Windows;
 using System.Net;
 using System.IO.Compression;
+using Akces.Wpf.Extensions;
 
 namespace Akces.Unity.Launcher.ViewModels
 {
@@ -56,16 +57,13 @@ namespace Akces.Unity.Launcher.ViewModels
 
         private async Task UpdateAppAsync() 
         {
-            var versionFilePath = Path.Combine(App.MainAppPath, "Version.txt");
+            var appUpdater = new AppUpdater();
+            var isCurrentVersion = await appUpdater.IsCurrentVersionAsync();
 
-            if (!File.Exists(versionFilePath))
-                File.WriteAllText(versionFilePath, "");
-
-            var newestVersion = await GetNewestVersionAsync();
-            var currentVersionNumber = File.ReadAllText(versionFilePath);
-
-            if (newestVersion.tag_name == currentVersionNumber)
+            if (isCurrentVersion) 
                 return;
+
+            var newestVersion = await appUpdater.GetNewestVersionAsync();
 
             var result = MessageBox.Show(
                 $"Istnieje nowa wersja aplikacji {newestVersion.tag_name}" + Environment.NewLine + Environment.NewLine +
@@ -78,37 +76,15 @@ namespace Akces.Unity.Launcher.ViewModels
             if (result == MessageBoxResult.No)
                 return;
 
-            Host.IsBusy = true;
-
-            using (var client = new WebClient())
-            {
-                var asset = newestVersion.assets.FirstOrDefault(x => x.content_type == "application/x-zip-compressed");
-
-                if (asset?.browser_download_url == null)
-                    return;
-
-                var fileName = asset.name;
-                client.DownloadFile(new Uri($"https://github.com/{App.GitHubAuthor}/{App.GitHubRepository}/releases/download/{newestVersion.tag_name}/{fileName}"), fileName);
-                Directory.Delete(App.MainAppPath, true);
-                ZipFile.ExtractToDirectory(fileName, App.MainAppPath);
-                File.WriteAllText(versionFilePath, newestVersion.tag_name);
-                File.Delete(fileName);
-            }
-
-            Host.IsBusy = false;
-        }
-
-        private async Task<GitHubVersion> GetNewestVersionAsync() 
-        {
-            using (var client = new HttpClient())
-            {
-                var request = new HttpRequestMessage(HttpMethod.Get, $"https://api.github.com/repos/{App.GitHubAuthor}/{App.GitHubRepository}/releases");
-                request.Headers.TryAddWithoutValidation("User-Agent", "Updater");
-                var response = await client.SendAsync(request);
-                var versions = await response.Content.ReadFromJsonAsync<List<GitHubVersion>>();
-                var newestVersion = versions.OrderBy(x => x.published_at).LastOrDefault();
-                return newestVersion;
-            }
+            var window = Host.CreateWindow<ExtraWindow, MainViewModel>(550, 150);
+            var vm = window.GetHost().UpdateView<OperationsProgressViewModel>();
+            vm.AppUpdater = appUpdater;
+            window.Title = $"Aktualizacja";
+            window.WindowStyle = WindowStyle.SingleBorderWindow;
+            window.ResizeMode = ResizeMode.NoResize;
+            window.Show();
+            await vm.RunOperationsAsync();
+            Host.ShowInfo("Aktualizacja zakończona");
         }
     }
 }

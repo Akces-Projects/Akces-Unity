@@ -55,7 +55,7 @@
             <TextBlock Style="{StaticResource mainText}" VerticalAlignment="Bottom" Text="Konfiguracja"/>
             <Button Click="Button_Click" Content="Konta" Style="{StaticResource mainButton}" Command="{Binding GoToAccountsCommand}"/>
             <Button Click="Button_Click" Content="Użytkownicy" Style="{StaticResource mainButton}" Command="{Binding GoToUnityUsersCommand}"/>
-           
+            <Button Click="Button_Click" Content="Funkcje własne" Style="{StaticResource mainButton}" Command="{Binding GoToAccountFunctionsCommand}"/>           
 
         </StackPanel>
         

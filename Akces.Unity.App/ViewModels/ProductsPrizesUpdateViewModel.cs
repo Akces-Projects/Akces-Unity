@@ -107,7 +107,7 @@ namespace Akces.Unity.App.ViewModels
             Products = new ObservableCollection<ProductAssortmentModel>();
             downloadedProducts = new List<ProductAssortmentModel>();
             SelectedPriceList = PriceLists.FirstOrDefault();
-            LoadProductsCommand = CreateAsyncCommand(LoadProductsAsync, (err) => Host.ShowError(err), null, true, "Ładowanie produktów...");
+            LoadProductsCommand = CreateAsyncCommand(LoadProductsAsync, (err) => Host.ShowError(err), null, true, "Ładowanie cen...");
             ModifyPricesCommand = CreateAsyncCommand(ModifyPricesAsync, (err) => Host.ShowError(err), null, true, "Aktualizacja cen produktów...");
             OpenModificationWindowCommand = CreateCommand(OpenModificationWindow, (err) => Host.ShowError(err));
             SearchMethods = new ObservableCollection<SearchMethod>(Enum.GetValues(typeof(SearchMethod)).Cast<SearchMethod>());
@@ -121,14 +121,13 @@ namespace Akces.Unity.App.ViewModels
 
         private async Task LoadProductsAsync()
         {
-            var assortments = await nexoAssortmentManager.GetAssortmentsAsync(SelectedPriceList);
             downloadedProducts.Clear();
 
             var selectedAccounts = Accounts.Where(x => x.Selected).Select(x => x.Item);
 
             foreach (var selectedAccount in selectedAccounts)
             {
-                var saleChannelService = selectedAccount.CreateService();
+                var saleChannelService = selectedAccount.CreateMainService();
                 await saleChannelService.ValidateConnectionAsync();
                 var productsContainer = await saleChannelService.GetProductsAsync(all: true);
                 CurrentPage = productsContainer.PageIndex + 1;
@@ -136,14 +135,14 @@ namespace Akces.Unity.App.ViewModels
 
                 foreach (var product in productsContainer.Products)
                 {
-                    var correctSymbol = product.Symbol == null ? "" : new string(product.Symbol.Where(c => char.IsDigit(c)).Take(4).ToArray());
-                    var assortment = assortments.FirstOrDefault(x => x.Symbol == correctSymbol || x.Name == product.Name || x.Ean == product.EAN);
-                    var model = new ProductAssortmentModel(product, assortment, selectedAccount.Name);
+                    var model = new ProductAssortmentModel(product, null, selectedAccount);
                     downloadedProducts.Add(model);
                 }
             }
 
-            Products = new ObservableCollection<ProductAssortmentModel>(downloadedProducts.OrderBy(x => x.SaleChannelSymbol));
+            Products = new ObservableCollection<ProductAssortmentModel>(downloadedProducts.OrderBy(x => x.Product.Symbol));
+
+            await LoadPricesAsync();
         }
         private async Task ModifyPricesAsync()
         {
@@ -156,16 +155,16 @@ namespace Akces.Unity.App.ViewModels
 
             foreach (var selectedAccount in selectedAccounts)
             {
-                var saleChannelService = selectedAccount.CreateService();
+                var saleChannelService = selectedAccount.CreateMainService();
 
                 var productsToModify = Products
-                    .Where(x => x.Selected && x.SourceName == selectedAccount.Name)
+                    .Where(x => x.Selected && x.Account.Id == selectedAccount.Id)
                     .Select(x => new Product()
                     {
-                        Id = x.SaleChannelId,
-                        Name = x.SaleChannelName,
-                        Currency = x.SaleChannelCurrency,
-                        OriginalPrice = x.OriginalPrice,
+                        Id = x.Product.Id,
+                        Name = x.Product.Name,
+                        Currency = x.Product.Currency,
+                        OriginalPrice = x.Product.OriginalPrice,
                         Price = x.CurrentPrice
                     }).ToList();
 
@@ -209,19 +208,19 @@ namespace Akces.Unity.App.ViewModels
                     filteredProducts = downloadedProducts.Where(x => string.IsNullOrEmpty(searchstring) || x.FullName.Contains(searchstring)).ToList();
                     break;
                 case SearchMethod.Nazwa:
-                    filteredProducts = downloadedProducts.Where(x => string.IsNullOrEmpty(Searchstring) || x.SaleChannelName.Contains(Searchstring)).ToList();
+                    filteredProducts = downloadedProducts.Where(x => string.IsNullOrEmpty(Searchstring) || x.Product.Name.Contains(Searchstring)).ToList();
                     break;
                 case SearchMethod.EAN:
-                    filteredProducts = downloadedProducts.Where(x => string.IsNullOrEmpty(Searchstring) || x.SaleChannelEan.Contains(Searchstring)).ToList();
+                    filteredProducts = downloadedProducts.Where(x => string.IsNullOrEmpty(Searchstring) || x.Product.EAN.Contains(Searchstring)).ToList();
                     break;
                 case SearchMethod.Id:
-                    filteredProducts = downloadedProducts.Where(x => string.IsNullOrEmpty(Searchstring) || x.SaleChannelId.Contains(Searchstring)).ToList();
+                    filteredProducts = downloadedProducts.Where(x => string.IsNullOrEmpty(Searchstring) || x.Product.Id.Contains(Searchstring)).ToList();
                     break;
                 case SearchMethod.Symbol:
-                    filteredProducts = downloadedProducts.Where(x => string.IsNullOrEmpty(Searchstring) || x.SaleChannelSymbol.Contains(Searchstring)).ToList();
+                    filteredProducts = downloadedProducts.Where(x => string.IsNullOrEmpty(Searchstring) || x.Product.Symbol.Contains(Searchstring)).ToList();
                     break;
                 case SearchMethod.Konto:
-                    filteredProducts = downloadedProducts.Where(x => string.IsNullOrEmpty(Searchstring) || x.SourceName.Contains(Searchstring)).ToList();
+                    filteredProducts = downloadedProducts.Where(x => string.IsNullOrEmpty(Searchstring) || x.Account.Name.Contains(Searchstring)).ToList();
                     break;
                 default:
                     break;
@@ -230,37 +229,26 @@ namespace Akces.Unity.App.ViewModels
             if (filteredProducts == null)
                 return;
 
-            Products = new ObservableCollection<ProductAssortmentModel>(filteredProducts.OrderBy(x => x.SaleChannelSymbol));
+            Products = new ObservableCollection<ProductAssortmentModel>(filteredProducts.OrderBy(x => x.Product.Symbol));
         }
         private async Task LoadPricesAsync()
         {
             if (downloadedProducts.Count == 0)
                 return;
 
-            var assortments = await nexoAssortmentManager.GetAssortmentsAsync(SelectedPriceList);
+            var assortments = await nexoAssortmentManager.GetAssortmentsAsync(SelectedPriceList);           
 
-            if (assortments == null)
-                return;
-
-            foreach (var product in Products)
+            Parallel.ForEach(Products, (model) =>
             {
-                string correctSymbol;
-
-                if (product.SaleChannelSymbol == null) 
+                try
                 {
-                    correctSymbol = "";
+                    var assortment = assortments.FirstOrDefault(x => x.Symbol == model.Product.Symbol || x.Ean == model.Product.EAN);
+                    model.Assortment = assortment;
                 }
-                else 
+                catch
                 {
-                    var countDigits = product.SaleChannelSymbol.Count(c => char.IsDigit(c));
-                    correctSymbol = new string(product.SaleChannelSymbol.Where(c => char.IsDigit(c)).Take(countDigits < 4 ? countDigits : 4).ToArray());
                 }
-
-                var assortment = assortments.FirstOrDefault(x => x.Symbol == correctSymbol || x.Name == product.SaleChannelName || x.Ean == product.SaleChannelEan);
-
-                product.NexoPrice = assortment?.Price;
-                product.NexoRegistrationPrice = assortment?.RegistrationPrice;
-            }
+            });
         }
     }
 
@@ -274,43 +262,27 @@ namespace Akces.Unity.App.ViewModels
     {
         private bool selected;
         private decimal currentPrice;
-        private decimal? nexoPrice;
-        private decimal? nexoRegistrationPrice;
+        private Assortment assortment;
 
         public bool Selected { get => selected; set { selected = value; OnProperyChanged(); } }
         public decimal CurrentPrice { get => currentPrice; set { currentPrice = Math.Round(value, 2, MidpointRounding.AwayFromZero); OnProperyChanged(); } }
-        public decimal OriginalPrice { get; set; }
-        public decimal? NexoPrice { get => nexoPrice; set { nexoPrice = value; OnProperyChanged(); } }
-        public decimal? NexoRegistrationPrice { get => nexoRegistrationPrice; set { nexoRegistrationPrice = value; OnProperyChanged(); } }
-        public string SaleChannelId { get; set; }
-        public string SaleChannelName { get; set; }
-        public string SaleChannelSymbol { get; set; }
-        public string SaleChannelEan { get; set; }
-        public string SaleChannelQuantity { get; set; }
-        public string SaleChannelPrice { get; set; }
-        public string SaleChannelCurrency { get; set; }
-        public string SourceName { get; private set; }
+        public decimal? NexoPrice { get => Assortment?.Price; }
+        public decimal? NexoRegistrationPrice { get => Assortment?.RegistrationPrice; }
         public string FullName { get; private set; }
 
+        public Product Product { get; set; }
+        public Assortment Assortment { get => assortment; set { assortment = value; OnProperyChanged(nameof(NexoPrice)); OnProperyChanged(nameof(NexoRegistrationPrice)); } }
+        public Account Account { get; set; }
 
-        public ProductAssortmentModel(Product product, Assortment assortment, string sourceName)
+
+        public ProductAssortmentModel(Product product, Assortment assortment, Account account)
         {
-            SaleChannelId = product.Id;
-            SaleChannelName = product.Name;
-            SaleChannelSymbol = product.Symbol;
-            SaleChannelEan = product.EAN;
-            SaleChannelPrice = product.Price.ToString("F2");
-            SaleChannelQuantity = product.Quantity.ToString("F2");
-            SaleChannelCurrency = product.Currency;
-            OriginalPrice = product.Price;
             CurrentPrice = product.Price;
-            SourceName = sourceName;
+            Assortment = assortment;
+            Account = account;
+            Product = product;
 
-            NexoPrice = assortment?.Price;
-            NexoRegistrationPrice = assortment?.RegistrationPrice;
-
-            FullName = ("" + sourceName + product.Id + product.Name + product.Symbol + product.EAN).ToLower();
-            SourceName = sourceName;
+            FullName = ("" + account.Name + product.Id + product.Name + product.Symbol + product.EAN).ToLower();
         }
 
 

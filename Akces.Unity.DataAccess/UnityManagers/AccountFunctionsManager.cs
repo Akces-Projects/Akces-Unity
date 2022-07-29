@@ -1,44 +1,118 @@
-﻿using Akces.Unity.Models.Nexo;
-using Akces.Unity.Models.SaleChannels;
-using Microsoft.CodeAnalysis.CSharp.Scripting;
-using Microsoft.CodeAnalysis.Scripting;
-using Microsoft.CodeAnalysis.Scripting.Hosting;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Reflection;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.CodeAnalysis.Scripting;
+using Microsoft.CodeAnalysis.Scripting.Hosting;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
+using Akces.Unity.Models;
+using Akces.Unity.Models.Nexo;
+using Akces.Unity.Models.SaleChannels;
+using Akces.Unity.DataAccess.Managers.BusinessObjects;
 
-namespace Akces.Unity.Models
+namespace Akces.Unity.DataAccess.Managers
 {
     public class AccountFunctionsManager
     {
-        private readonly Dictionary<int, Script<bool>> matchAssormentScripts;
-        private readonly Dictionary<int, Script<string>> concludeProductSymbolScripts;
-        private readonly Dictionary<int, Script<decimal>> calculateOrderPositionQuantityScripts;
+        internal static readonly Dictionary<int, Dictionary<Guid, Script<object>>> compiledScripts;
+         
+        internal static Script<object> defaultMatchAssormentScript;
+        internal static Script<object> defaultConcludeProductSymbolScript;
+        internal static Script<object> defaultCalculateOrderPositionQuantityScript;
 
-        public AccountFunctionsManager()
+        static AccountFunctionsManager()
         {
-            matchAssormentScripts = new Dictionary<int, Script<bool>>();
-            concludeProductSymbolScripts = new Dictionary<int, Script<string>>();
-            calculateOrderPositionQuantityScripts = new Dictionary<int, Script<decimal>>();
+            compiledScripts = new Dictionary<int, Dictionary<Guid, Script<object>>>();
         }
 
+        public void Initialize() 
+        {
+            defaultMatchAssormentScript = InitScript(AccountFunctionType.MatchAssormentFunction.DefaultScript, typeof(MatchAssortmentParameters));
+            defaultConcludeProductSymbolScript = InitScript(AccountFunctionType.ConcludeProductSymbolFunction.DefaultScript, typeof(ConcludeProductSymbolParameters));
+            defaultCalculateOrderPositionQuantityScript = InitScript(AccountFunctionType.CalculateOrderPositionQuantityFunction.DefaultScript, typeof(CalculateOrderPositionQuantityParameters));
+
+            foreach (var accountFunction in Get())
+            {
+                Script<object> script = null;
+
+                if (accountFunction.AccountFunctionType.Id == AccountFunctionType.MatchAssormentFunction.Id)
+                    script = InitScript(accountFunction.Script, typeof(MatchAssortmentParameters));
+                else if (accountFunction.AccountFunctionType.Id == AccountFunctionType.ConcludeProductSymbolFunction.Id)
+                    script = InitScript(accountFunction.Script, typeof(ConcludeProductSymbolParameters));
+                else if (accountFunction.AccountFunctionType.Id == AccountFunctionType.CalculateOrderPositionQuantityFunction.Id)
+                    script = InitScript(accountFunction.Script, typeof(CalculateOrderPositionQuantityParameters));
+
+                if (!compiledScripts.ContainsKey(accountFunction.Account.Id)) 
+                    compiledScripts.Add(accountFunction.Account.Id, new Dictionary<Guid, Script<object>>());
+
+                var dict = compiledScripts[accountFunction.Account.Id];
+                dict.Add(accountFunction.AccountFunctionType.Id, script);
+            }
+        }
+        public List<AccountFunction> Get()
+        {
+            using (var unityDbContext = new UnityDbContext())
+            {
+                var accountFunctions = unityDbContext.AccountFunctions
+                    .Include(unityDbContext.GetIncludePaths(typeof(AccountFunction)))
+                    .AsNoTracking()
+                    .ToList();
+
+                return accountFunctions;
+            }
+        }
+        public IAccountFunction Create()
+        {
+            var data = new AccountFunction();
+            var bo = new AccountFunctionBO(data);
+            return bo;
+        }
+        public IAccountFunction Find(AccountFunction entity)
+        {
+            var unityDbContext = new UnityDbContext();
+
+            var accountFunction = unityDbContext.AccountFunctions
+                .Include(unityDbContext.GetIncludePaths(typeof(AccountFunction)))
+                .FirstOrDefault(x => x.Id == entity.Id);
+
+            var bo = new AccountFunctionBO(accountFunction, unityDbContext);
+            return bo;
+        }
+
+        [Obsolete]
         public Func<Product, Assortment, bool> GetMatchAssormentMethod(int accountId)
         {
             return (p, a) =>
             {
                 var parameters = new MatchAssortmentParameters() { Assortment = a, Product = p };
-                var scriptState = matchAssormentScripts[accountId].RunAsync(globals: parameters).Result;
-                return scriptState.ReturnValue;
+                Script<object> script = null;
+                var functionTypeId = AccountFunctionType.MatchAssormentFunction.Id;
+
+                if (!compiledScripts.ContainsKey(accountId) || !compiledScripts[accountId].ContainsKey(AccountFunctionType.MatchAssormentFunction.Id))
+                    script = defaultMatchAssormentScript;
+                else
+                    script = compiledScripts[accountId][functionTypeId];
+
+                var scriptState = script.RunAsync(globals: parameters).Result;
+                return (bool)scriptState.ReturnValue;
             };
         }
-        public Func<Product, string> GetConcludeProductSymbolScriptMethod(int accountId)
+        public Func<Product, string> GetConcludeProductSymbolMethod(int accountId)
         {
             return (p) =>
             {
                 var parameters = new ConcludeProductSymbolParameters() { Product = p };
-                var scriptState = concludeProductSymbolScripts[accountId].RunAsync(globals: parameters).Result;
-                return scriptState.ReturnValue;
+                Script<object> script = null;
+                var functionTypeId = AccountFunctionType.ConcludeProductSymbolFunction.Id;
+
+                if (!compiledScripts.ContainsKey(accountId) || !compiledScripts[accountId].ContainsKey(AccountFunctionType.ConcludeProductSymbolFunction.Id))
+                    script = defaultConcludeProductSymbolScript;
+                else
+                    script = compiledScripts[accountId][functionTypeId];
+
+                var scriptState = script.RunAsync(globals: parameters).Result;
+                return (string)scriptState.ReturnValue;
             };
         }
         public Func<Product, decimal> GetCalculateOrderPositionQuantityScriptMethod(int accountId)
@@ -46,74 +120,82 @@ namespace Akces.Unity.Models
             return (p) =>
             {
                 var parameters = new CalculateOrderPositionQuantityParameters() { Product = p };
-                var scriptState = calculateOrderPositionQuantityScripts[accountId].RunAsync(globals: parameters).Result;
-                return scriptState.ReturnValue;
+                Script<object> script = null;
+                var functionTypeId = AccountFunctionType.CalculateOrderPositionQuantityFunction.Id;
+
+                if (!compiledScripts.ContainsKey(accountId) || !compiledScripts[accountId].ContainsKey(AccountFunctionType.CalculateOrderPositionQuantityFunction.Id))
+                    script = defaultCalculateOrderPositionQuantityScript;
+                else
+                    script = compiledScripts[accountId][functionTypeId];
+
+                var scriptState = script.RunAsync(globals: parameters).Result;
+                return (decimal)scriptState.ReturnValue;
             };
         }
-
-        private void InitScripts(Account account)
+        internal Script<object> InitScript(AccountFunction accountFunction)
         {
-            var scriptOptions = ScriptOptions.Default;
+            Type globalsType = null;
 
-            // Add reference to mscorlib
+            if (accountFunction.AccountFunctionType.Id == AccountFunctionType.MatchAssormentFunction.Id)
+                globalsType = typeof(MatchAssortmentParameters);
+            else if (accountFunction.AccountFunctionType.Id == AccountFunctionType.ConcludeProductSymbolFunction.Id) 
+                globalsType = typeof(ConcludeProductSymbolParameters);
+            else if (accountFunction.AccountFunctionType.Id == AccountFunctionType.CalculateOrderPositionQuantityFunction.Id) 
+                globalsType = typeof(CalculateOrderPositionQuantityParameters);
+
+            var scriptOptions = ScriptOptions.Default;
             var mscorlib = typeof(object).GetTypeInfo().Assembly;
             var systemCore = typeof(Enumerable).GetTypeInfo().Assembly;
-
             var references = new[] { mscorlib, systemCore };
             scriptOptions = scriptOptions.AddReferences(references);
 
             using (var interactiveLoader = new InteractiveAssemblyLoader())
             {
                 foreach (var reference in references)
-                {
                     interactiveLoader.RegisterDependency(reference);
-                }
 
-                // Add namespaces
                 scriptOptions = scriptOptions.AddImports("System");
                 scriptOptions = scriptOptions.AddImports("System.Linq");
-                scriptOptions = scriptOptions.AddImports("System.Math");
                 scriptOptions = scriptOptions.AddImports("System.Collections.Generic");
-
-                // Initialize script with custom interactive assembly loader
-
-                var accountFunctions = new List<AccountFunction>();
-
-                var matchAssormentFunction = accountFunctions.FirstOrDefault(x => x.AccountFunctionType.Name == "MatchAssormentFunction");
-                var concludeProductSymbolFunction = accountFunctions.FirstOrDefault(x => x.AccountFunctionType.Name == "ConcludeProductSymbolFunction");
-                var calculateOrderPositionQuantityFunction = accountFunctions.FirstOrDefault(x => x.AccountFunctionType.Name == "CalculateOrderPositionQuantityFunction");
-
-                var matchAssormentScript = CSharpScript.Create<bool>(matchAssormentFunction.Script, scriptOptions, typeof(MatchAssortmentParameters));
-                var concludeProductSymbolScript = CSharpScript.Create<string>(concludeProductSymbolFunction.Script, scriptOptions, typeof(ConcludeProductSymbolParameters));
-                var calculateOrderPositionQuantityScript = CSharpScript.Create<decimal>(calculateOrderPositionQuantityFunction.Script, scriptOptions, typeof(CalculateOrderPositionQuantityParameters));
-
-                matchAssormentScript.Compile();
-                concludeProductSymbolScript.Compile();
-                calculateOrderPositionQuantityScript.Compile();
-
-                if (!matchAssormentScripts.ContainsKey(account.Id))
-                    matchAssormentScripts.Add(account.Id, matchAssormentScript);
-
-                if (!concludeProductSymbolScripts.ContainsKey(account.Id))
-                    concludeProductSymbolScripts.Add(account.Id, concludeProductSymbolScript);
-
-                if (!calculateOrderPositionQuantityScripts.ContainsKey(account.Id))
-                    calculateOrderPositionQuantityScripts.Add(account.Id, calculateOrderPositionQuantityScript);
+                var script = CSharpScript.Create(accountFunction.Script, scriptOptions, globalsType);
+                script.Compile();
+                return script;
             }
         }
-        public class MatchAssortmentParameters
+        internal Script<object> InitScript(string scriptText, Type globalsType)
         {
-            public Product Product { get; set; }
-            public Assortment Assortment { get; set; }
-        }
-        public class ConcludeProductSymbolParameters
-        {
-            public Product Product { get; set; }
-        }
-        public class CalculateOrderPositionQuantityParameters
-        {
-            public Product Product { get; set; }
-        }
+            var scriptOptions = ScriptOptions.Default;
+            var mscorlib = typeof(object).GetTypeInfo().Assembly;
+            var systemCore = typeof(Enumerable).GetTypeInfo().Assembly;
+            var references = new[] { mscorlib, systemCore };
+            scriptOptions = scriptOptions.AddReferences(references);
 
+            using (var interactiveLoader = new InteractiveAssemblyLoader())
+            {
+                foreach (var reference in references)
+                    interactiveLoader.RegisterDependency(reference);
+
+                scriptOptions = scriptOptions.AddImports("System");
+                scriptOptions = scriptOptions.AddImports("System.Linq");
+                scriptOptions = scriptOptions.AddImports("System.Collections.Generic");
+                var script = CSharpScript.Create(scriptText, scriptOptions, globalsType);
+                script.Compile();
+                return script;
+            }
+        }
+    }
+
+    public class MatchAssortmentParameters
+    {
+        public Product Product { get; set; }
+        public Assortment Assortment { get; set; }
+    }
+    public class ConcludeProductSymbolParameters
+    {
+        public Product Product { get; set; }
+    }
+    public class CalculateOrderPositionQuantityParameters
+    {
+        public Product Product { get; set; }
     }
 }

@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Akces.Unity.Models;
 using Akces.Unity.Models.SaleChannels;
-using Akces.Unity.Models.SaleChannels.Baselinker;
 using Akces.Unity.Models.SaleChannels.Baselinker.Models;
 
 namespace Akces.Unity.DataAccess.Services
@@ -91,7 +90,7 @@ namespace Akces.Unity.DataAccess.Services
                 await GetOrdersAsync();
                 return true;
             }
-            catch (Exception e)
+            catch
             {
                 return false;
             }
@@ -103,7 +102,7 @@ namespace Akces.Unity.DataAccess.Services
                 await GetOrdersAsync();
                 return true;
             }
-            catch (Exception e)
+            catch
             {
                 return false;
             }
@@ -124,12 +123,10 @@ namespace Akces.Unity.DataAccess.Services
             httpClient?.Dispose();
             GC.SuppressFinalize(this);
         }
-
         public Task<ProductsContainer> GetProductsAsync(bool all, int pageIndex = 0)
         {
             throw new NotImplementedException();
         }
-
         public Task<bool> UpdateProductPriceAsync(object id, string currency, decimal newPrice)
         {
             throw new NotImplementedException();

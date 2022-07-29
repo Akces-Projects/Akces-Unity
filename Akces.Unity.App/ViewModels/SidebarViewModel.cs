@@ -17,6 +17,7 @@ namespace Akces.Unity.App.ViewModels
         public ICommand GoToTasks { get; set; }
         public ICommand GoToProductsPrizesUpdateCommand { get; set; }
         public ICommand GoToUnityUsersCommand { get; set; }
+        public ICommand GoToAccountFunctionsCommand { get; set; }
 
         public SidebarViewModel(HostViewModel host) : base(host)
         {
@@ -26,6 +27,7 @@ namespace Akces.Unity.App.ViewModels
             GoToTasks = CreateCommand(() => GoTo<ActiveHarmonogramViewModel>(Modules.Tasks), (err) => Host.ShowError(err));
             GoToProductsPrizesUpdateCommand = CreateCommand(() => GoTo<ProductsPricesUpdateViewModel>(Modules.Prizes), (err) => Host.ShowError(err));
             GoToUnityUsersCommand = CreateCommand(() => GoTo<UnityUsersViewModel>(Modules.Users), (err) => Host.ShowError(err));
+            GoToAccountFunctionsCommand = CreateCommand(() => GoTo<AccountFunctionsViewModel>(Modules.Users), (err) => Host.ShowError(err));
         }
 
         private void GoTo<T>(string module) where T : ControlViewModel

@@ -52,8 +52,8 @@ namespace Akces.Unity.App.ViewModels
                 harmonogram.Activate();
 
             harmonogram.Save();
-            Host.Window.Close();
             (Host.Window.Owner.GetHost().ControlViewModel as HarmonogramsViewModel).LoadHarmonograms();
+            Host.Window.Close();
         }
         private void Cancel()
         {
@@ -62,8 +62,8 @@ namespace Akces.Unity.App.ViewModels
         }
         private void ActivateHarmonogram() 
         {
-            Harmonogram.Activate();
-            Host.ShowInfo("Harmonogram został aktywowany");
+            harmonogram.Data.Active = true;
+            Host.ShowInfo("Harmonogram zostanie aktywowany po zapisaniu zmian");
         }
         private void AddHarmonogramPosition()
         {

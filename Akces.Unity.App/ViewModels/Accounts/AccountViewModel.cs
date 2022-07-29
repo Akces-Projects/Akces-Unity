@@ -132,8 +132,8 @@ namespace Akces.Unity.App.ViewModels
         {
             Account.Save();
             Account.Dispose();
-            Host.Window.Close();
             (Host.Window.Owner.GetHost().ControlViewModel as AccountsViewModel).LoadAccounts();
+            Host.Window.Close();
         }
         private void Cancel()
         {
@@ -163,7 +163,7 @@ namespace Akces.Unity.App.ViewModels
 
             try
             {
-                service = Account.Data.CreateService();
+                service = Account.Data.CreateMainService();
                 var result = await service.AuthenticateAsync();
 
                 if (!result)
@@ -186,7 +186,7 @@ namespace Akces.Unity.App.ViewModels
 
             try
             {
-                service = Account.Data.CreateService();
+                service = Account.Data.CreateMainService();
                 var result = await service.ValidateConnectionAsync();
                 Host.ShowInfo("Test połączenia zakończony powodzeniem");
             }

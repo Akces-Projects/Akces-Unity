@@ -5,6 +5,7 @@ using InsERT.Moria.Sfera;
 using InsERT.Moria.Asortymenty;
 using InsERT.Moria.CennikiICeny;
 using Akces.Unity.Models.Nexo;
+using InsERT.Moria.Slowniki;
 
 namespace Akces.Unity.DataAccess.NexoManagers
 {
@@ -35,6 +36,7 @@ namespace Akces.Unity.DataAccess.NexoManagers
             {
                 return sfera.PodajObiektTypu<IAsortymenty>().Dane
                     .Wszystkie()
+                    .Where(x => x.PozycjeCennika.Any(p => p.Cennik != null && p.Cennik.Id == pricesFrom.Id))
                     .Select(x => new Assortment()
                     {
                         Id = x.Id,

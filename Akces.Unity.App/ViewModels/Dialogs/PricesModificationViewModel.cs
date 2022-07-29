@@ -42,18 +42,16 @@ namespace Akces.Unity.App.ViewModels
 
             Close();
         }
-
         private void SetFromOriginal()
         {
             foreach (var product in Products)
             {
-                var newPrice = product.OriginalPrice;
+                var newPrice = product.Product.OriginalPrice;
                 product.CurrentPrice = newPrice;
             }
 
             Close();
         }
-
         private void Apply() 
         {
             foreach (var product in Products)
@@ -73,7 +71,6 @@ namespace Akces.Unity.App.ViewModels
 
             Close();
         }
-
         private void Close() 
         {
             Host.Window.Close();

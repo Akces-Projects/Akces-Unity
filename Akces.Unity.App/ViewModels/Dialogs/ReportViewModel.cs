@@ -9,11 +9,11 @@ namespace Akces.Unity.App.ViewModels
     internal class ReportViewModel : ControlViewModel
     {
         private TaskReport report;
-        private string searchstring;
+        private ObservableCollection<TaskReportPosition> positions;
 
         public TaskReport Report { get => report; set { report = value; OnPropertyChanged(); OnSearchChanged(null); } }
-        public ObservableCollection<TaskReportPosition> Positions { get; set; }
-        public string Searchstring { set { searchstring = value; OnSearchChanged(value); } }
+        public ObservableCollection<TaskReportPosition> Positions { get => positions; set { positions = value; OnPropertyChanged(); } }
+        public string Searchstring { set { OnSearchChanged(value); } }
 
         public ICommand CancelCommand { get; set; }
 
@@ -39,7 +39,7 @@ namespace Akces.Unity.App.ViewModels
                 (x.Description != null && x.Description.ToLower().Contains(value)))
                 .ToList();
 
-            RefreshCollection(Positions, positions);
+            Positions = new ObservableCollection<TaskReportPosition>(positions);
         }
     }
 }

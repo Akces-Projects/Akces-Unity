@@ -12,6 +12,8 @@ using Akces.Unity.App.Operations;
 
 namespace Akces.Unity.App
 {
+    public delegate void OnWorkerStatusChanged(bool enabled);
+
     internal class HarmonogramWorker : IDisposable
     {
         private const int WORKER_RUN_INTERVAL_SECONDS = 10;
@@ -27,11 +29,13 @@ namespace Akces.Unity.App
         public bool Enabled { get; set; }
         public OnTaskStarted OnOperationStarted { get; set; }
         public OnTaskFinished OnOperationFinished { get; set; }
+        public OnWorkerStatusChanged OnWorkerStatusChanged { get; set; }
 
         public HarmonogramWorker()
         {
             OnOperationStarted = new OnTaskStarted((p) => { });
             OnOperationFinished = new OnTaskFinished((r,p) => { });
+            OnWorkerStatusChanged = new OnWorkerStatusChanged((e) => { });
             accountsManager = new AccountsManager();
             workerStatusesManager = new WorkerStatusesManager();
             harmonogramsManager = new HarmonogramsManager();
@@ -39,13 +43,31 @@ namespace Akces.Unity.App
             loggedUnityUser = GetLoggedUnityUser();
             Enabled = workerStatusesManager.GetCurrent()?.Enabled ?? false;
 
-            if (loggedUnityUser.IsWorker) 
+            timer = new Timer();
+            timer.Elapsed += CheckStatus;
+
+            if (loggedUnityUser.IsWorker)
             {
-                timer = new Timer();
-                timer.Enabled = true;
-                timer.Enabled = true;
-                timer.Interval = 1000 * WORKER_RUN_INTERVAL_SECONDS;
                 timer.Elapsed += OnTimerElapsed;
+                timer.Interval = 1000 * WORKER_RUN_INTERVAL_SECONDS;
+            }
+            else
+            {
+                timer.Interval = 1000 * 2;
+            }
+
+            timer.Enabled = true;
+            timer.Start();
+        }
+
+        private void CheckStatus(object sender, ElapsedEventArgs e)
+        {
+            var enabled = workerStatusesManager.GetCurrent()?.Enabled ?? false;
+
+            if (Enabled != enabled) 
+            {
+                Enabled = enabled;
+                OnWorkerStatusChanged.Invoke(enabled);
             }
         }
 
@@ -74,6 +96,8 @@ namespace Akces.Unity.App
 
             foreach (var harmonogramPosition in activeHarmonogram.Positions.Where(x => x.ShouldRun()))
             {
+                Enabled = workerStatusesManager.GetCurrent()?.Enabled ?? false;
+
                 if (!Enabled)
                     break;
 
@@ -92,6 +116,36 @@ namespace Akces.Unity.App
                 {
                     var account = accountsManager.Get(harmonogramPosition.Account.Id);
                     unityOperation = new ImportOrdersTask(account, harmonogramPosition);
+                }
+                else if (harmonogramPosition.HarmonogramOperation == TaskType.UsuwanieRaportow_starsze_niz_1_dzien) 
+                {
+                    var to = DateTime.Now.AddDays(-1);
+                    var reports = taskReportsManager.Get(to: to);
+                    unityOperation = new DeleteTaskReportsTask(reports, harmonogramPosition);
+                }
+                else if (harmonogramPosition.HarmonogramOperation == TaskType.UsuwanieRaportow_starsze_niz_3_dni)
+                {
+                    var to = DateTime.Now.AddDays(-3);
+                    var reports = taskReportsManager.Get(to: to);
+                    unityOperation = new DeleteTaskReportsTask(reports, harmonogramPosition);
+                }
+                else if (harmonogramPosition.HarmonogramOperation == TaskType.UsuwanieRaportow_starsze_niz_10_dni)
+                {
+                    var to = DateTime.Now.AddDays(-10);
+                    var reports = taskReportsManager.Get(to: to);
+                    unityOperation = new DeleteTaskReportsTask(reports, harmonogramPosition);
+                }
+                else if (harmonogramPosition.HarmonogramOperation == TaskType.UsuwanieRaportow_starsze_niz_1_tydzien)
+                {
+                    var to = DateTime.Now.AddDays(-7);
+                    var reports = taskReportsManager.Get(to: to);
+                    unityOperation = new DeleteTaskReportsTask(reports, harmonogramPosition);
+                }
+                else if (harmonogramPosition.HarmonogramOperation == TaskType.UsuwanieRaportow_starsze_niz_1_miesiac)
+                {
+                    var to = DateTime.Now.AddMonths(-1);
+                    var reports = taskReportsManager.Get(to: to);
+                    unityOperation = new DeleteTaskReportsTask(reports, harmonogramPosition);
                 }
 
                 if (unityOperation == null)

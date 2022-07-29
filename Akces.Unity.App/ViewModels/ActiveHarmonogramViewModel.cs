@@ -61,9 +61,9 @@ namespace Akces.Unity.App.ViewModels
             (Host as MainViewModel).SidebarVisable = true;
             harmonogramWorker = ServicesProvider.GetService<HarmonogramWorker>();
             IsWorkerEnabled = workerStatusesManager.GetCurrent()?.Enabled ?? false;
-
             harmonogramWorker.OnOperationStarted += OnOperationStarted;
             harmonogramWorker.OnOperationFinished += OnOperationFinished;
+            harmonogramWorker.OnWorkerStatusChanged += OnWorkerStatusChanged;
             StartWorkerCommand = CreateCommand(StartWorker, (err) => host.ShowError(err));
             StopWorkerCommand = CreateCommand(StopWorker, (err) => host.ShowError(err));
             ShowReportCommand = CreateCommand(ShowReport, (err) => host.ShowError(err));
@@ -126,6 +126,11 @@ namespace Akces.Unity.App.ViewModels
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
                 RefreshCollection(HarmonogramPositions)));
+        }
+        private void OnWorkerStatusChanged(bool enabled)
+        {
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+                IsWorkerEnabled = enabled));
         }
         private void OnSearchstringChanged()
         {

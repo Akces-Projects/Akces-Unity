@@ -3,27 +3,30 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Akces.Unity.Models;
 using Akces.Unity.DataAccess.Managers.BusinessObjects;
+using System;
 
 namespace Akces.Unity.DataAccess.Managers
 {
     public class TaskReportsManager
     {
-        public List<TaskReport> Get()
+        public List<TaskReport> Get(DateTime? from = null, DateTime? to = null)
         {
             using (var unityDbContext = new UnityDbContext())
             {
-                var accounts = unityDbContext.OperationReports
+                var taskReports = unityDbContext.TaskReports
+                    .Where(x => !from.HasValue || x.Created >= from)
+                    .Where(x => !to.HasValue || x.Created <= to)
                     .AsNoTracking()
                     .ToList();
 
-                return accounts;
+                return taskReports;
             }
         }
         public TaskReport Get(object id)
         {
             using (var unityDbContext = new UnityDbContext())
             {
-                var operationReport = unityDbContext.OperationReports
+                var operationReport = unityDbContext.TaskReports
                     .Include(unityDbContext.GetIncludePaths(typeof(TaskReport)))
                     .AsNoTracking()
                     .FirstOrDefault(x => x.Id == (int)id);
@@ -35,13 +38,13 @@ namespace Akces.Unity.DataAccess.Managers
         {
             using (var unityDbContext = new UnityDbContext())
             {
-                var operationReports = unityDbContext.OperationReports
+                var taskReports = unityDbContext.TaskReports
                     .Where(x => x.HarmonogramPositionId == harmonogramPosition.Id)
                     .Include(unityDbContext.GetIncludePaths(typeof(TaskReport)))
                     .AsNoTracking()
                     .ToList();
 
-                return operationReports;
+                return taskReports;
             }
         }
         public ITaskReport Create(TaskType taskType)
@@ -55,7 +58,7 @@ namespace Akces.Unity.DataAccess.Managers
         {
             var unityDbContext = new UnityDbContext();
 
-            var report = unityDbContext.OperationReports
+            var report = unityDbContext.TaskReports
                    .Include(unityDbContext.GetIncludePaths(typeof(TaskReport)))
                    .FirstOrDefault(x => x.Id == entity.Id);
 

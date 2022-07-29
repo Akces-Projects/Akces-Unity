@@ -28,8 +28,7 @@ namespace Akces.Unity.DataAccess.NexoManagers.Operations
             Data = data;
             this.sfera = sfera;
             this.configuration = configuration;
-            operationResult = new NexoOperationResult();
-            operationResult.ObjectName = data.Original;
+            operationResult = new NexoOperationResult() { ObjectName = data.Original };
 
             configuration.Units.ForEach(x => x.CountriesCodes = x.CountriesCodes ?? "");
             configuration.Warehouses.ForEach(x => x.CountriesCodes = x.CountriesCodes ?? "");
@@ -61,7 +60,12 @@ namespace Akces.Unity.DataAccess.NexoManagers.Operations
         private void AddOrderToNexoIfNotExists()
         {
             var zkManager = sfera.PodajObiektTypu<IZamowieniaOdKlientow>();
-            var alreadyExists = zkManager.Dane.Wszystkie().Any(x => x.NumerZewnetrzny == Data.Original);
+            var oryginal = configuration.ExternalNumberTemplate
+                    .Replace("{numer}", Data.Original)
+                    .Replace("{miesiąc}", Data.OriginalDate.Month.ToString())
+                    .Replace("{magazyn}", DopasujMagazyn(null, Data.Warehouse, Data.Purchaser.CountryCode)?.Symbol ?? "");
+
+            var alreadyExists = zkManager.Dane.Wszystkie().Any(x => x.NumerZewnetrzny == oryginal);
 
             if (alreadyExists)
             {
@@ -79,25 +83,27 @@ namespace Akces.Unity.DataAccess.NexoManagers.Operations
             {
                 #region Podstawowe
 
-                zkOB.Dane.NumerZewnetrzny = Data.Original;
                 zkOB.Dane.DataWprowadzenia = Data.OriginalDate;
                 zkOB.Dane.TerminRealizacji = Data.CompletionDate > Data.OriginalDate ? Data.CompletionDate : Data.OriginalDate;
                 zkOB.Dane.MiejsceWprowadzenia = DopasujOddzial(Data.Branch, Data.Purchaser.CountryCode);
-
                 zkOB.Dane.PodmiotWybrany = DopasujPodmiot(Data.Purchaser);
                 zkOB.Dane.Magazyn = DopasujMagazyn(null, Data.Warehouse, Data.Purchaser.CountryCode);
                 zkOB.Dane.SposobDostawy = DopasujSposobDostawy(Data.Delivery.DeliveryMethod, Data.Purchaser.CountryCode);
                 zkOB.Dane.TransakcjaHandlowa = DopasujTransakcjeHandlowa(Data.Purchaser.CountryCode);
+                zkOB.Dane.NumerZewnetrzny = oryginal;
 
                 #endregion                               
 
-                if (false)// zkOB.Dane.SposobDostawy.WidocznyAdresDostawy)
+                if (!configuration.DefaultAddress && zkOB.Dane.SposobDostawy.WidocznyAdresDostawy)
                 {
                     var panstwo = sfera.PodajObiektTypu<IPanstwa>().Dane.Wszystkie().FirstOrDefault(x => x.Nazwa == Data.Purchaser.Country || x.KodPanstwaUE == Data.Purchaser.CountryCode);
                     zkOB.Dane.MiejsceDostawyTyp = (byte)MiejsceDostawyTyp.Reczny;
-                    zkOB.Dane.MiejsceDostawy = new AdresHistoria();
-                    zkOB.Dane.MiejsceDostawy.Panstwo = panstwo;
-                    zkOB.Dane.MiejsceDostawy.Nazwa = Data.Delivery.DeliveryAddress.Name;
+
+                    zkOB.Dane.MiejsceDostawy = new AdresHistoria
+                    {
+                        Panstwo = panstwo,
+                        Nazwa = Data.Delivery.DeliveryAddress.Name
+                    };
 
                     if (!string.IsNullOrEmpty(Data.Delivery.DeliveryAddress.DeliveryPointName))
                     {
@@ -125,44 +131,47 @@ namespace Akces.Unity.DataAccess.NexoManagers.Operations
 
                 foreach (var product in Data.Products)
                 {
-                    var asortyment = DopasujAsortyment(product.Symbol);
-                    var jm = DopasujJednostkeMiary(product.Unit, Data.Purchaser.CountryCode, asortyment?.Symbol, product.EAN);
-                    JednostkaMiaryAsortymentu jma = null;
-
-                    if (asortyment != null && jm != null)
+                    for (int i = 0; i < product.RepeatPosition; i++)
                     {
-                        jma = asortyment.JednostkiMiar.FirstOrDefault(x => x.JednostkaMiary.Symbol == jm.Symbol);
-                    }
+                        var asortyment = DopasujAsortyment(product.Symbol);
+                        var jm = DopasujJednostkeMiary(product.Unit, Data.Purchaser.CountryCode, asortyment?.Symbol, product.EAN);
+                        JednostkaMiaryAsortymentu jma = null;
 
-                    if (jma != null)
-                    {
-                        if (asortyment.Rodzaj.Symbol == "US")
+                        if (asortyment != null && jm != null)
                         {
-                            var pozycje_z_materialami = zkOB.Pozycje.DodajZPowiazanymi(asortyment, product.Quantity, jma);
-                            var pozycjaGlowna = pozycje_z_materialami.FirstOrDefault(x => x.RodzajAsortymentu.Symbol == "US");
+                            jma = asortyment.JednostkiMiar.FirstOrDefault(x => x.JednostkaMiary.Symbol == jm.Symbol);
+                        }
 
-                            if (pozycjaGlowna != null) 
+                        if (jma != null)
+                        {
+                            if (asortyment.Rodzaj.Symbol == "US")
                             {
-                                pozycjaGlowna.StawkaVat = DopasujStawkeVAT(product.Tax, Data.Purchaser.CountryCode);
-                                pozycjaGlowna.Cena.BruttoPrzedRabatem = product.Price;
-                                pozycjaGlowna.Cena.RabatProcent = product.DiscountPercentage;
+                                var pozycje_z_materialami = zkOB.Pozycje.DodajZPowiazanymi(asortyment, product.Quantity, jma);
+                                var pozycjaGlowna = pozycje_z_materialami.FirstOrDefault(x => x.RodzajAsortymentu.Symbol == "US");
+
+                                if (pozycjaGlowna != null)
+                                {
+                                    pozycjaGlowna.StawkaVat = DopasujStawkeVAT(product.Tax, Data.Purchaser.CountryCode);
+                                    pozycjaGlowna.Cena.BruttoPrzedRabatem = product.Price;
+                                    pozycjaGlowna.Cena.RabatProcent = product.DiscountPercentage;
+                                }
+                            }
+                            else
+                            {
+                                var pozycja = zkOB.Pozycje.Dodaj(asortyment, product.Quantity, jma);
+                                pozycja.StawkaVat = DopasujStawkeVAT(product.Tax, Data.Purchaser.CountryCode);
+                                pozycja.Cena.BruttoPrzedRabatem = product.Price;
+                                pozycja.Cena.RabatProcent = product.DiscountPercentage;
                             }
                         }
-                        else 
+                        else
                         {
-                            var pozycja = zkOB.Pozycje.Dodaj(asortyment, product.Quantity, jma);
+                            jm = sfera.PodajObiektTypu<IJednostkiMiar>().DaneDomyslne.Usluga;
+                            var pozycja = zkOB.Pozycje.Dodaj("US", product.Name, product.Quantity, jm, jm.Precyzja, null, null);
                             pozycja.StawkaVat = DopasujStawkeVAT(product.Tax, Data.Purchaser.CountryCode);
                             pozycja.Cena.BruttoPrzedRabatem = product.Price;
-                            pozycja.Cena.RabatProcent = product.DiscountPercentage;
+                            pozycja.Cena.RabatProcent = product.DiscountPercentage / 100;
                         }
-                    }
-                    else
-                    {
-                        jm = sfera.PodajObiektTypu<IJednostkiMiar>().DaneDomyslne.Usluga;
-                        var pozycja = zkOB.Pozycje.Dodaj("US", product.Name, product.Quantity, jm, jm.Precyzja, null, null);
-                        pozycja.StawkaVat = DopasujStawkeVAT(product.Tax, Data.Purchaser.CountryCode);
-                        pozycja.Cena.BruttoPrzedRabatem = product.Price;
-                        pozycja.Cena.RabatProcent = product.DiscountPercentage / 100;
                     }
                 }
 
@@ -365,14 +374,13 @@ namespace Akces.Unity.DataAccess.NexoManagers.Operations
             var stawkaVat = stawkiVatMgr.FirstOrDefault(x => x.Symbol == taxRateSymbol);
             return stawkaVat;
         }
-        private Asortyment DopasujAsortyment(string asortymentNaZamowieniuSymbol, string ean = null)
+        private Asortyment DopasujAsortyment(string asortymentNaZamowieniuSymbol, string ean = null) 
         {
-            var symbol = new string(asortymentNaZamowieniuSymbol.Where(c => char.IsDigit(c)).Take(4).ToArray());
-            var asortyment = sfera.PodajObiektTypu<IAsortymenty>().Dane.WyszukajPoSymbolu(symbol);
-            var asor = sfera.PodajObiektTypu<IAsortymenty>().Dane.Wszystkie().FirstOrDefault(x => x.JednostkiMiar.Any(jm => jm.KodyKreskowe.Any(k => k.Kod == ean)));
+            var asortyment = sfera.PodajObiektTypu<IAsortymenty>().Dane.WyszukajPoSymbolu(asortymentNaZamowieniuSymbol);
+            var asor = sfera.PodajObiektTypu<IAsortymenty>().Dane.Wszystkie().FirstOrDefault(x => ean != null && x.JednostkiMiar.Any(jm => jm.KodyKreskowe.Any(k => k.Kod == ean)));
             return asortyment ?? asor;
         }
-        private TransakcjaHandlowa DopasujTransakcjeHandlowa(string kodKraju, bool czynnyPodatnikVAT = false)
+        private TransakcjaHandlowa DopasujTransakcjeHandlowa(string kodKraju) //, bool czynnyPodatnikVAT = false
         {
             // od - miejsce dosstawy 
             // opcja w konfiguracji - dla podatnika

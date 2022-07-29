@@ -20,27 +20,33 @@ namespace Akces.Unity.DataAccess.Managers
         }
         public void StopWorker(UnityUser unityUser) 
         {
-            var workerStatus = new WorkerStatus()
+            using (var context = new UnityDbContext())
             {
-                Created = DateTime.Now,
-                CreatedBy = unityUser.Id,
-                Enabled = false
-            };
+                var workerStatus = new WorkerStatus()
+                {
+                    Created = DateTime.Now,
+                    CreatedBy = unityUser.Id,
+                    Enabled = false
+                };
 
-            unityDbContext.WorkerStatuses.Add(workerStatus).State = EntityState.Added;
-            unityDbContext.SaveChanges();
+                context.WorkerStatuses.Add(workerStatus).State = EntityState.Added;
+                context.SaveChanges();
+            }
         }
         public void StartWorker(UnityUser unityUser)
         {
-            var workerStatus = new WorkerStatus()
+            using (var context = new UnityDbContext()) 
             {
-                Created = DateTime.Now,
-                CreatedBy = unityUser.Id,
-                Enabled = true
-            };
+                var workerStatus = new WorkerStatus()
+                {
+                    Created = DateTime.Now,
+                    CreatedBy = unityUser.Id,
+                    Enabled = true
+                };
 
-            unityDbContext.WorkerStatuses.Add(workerStatus).State = EntityState.Added;
-            unityDbContext.SaveChanges();
+                context.WorkerStatuses.Add(workerStatus).State = EntityState.Added;
+                context.SaveChanges();
+            }
         }
         public void Dispose() 
         {

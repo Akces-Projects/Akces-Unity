@@ -119,11 +119,11 @@ namespace Akces.Unity.DataAccess.NexoManagers.Operations
 
                 if (!string.IsNullOrEmpty(Data.Username))
                 {
-                    var web = sfera.PodajObiektTypu<Kontakt>();
-                    podmiotOB.Dane.Kontakty.Add(web);
-                    web.Rodzaj = sfera.PodajObiektTypu<IRodzajeKontaktu>().DaneDomyslne.Fax;
-                    web.Podstawowy = true;
-                    web.Wartosc = Data.Username;
+                    var fax = sfera.PodajObiektTypu<Kontakt>();
+                    podmiotOB.Dane.Kontakty.Add(fax);
+                    fax.Rodzaj = sfera.PodajObiektTypu<IRodzajeKontaktu>().DaneDomyslne.Fax;
+                    fax.Podstawowy = true;
+                    fax.Wartosc = Data.Username;
                 }
 
                 var dodano = podmiotOB.Zapisz();
@@ -159,7 +159,8 @@ namespace Akces.Unity.DataAccess.NexoManagers.Operations
             //Szukanie po username w kontaktach
             if (podmiot == null && !string.IsNullOrEmpty(contractor.Username))
             {
-                podmiot = podmioty.Where(x => x.Kontakty.Any(k => k.Wartosc == contractor.Username)).FirstOrDefault()?.Aktualny;
+                var rodzajFax = sfera.PodajObiektTypu<IRodzajeKontaktu>().DaneDomyslne.Fax;
+                podmiot = podmioty.Where(x => x.Kontakty.Any(k => k.Rodzaj.Id == rodzajFax.Id && k.Wartosc == contractor.Username)).FirstOrDefault()?.Aktualny;
             }
 
             return podmiot;

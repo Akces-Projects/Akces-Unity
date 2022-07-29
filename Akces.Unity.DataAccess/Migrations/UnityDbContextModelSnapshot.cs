@@ -29,17 +29,8 @@ namespace Akces.Unity.DataAccess.Migrations
                     b.Property<int>("AccountType")
                         .HasColumnType("int");
 
-                    b.Property<string>("CalculateOrderPositionQuantityScript")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ConcludeProductSymbolScript")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("MatchAssormentScript")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Modified")
                         .HasColumnType("datetime2");
@@ -56,6 +47,71 @@ namespace Akces.Unity.DataAccess.Migrations
                     b.ToTable("Accounts");
 
                     b.HasDiscriminator<string>("account_type").HasValue("Account");
+                });
+
+            modelBuilder.Entity("Akces.Unity.Models.AccountFunction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<Guid>("AccountFunctionTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Modified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Script")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountFunctionTypeId");
+
+                    b.HasIndex("AccountId");
+
+                    b.ToTable("AccountFunctions");
+                });
+
+            modelBuilder.Entity("Akces.Unity.Models.AccountFunctionType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AccountFunctionTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("a35ce9cd-31dc-4412-b7dc-b8a1b27701cc"),
+                            Name = "Funkcja dopasowania asortymentu do produktu"
+                        },
+                        new
+                        {
+                            Id = new Guid("844a822a-3f61-4835-892a-0c3133a1ac52"),
+                            Name = "Funkcja określająca symbol produktu"
+                        },
+                        new
+                        {
+                            Id = new Guid("0379f3b4-762d-453e-afc0-317cd353919a"),
+                            Name = "Funkcja wyliczająca ilość na pozycji"
+                        });
                 });
 
             modelBuilder.Entity("Akces.Unity.Models.Authorisation", b =>
@@ -277,9 +333,6 @@ namespace Akces.Unity.DataAccess.Migrations
                     b.Property<bool>("Default")
                         .HasColumnType("bit");
 
-                    b.Property<string>("ExternalNumberTemplate")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int?>("NexoConfigurationId")
                         .HasColumnType("int");
 
@@ -376,6 +429,12 @@ namespace Akces.Unity.DataAccess.Migrations
                     b.Property<int>("AccountId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("DefaultAddress")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ExternalNumberTemplate")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId")
@@ -394,8 +453,7 @@ namespace Akces.Unity.DataAccess.Migrations
                     b.Property<string>("AccessToken")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("AccountId")
-                        .IsRequired()
+                    b.Property<int>("AccountId")
                         .HasColumnType("int");
 
                     b.Property<string>("BaseAddress")
@@ -431,8 +489,7 @@ namespace Akces.Unity.DataAccess.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("AccountId")
-                        .IsRequired()
+                    b.Property<int>("AccountId")
                         .HasColumnType("int");
 
                     b.Property<string>("BaseAddress")
@@ -563,7 +620,7 @@ namespace Akces.Unity.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OperationReports");
+                    b.ToTable("TaskReports");
                 });
 
             modelBuilder.Entity("Akces.Unity.Models.TaskReportPosition", b =>
@@ -673,6 +730,21 @@ namespace Akces.Unity.DataAccess.Migrations
                     b.HasBaseType("Akces.Unity.Models.Account");
 
                     b.HasDiscriminator().HasValue("ShopgoldAccount");
+                });
+
+            modelBuilder.Entity("Akces.Unity.Models.AccountFunction", b =>
+                {
+                    b.HasOne("Akces.Unity.Models.AccountFunctionType", "AccountFunctionType")
+                        .WithMany()
+                        .HasForeignKey("AccountFunctionTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Akces.Unity.Models.Account", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Akces.Unity.Models.Authorisation", b =>

@@ -133,7 +133,7 @@
                 <DataGridTemplateColumn Header="Opis" Width="*" SortMemberPath="Description">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock FontSize="16" Padding="8" Text="{Binding Description, Mode=OneTime, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock FontSize="16" Padding="8" TextWrapping="Wrap" Text="{Binding Description, Mode=OneTime, UpdateSourceTrigger=PropertyChanged}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

@@ -120,7 +120,7 @@ namespace Akces.Unity.DataAccess.Services
                     .Select(x => new Product()
                     {
                         Id = x.id.ToString(),
-                        Symbol = x.title == null ? null : new string(x.title.Reverse().Where(c => char.IsDigit(c)).Take(4).Reverse().ToArray()),
+                        Symbol = x.title,
                         EAN = "",
                         Currency = x.price?.currency,
                         OriginalPrice = x.price?.value ?? 0,
@@ -129,6 +129,9 @@ namespace Akces.Unity.DataAccess.Services
                         Name = x.title
                     })
                     .ToList();
+
+
+                var Product = products[0];
 
                 var container = new ProductsContainer()
                 {

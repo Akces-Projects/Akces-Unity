@@ -1,9 +1,8 @@
-﻿using System.IO;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Akces.Unity.Models;
 using Akces.Unity.Models.SaleChannels;
+using System;
 
 namespace Akces.Unity.DataAccess
 { 
@@ -17,10 +16,12 @@ namespace Akces.Unity.DataAccess
 
             try
             {
-                //context.Database.EnsureCreated();
-               // context.Database.Migrate();
+                var created = context.Database.EnsureCreated();
+
+                if (!created)
+                    context.Database.Migrate();
             }
-            catch
+            catch 
             {
             }
         }
@@ -30,11 +31,11 @@ namespace Akces.Unity.DataAccess
     {
         internal DbSet<Account> Accounts { get; set; }
         internal DbSet<Harmonogram> Harmonograms { get; set; }
-        internal DbSet<TaskReport> OperationReports { get; set; }
-        //internal DbSet<TaskReport> TaskReports { get; set; }
+        internal DbSet<TaskReport> TaskReports { get; set; }
         internal DbSet<UnityUser> UnityUsers { get; set; }
         internal DbSet<WorkerStatus> WorkerStatuses { get; set; }
-        //internal DbSet<AccountFunction> AccountFunctions { get; set; }
+        internal DbSet<AccountFunction> AccountFunctions { get; set; }
+        internal DbSet<AccountFunctionType> AccountFunctionTypes { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -44,14 +45,16 @@ namespace Akces.Unity.DataAccess
             });
             base.OnConfiguring(optionsBuilder);
         }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Harmonogram>().HasMany(x => x.Positions).WithOne().IsRequired(true).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<HarmonogramPosition>().HasOne(x => x.Account).WithMany().IsRequired(false).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<TaskReport>().HasMany(x => x.Positions).WithOne().IsRequired(true).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<UnityUser>().HasMany(x => x.Authorisations).WithOne().IsRequired(true).OnDelete(DeleteBehavior.Cascade);
-            //modelBuilder.Entity<AccountFunction>().HasOne(x => x.AccountFunctionType).WithMany().IsRequired(true).OnDelete(DeleteBehavior.Restrict);
-            //modelBuilder.Entity<AccountFunction>().HasOne(x => x.Account).WithMany().IsRequired(true).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<AccountFunction>().HasOne(x => x.AccountFunctionType).WithMany().IsRequired(true).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<AccountFunction>().HasOne(x => x.Account).WithMany().IsRequired(true).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<AccountFunctionType>().Ignore(x => x.DefaultScript);
 
             modelBuilder.Entity<Account>()
                 .HasDiscriminator<string>("account_type");
@@ -121,12 +124,14 @@ namespace Akces.Unity.DataAccess
                 .IsRequired(true)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            base.OnModelCreating(modelBuilder);
-        }
 
-        public UnityUser GetUser(string user)
-        {
-            return UnityUsers.Where(x => x.Login == user).FirstOrDefault();
+            modelBuilder.Entity<AccountFunctionType>().HasData(
+                    AccountFunctionType.MatchAssormentFunction,
+                    AccountFunctionType.ConcludeProductSymbolFunction,
+                    AccountFunctionType.CalculateOrderPositionQuantityFunction
+                );
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

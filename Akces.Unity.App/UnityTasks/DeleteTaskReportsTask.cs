@@ -44,6 +44,9 @@ namespace Akces.Unity.App.Operations
                 if (cancellationToken != null && cancellationToken.Value.IsCancellationRequested)
                     break;
 
+                progress++;
+                OnTaskProgress.Invoke(progress, $"Usuwanie raportu \"{taskReport.OperationType}\" [{taskReport.Id}]");
+
                 await Task.Run(() =>
                 {
                     using (var taskReportOB = taskReportsManager.Find(taskReport))
@@ -51,9 +54,6 @@ namespace Akces.Unity.App.Operations
                         taskReportOB.Delete();
                     }
                 });
-
-                progress++;
-                OnTaskProgress.Invoke(progress, "");
             }
 
             OnTaskExecuted.Invoke(null, harmonogramPosition);

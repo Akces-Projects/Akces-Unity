@@ -15,6 +15,7 @@ namespace Akces.Unity.App.ViewModels
 
         private int currenPosition;
         private int positionsCount;
+        private string comment;
         public int CurrentPosition
         {
             get { return currenPosition; }
@@ -24,6 +25,11 @@ namespace Akces.Unity.App.ViewModels
         {
             get { return positionsCount; }
             set { positionsCount = value; OnPropertyChanged(); }
+        }
+        public string Comment
+        {
+            get { return comment; }
+            set { comment = value; OnPropertyChanged(); }
         }
 
         public IUnityTask Operation { get; set; }
@@ -41,7 +47,8 @@ namespace Akces.Unity.App.ViewModels
         {
             PositionsCount = Operation.Processes;
             Operation.OnTaskProgress += OnOperationProgress;
-            await Operation.ExecuteAsync(cancellationTokenSource.Token);   
+            await Operation.ExecuteAsync(cancellationTokenSource.Token);
+            Operation.OnTaskExecuted.Invoke(null, null);
             Host.Window.Close();
         }
         private void OnOperationProgress(int index, string description) 
@@ -49,6 +56,7 @@ namespace Akces.Unity.App.ViewModels
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
             {
                 CurrentPosition = index;
+                Comment = description;
             }));
         }
     }

@@ -12,7 +12,7 @@ namespace Akces.Unity.App.ViewModels
     public class UnityUsersViewModel : ControlViewModel
     {
         private readonly UnityUsersManager unityUserManager;
-        private readonly List<UnityUser> downloadedUnityUsers;
+        private List<UnityUser> downloadedUnityUsers;
         private ObservableCollection<UnityUser> harmonogramUnityUsers;
 
         private string searchstring;
@@ -36,12 +36,16 @@ namespace Akces.Unity.App.ViewModels
         {
             (Host as MainViewModel).SidebarVisable = true;
             unityUserManager = new UnityUsersManager();
-            downloadedUnityUsers = unityUserManager.Get();
-            UnityUsers = new ObservableCollection<UnityUser>(downloadedUnityUsers);
             EditUnityUserCommand = CreateCommand(() => OpenEditor(editMode: true), (err) => Host.ShowError(err));
             ShowUnityUserCommand = CreateCommand(() => OpenEditor(editMode: false), (err) => Host.ShowError(err));
+            LoadUnityUsers();
         }
 
+        public void LoadUnityUsers() 
+        {
+            downloadedUnityUsers = unityUserManager.Get();
+            UnityUsers = new ObservableCollection<UnityUser>(downloadedUnityUsers);
+        }
         private void OpenEditor(bool editMode)
         {
             if (SelectedUnityUser == null)

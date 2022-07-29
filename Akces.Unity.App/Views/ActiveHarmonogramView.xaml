@@ -54,9 +54,7 @@
                 <ColumnDefinition Width="10"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="200"/>
-                <ColumnDefinition Width="2"/>
-                <ColumnDefinition Width="220"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="10"/>
             </Grid.ColumnDefinitions>
 
@@ -137,28 +135,27 @@
             </StackPanel>
 
             <TextBlock Grid.Column="6"
-                       FontSize="18"
-                       Margin="0,0,0,2"
+                       Height="30"
                        VerticalAlignment="Center"
-                       Text="Aktywny harmonogram: "/>
-
-            <TextBlock Grid.Column="8"
-                      Text="{Binding ActiveHarmonogram.Name}"
-                      Height="30"
-                      FontSize="16">
+                       FontSize="18">
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="{}Aktywny harmonogram:  {0}">
+                        <Binding Path="ActiveHarmonogram.Name"/>
+                    </MultiBinding>
+                </TextBlock.Text>
             </TextBlock>
         </Grid>
 
         <Grid Grid.Row="2" Background="#eeeeee">
             <TextBox Text="{Binding Searchstring, UpdateSourceTrigger=PropertyChanged}" 
-                         FontSize="18"
-                         Height="30"
-                         VerticalContentAlignment="Center"
-                         Padding="5,0,0,0"
-                         VerticalAlignment="Center"
-                         HorizontalAlignment="Stretch" 
-                         x:Name="SearchTermTextBox" 
-                         Margin="5"/>
+                     FontSize="18"
+                     Height="30"
+                     VerticalContentAlignment="Center"
+                     Padding="5,0,0,0"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Stretch" 
+                     x:Name="SearchTermTextBox" 
+                     Margin="5"/>
 
             <TextBlock IsHitTestVisible="False" Text="Wyszukaj..." FontSize="16" Padding="5,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="DarkGray">
                 <TextBlock.Style>

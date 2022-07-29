@@ -281,61 +281,61 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Konto" Width="110" SortMemberPath="SourceName">
+                <DataGridTemplateColumn Header="Konto" Width="110" SortMemberPath="Account.Name">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Padding="8,0,0,0" Text="{Binding SourceName}" FontSize="14"/>
+                            <TextBlock Padding="8,0,0,0" Text="{Binding Account.Name}" FontSize="14"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Id produktu" SortMemberPath="SaleChannelId" Width="90">
+                <DataGridTemplateColumn Header="Id produktu" SortMemberPath="Product.Id" Width="90">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Padding="8,0,0,0" Text="{Binding SaleChannelId}" FontSize="14"/>
+                            <TextBlock Padding="8,0,0,0" Text="{Binding Product.Id}" FontSize="14"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Nazwa" Width="*" SortMemberPath="SaleChannelName">
+                <DataGridTemplateColumn Header="Nazwa" Width="*" SortMemberPath="Product.Name">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding SaleChannelName}" FontSize="14"/>
+                            <TextBlock Text="{Binding Product.Name}" FontSize="14"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Symbol" Width="90" SortMemberPath="SaleChannelSymbol">
+                <DataGridTemplateColumn Header="Symbol" Width="90" SortMemberPath="Product.Symbol">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Padding="8,0,0,0" Text="{Binding SaleChannelSymbol}" FontSize="14"/>
+                            <TextBlock Padding="8,0,0,0" Text="{Binding Product.Symbol}" FontSize="14"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="EAN" Width="90" SortMemberPath="SaleChannelEan">
+                <DataGridTemplateColumn Header="EAN" Width="90" SortMemberPath="Product.EAN">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding SaleChannelEan}"/>
+                            <TextBlock Text="{Binding Product.EAN}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Width="93" SortMemberPath="SaleChannelPrice">
+                <DataGridTemplateColumn Width="93" SortMemberPath="Product.OriginalPrice">
                     <DataGridTemplateColumn.Header>
                         <TextBlock Text="Aktualna cena" TextWrapping="WrapWithOverflow"/>
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Padding="8,0,0,0" Text="{Binding SaleChannelPrice}" FontSize="14"/>
+                            <TextBlock Padding="8,0,0,0" Text="{Binding Product.OriginalPrice}" FontSize="14"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Waluta" Width="64" SortMemberPath="ErpEan">
+                <DataGridTemplateColumn Header="Waluta" Width="64" SortMemberPath="Product.Currency">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Padding="8,0,0,0" Text="{Binding SaleChannelCurrency}" FontSize="14"/>
+                            <TextBlock Padding="8,0,0,0" Text="{Binding Product.Currency}" FontSize="14"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -351,7 +351,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Width="120" SortMemberPath="ErpRegistrationPrice">
+                <DataGridTemplateColumn Width="120" SortMemberPath="NexoRegistrationPrice">
                     <DataGridTemplateColumn.Header>
                         <TextBlock Text="Cena ewidencyjna" TextWrapping="WrapWithOverflow"/>
                     </DataGridTemplateColumn.Header>
@@ -362,7 +362,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Width="110" SortMemberPath="ErpPriceText">
+                <DataGridTemplateColumn Width="110" SortMemberPath="NexoPrice">
                     <DataGridTemplateColumn.Header>
                         <TextBlock Text="Cena brutto" TextWrapping="WrapWithOverflow"/>
                     </DataGridTemplateColumn.Header>

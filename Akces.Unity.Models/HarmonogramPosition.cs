@@ -36,8 +36,13 @@ namespace Akces.Unity.Models
 
     public enum TaskType
     {
-        ImportZamowien,
-        PobranieStatusowZamowien,
-        WyslanieCen
+        ImportZamowien = 0,
+        PobranieStatusowZamowien = 1,
+        WyslanieCen = 2,
+        UsuwanieRaportow_starsze_niz_1_dzien = 3,
+        UsuwanieRaportow_starsze_niz_3_dni = 4,
+        UsuwanieRaportow_starsze_niz_10_dni = 5,
+        UsuwanieRaportow_starsze_niz_1_tydzien = 6,
+        UsuwanieRaportow_starsze_niz_1_miesiac = 7,
     }
 }

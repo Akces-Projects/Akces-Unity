@@ -8,7 +8,8 @@ using Akces.Unity.DataAccess.Managers;
 using Akces.Wpf.Helpers;
 using Akces.Wpf.Extensions.Style;
 using System.Globalization;
-using System.Threading;
+using Akces.Unity.App.ViewModels;
+using Akces.Unity.App.Operations;
 
 namespace Akces.Unity.App
 {
@@ -33,7 +34,7 @@ namespace Akces.Unity.App
         public static string ErpName = $"{NexoProduct} nexo";
         public const string AppName = "Akces Unity";
         public const string LauncherName = "Akces.Unity.Launcher.exe";
-        public const string Version = "2022.1.2";
+        public const string Version = "2022.1.3.3";
         public const string HelpFileLocation = "{lokalizacja pliku pomocy [.doc, .pdf, .txt itd.]}";
         public const string WebsiteLink = "https://akces.pro/";
         public const string WebsiteName = "www.akces.pro";
@@ -43,7 +44,6 @@ ADRES :                            ul. Lotników 7, 87-100 Toruń
 E-MAIL :                            biuro@akces.pro            
 TELEFON :                        +48 56 660 23 45 lub +48 56 652 70 65
 GODZINY OTWARCIA :    Poniedziałek – Piątek 8:00 – 16:00";
-
 
         public App()
         {
@@ -60,20 +60,43 @@ GODZINY OTWARCIA :    Poniedziałek – Piątek 8:00 – 16:00";
             //var nexoDatabase = ServicesProvider.AddSingleton(NexoDatabase.FromString(e.Args[0]));
 
             ServicesProvider.AddSingleton(nexoDatabase);
-            UnityConnection.ConnectionString = nexoDatabase.NexoConnectionData.GetConnectionString(useInitialCatalog: false) + "Database=Unity.DataCenter;";
-            UnityConnection.EnsureCreated();
             CheckLicense(nexoDatabase);
+
+            UnityConnection.ConnectionString = nexoDatabase.NexoConnectionData
+                .GetConnectionString(useInitialCatalog: false) + ";Database=Unity.DataCenter2;";
+
+            UnityConnection.EnsureCreated();
             InitUnityUsers(nexoDatabase);
+            InitHarmonograms(); 
+            InitAccountFunctions();
         }
 
-        private void CheckLicense(NexoDatabase nexoDatabase) 
+        public static void SetStyle(NexoProduct nexoProduct)
+        {
+            var akcesStyleTheme = (AkcesStyleTheme)typeof(AkcesStyleTheme)
+                .GetFields()
+                .First(x => x.Name == Enum.GetName(typeof(NexoProduct), nexoProduct))
+                .GetValue(null);
+
+            AkcesStyle.SetStyle(akcesStyleTheme);
+            var mw = Current.MainWindow as MainWindow;
+            mw?.RebuildAsync();
+
+            // Global DateTime format
+            FrameworkElement.LanguageProperty.OverrideMetadata(
+                typeof(FrameworkElement),
+                new FrameworkPropertyMetadata(
+                    System.Windows.Markup.XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag)));
+        }
+
+        private void CheckLicense(NexoDatabase nexoDatabase)
         {
             var lickey = File.ReadAllText("..\\lickey");
             var licenseIsValid = nexoDatabase.TryCheckLicense("UNT", lickey, out _, out _);
             if (!licenseIsValid)
-                Current.Shutdown();
+                App.Current.Shutdown();
         }
-        private void InitUnityUsers(NexoDatabase nexoDatabase) 
+        private void InitUnityUsers(NexoDatabase nexoDatabase)
         {
             var nexoUsers = nexoDatabase.GetNexoUsers();
             var unityUsersManager = new UnityUsersManager();
@@ -92,22 +115,23 @@ GODZINY OTWARCIA :    Poniedziałek – Piątek 8:00 – 16:00";
                 }
             }
         }
-        public static void SetStyle(NexoProduct nexoProduct)
+        private void InitHarmonograms()
         {
-            var akcesStyleTheme = (AkcesStyleTheme)typeof(AkcesStyleTheme)
-                .GetFields()
-                .First(x => x.Name == Enum.GetName(typeof(NexoProduct), nexoProduct))
-                .GetValue(null);
-
-            AkcesStyle.SetStyle(akcesStyleTheme);
-            var mw = Current.MainWindow as MainWindow;
-            mw?.RebuildAsync();
-
-            // Global DateTime format
-            FrameworkElement.LanguageProperty.OverrideMetadata(
-                typeof(FrameworkElement),
-                new FrameworkPropertyMetadata(
-                    System.Windows.Markup.XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag)));
+            var harmonogramsManager = new HarmonogramsManager();
+            if (!harmonogramsManager.Get().Any())
+            {
+                using (var harmonogramBO = harmonogramsManager.Create())
+                {
+                    harmonogramBO.Data.Name = "Podstawowy";
+                    harmonogramBO.Data.Active = true;
+                    harmonogramBO.Save();
+                }
+            }
+        }
+        private void InitAccountFunctions()
+        {
+            var accountFunctionsManager = new AccountFunctionsManager();
+            accountFunctionsManager.Initialize();
         }
     }
 }

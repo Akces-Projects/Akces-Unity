@@ -117,13 +117,13 @@ namespace Akces.Unity.DataAccess.Services
                 if (!response.IsSuccessStatusCode)
                     throw new Exception("Nie udało się pobrać produktów. Sprawdź poprawność połączenia");
 
-                var allegroGetOffersResponse = await response.Content.ReadFromJsonAsync<AllegroGetOffersResponse>();
+                var allegroGetOffersResponse = await response.Content.ReadFromJsonAsync<AllegroGetOffersResponse>();             
 
                 var products = allegroGetOffersResponse.offers
                     .Select(x => new Product()
                     {
                         Id = x.id,
-                        Symbol = x.external?.id == null ? "" : x.external.id.Split(' ').FirstOrDefault(),
+                        Symbol = x.external?.id,
                         EAN = "",
                         Currency = x.sellingMode.price.currency,
                         OriginalPrice = x.sellingMode.price.amount,

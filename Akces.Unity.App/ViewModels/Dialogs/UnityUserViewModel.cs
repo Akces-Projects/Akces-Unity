@@ -6,15 +6,20 @@ using Akces.Wpf.Models;
 using Akces.Unity.DataAccess.Managers.BusinessObjects;
 using Akces.Unity.Models;
 using Akces.Unity.DataAccess.Managers;
+using Akces.Wpf.Extensions;
+using Akces.Wpf.Helpers;
+using Akces.Core.Nexo;
+using System.Windows;
 
 namespace Akces.Unity.App.ViewModels
 {
     internal class UnityUserViewModel : ControlViewModel
     {
         private bool editMode;
+        private bool wasWorker;
         private IUnityUser unityUser;
 
-        public IUnityUser UnityUser { get => unityUser; set { unityUser = value; OnPropertyChanged(); } }
+        public IUnityUser UnityUser { get => unityUser; set { unityUser = value; wasWorker = unityUser.Data.IsWorker; OnPropertyChanged(); } }
         public ICommand SaveCommand { get; set; }
         public ICommand CancelCommand { get; set; }
         public ICommand CloseCommand { get; set; }
@@ -35,7 +40,26 @@ namespace Akces.Unity.App.ViewModels
         {
             UnityUser.Save();
             UnityUser.Dispose();
-            Host.Window.Close();
+
+            if (UnityUser.Data.IsWorker && !wasWorker) 
+            {
+                var result = MessageBox.Show("" +
+                    "Aby użytkownik zaczął działać jako serwer konieczne jest ponowne zalogowanie." + Environment.NewLine + Environment.NewLine + "Chcesz to zrobić teraz?",
+                    "",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question
+                  );
+
+                if (result == MessageBoxResult.Yes) 
+                {
+                    Logout();
+                    Host.Window.Close();
+                    return;
+                }
+            }
+
+            Host.Window.Close(); 
+            (Host.Window.Owner.GetHost().ControlViewModel as UnityUsersViewModel).LoadUnityUsers();
         }
         private void Cancel()
         {
@@ -49,6 +73,17 @@ namespace Akces.Unity.App.ViewModels
         {
             UnityUser.Dispose();
             Host.Window.Close();
+        }
+        private void Logout()
+        {
+            ServicesProvider.RemoveInstance<HarmonogramWorker>()?.Dispose();
+            ServicesProvider.RemoveInstance<NexoContext>()?.Dispose();
+            var nexoDatabase = ServicesProvider.GetService<NexoDatabase>();
+            var mvm = Host.Window.Owner.DataContext as MainViewModel;
+            mvm.Window.Title = $"{nexoDatabase.Name} - {App.AppName}";
+            mvm.UpdateView<LoginViewModel>();
+            mvm.SidebarVisable = false;
+            mvm.NavbarViewModel.Logged = false;
         }
     }
 }

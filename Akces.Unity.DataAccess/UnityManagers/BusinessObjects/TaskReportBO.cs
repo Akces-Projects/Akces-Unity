@@ -88,18 +88,18 @@ namespace Akces.Unity.DataAccess.Managers.BusinessObjects
             if (Data.Id == default)
             {
                 Data.Created = DateTime.Now;
-                unityDbContext.OperationReports.Add(Data).State = EntityState.Added;
+                unityDbContext.TaskReports.Add(Data).State = EntityState.Added;
             }
             else
             {
-                unityDbContext.OperationReports.Update(Data).State = EntityState.Modified;
+                unityDbContext.TaskReports.Update(Data).State = EntityState.Modified;
             }
 
             return unityDbContext.SaveChanges() > 0;
         }
         public bool Delete()
         {
-            unityDbContext.OperationReports.Remove(Data).State = EntityState.Deleted;
+            unityDbContext.TaskReports.Remove(Data).State = EntityState.Deleted;
             return unityDbContext.SaveChanges() > 0;
         }
         public void Validate()

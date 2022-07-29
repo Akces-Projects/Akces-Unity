@@ -2,12 +2,18 @@
 using Akces.Unity.Models.SaleChannels;
 using Akces.Unity.DataAccess.Managers;
 using Akces.Unity.DataAccess.Services;
+using Akces.Unity.DataAccess.SaleChannelsServices;
 
 namespace Akces.Unity.DataAccess
 {
     public static class UnityExtensions 
     {
-        public static ISaleChannelService CreateService(this Account account) 
+        public static ISaleChannelService CreateMainService(this Account account) 
+        {
+            return new MainSaleChannelService(account);
+        }
+
+        public static ISaleChannelService CreatePartialService(this Account account)
         {
             switch (account.AccountType)
             {

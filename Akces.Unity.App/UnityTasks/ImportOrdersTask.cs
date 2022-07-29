@@ -40,7 +40,7 @@ namespace Akces.Unity.App.Operations
 
             OnTaskStarted.Invoke(harmonogramPosition);
 
-            var saleChannelService = account.CreateService();
+            var saleChannelService = account.CreateMainService();
             var orders = await saleChannelService.GetOrdersAsync();
             var nexoOrdersManager = ServicesProvider.GetService<NexoContext>().GetManager<NexoOrdersManager>();
 

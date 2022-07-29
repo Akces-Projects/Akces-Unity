@@ -85,6 +85,14 @@ namespace Akces.Unity.DataAccess.Managers.BusinessObjects
 
             if (unityDbContext.Harmonograms.Any(x => x.Name == Data.Name && x.Id != Data.Id))
                 throw new Exception("Istnieje już harmonogram o podanej nazwie");
+
+            if (Data.Positions.Where(x => 
+                    x.HarmonogramOperation == TaskType.ImportZamowien || 
+                    x.HarmonogramOperation == TaskType.WyslanieCen ||
+                    x.HarmonogramOperation == TaskType.PobranieStatusowZamowien)
+                .Any(x => x.Account == null))
+
+                throw new Exception("Wybrana operacja pozycji harmonogramu musi mieć przypisane konto sprzedaży");
         }
         public void Activate()
         {
@@ -102,8 +110,11 @@ namespace Akces.Unity.DataAccess.Managers.BusinessObjects
 
             using (var harmonogramBO = harmonogramsManager.Find(Data))
             {
-                harmonogramBO.Data.Active = true;
-                harmonogramBO.Save();
+                if (harmonogramBO.Data != null)
+                {
+                    harmonogramBO.Data.Active = true;
+                    harmonogramBO.Save();
+                }
             }
 
             Data.Active = true;

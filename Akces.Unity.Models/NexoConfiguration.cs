@@ -6,6 +6,8 @@ namespace Akces.Unity.Models
     public class NexoConfiguration
     {
         public int Id { get; set; }
+        public bool DefaultAddress { get; set; }
+        public string ExternalNumberTemplate { get; set; } = "{numer}";
         public virtual List<DeliveryMethodConfigurationMember> DeliveryMethods { get; set; }
         public virtual List<PaymentMethodConfigurationMember> PaymentMethods { get; set; }
         public virtual List<TransactionConfigurationMember> Transactions { get; set; }

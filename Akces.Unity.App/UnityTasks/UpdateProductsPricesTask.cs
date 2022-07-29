@@ -33,7 +33,7 @@ namespace Akces.Unity.App.Operations
             OnTaskProgress = new OnTaskProgress((e,s) => { });
             OnTaskExecuted = new OnTaskFinished((e,s) => { });
             Processes = products.Count;
-            saleChannelService = account.CreateService();
+            saleChannelService = account.CreateMainService();
         }
 
         public async Task ExecuteAsync(CancellationToken? cancellationToken)
@@ -52,11 +52,14 @@ namespace Akces.Unity.App.Operations
 
                 foreach (var product in products)
                 {
+                    if (cancellationToken != null && cancellationToken.Value.IsCancellationRequested)
+                        break;
+
+                    progress++;
+                    OnTaskProgress.Invoke(progress, $"Aktualizacja ceny produktu [{product.Id}]");
+
                     try
                     {
-                        if (cancellationToken != null && cancellationToken.Value.IsCancellationRequested)
-                            break;
-
                         await saleChannelService.UpdateProductPriceAsync(product.Id, product.Currency, product.Price);
                         description = $"Zaktualizowano cenę produktu: {product.Id} - {product.Name} [{product.Symbol}] - {product.OriginalPrice} => {product.Price} [{product.Currency}]";
                         reportBO.AddInfo(product.Id, description);
@@ -66,9 +69,6 @@ namespace Akces.Unity.App.Operations
                         description = $"Wystąpił błąd: {e.Message}";
                         reportBO.AddError(product.Id, description);
                     }
-
-                    progress++;
-                    OnTaskProgress.Invoke(progress, description);
                 }
 
                 reportBO.Save();
