@@ -44,7 +44,6 @@ namespace Akces.Unity.App
             Enabled = workerStatusesManager.GetCurrent()?.Enabled ?? false;
 
             timer = new Timer();
-            timer.Elapsed += CheckStatus;
 
             if (loggedUnityUser.IsWorker)
             {
@@ -53,6 +52,7 @@ namespace Akces.Unity.App
             }
             else
             {
+                timer.Elapsed += CheckStatus;
                 timer.Interval = 1000 * 2;
             }
 
@@ -96,7 +96,13 @@ namespace Akces.Unity.App
 
             foreach (var harmonogramPosition in activeHarmonogram.Positions.Where(x => x.ShouldRun()))
             {
-                Enabled = workerStatusesManager.GetCurrent()?.Enabled ?? false;
+                var enabled = workerStatusesManager.GetCurrent()?.Enabled ?? false;
+
+                if (Enabled != enabled)
+                {
+                    Enabled = enabled;
+                    OnWorkerStatusChanged.Invoke(enabled);
+                }
 
                 if (!Enabled)
                     break;
