@@ -129,6 +129,12 @@ namespace Akces.Unity.App
                     var reports = taskReportsManager.Get(to: to);
                     unityOperation = new DeleteTaskReportsTask(reports, harmonogramPosition);
                 }
+                else if (harmonogramPosition.HarmonogramOperation == TaskType.UsuwanieRaportow_starsze_niz_2_dni)
+                {
+                    var to = DateTime.Now.AddDays(-2);
+                    var reports = taskReportsManager.Get(to: to);
+                    unityOperation = new DeleteTaskReportsTask(reports, harmonogramPosition);
+                }
                 else if (harmonogramPosition.HarmonogramOperation == TaskType.UsuwanieRaportow_starsze_niz_3_dni)
                 {
                     var to = DateTime.Now.AddDays(-3);

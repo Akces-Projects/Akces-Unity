@@ -10,6 +10,7 @@
              xmlns:viewmodels="clr-namespace:Akces.Unity.App.ViewModels"
              d:DataContext="{d:DesignInstance Type=viewmodels:ProductsPricesUpdateViewModel}"
              mc:Ignorable="d"
+             Loaded="OnLoaded"
              d:DesignHeight="450" d:DesignWidth="1200">
 
     <UserControl.Resources>

@@ -44,5 +44,6 @@ namespace Akces.Unity.Models
         UsuwanieRaportow_starsze_niz_10_dni = 5,
         UsuwanieRaportow_starsze_niz_1_tydzien = 6,
         UsuwanieRaportow_starsze_niz_1_miesiac = 7,
+        UsuwanieRaportow_starsze_niz_2_dni = 8
     }
 }
