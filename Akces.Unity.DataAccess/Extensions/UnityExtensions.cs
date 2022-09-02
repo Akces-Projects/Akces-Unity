@@ -1,6 +1,5 @@
 ﻿using Akces.Unity.Models;
 using Akces.Unity.Models.SaleChannels;
-using Akces.Unity.DataAccess.Managers;
 using Akces.Unity.DataAccess.Services;
 using Akces.Unity.DataAccess.SaleChannelsServices;
 

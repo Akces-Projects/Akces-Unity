@@ -34,7 +34,7 @@ namespace Akces.Unity.App
         public static string ErpName = $"{NexoProduct} nexo";
         public const string AppName = "Akces Unity";
         public const string LauncherName = "Akces.Unity.Launcher.exe";
-        public const string Version = "2022.1.3.3";
+        public const string Version = "2022.1.4.0";
         public const string HelpFileLocation = "{lokalizacja pliku pomocy [.doc, .pdf, .txt itd.]}";
         public const string WebsiteLink = "https://akces.pro/";
         public const string WebsiteName = "www.akces.pro";

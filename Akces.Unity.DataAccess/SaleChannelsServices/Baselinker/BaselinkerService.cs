@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Akces.Unity.Models;
 using Akces.Unity.Models.SaleChannels;
-using Akces.Unity.Models.SaleChannels.Baselinker.Models;
+using Akces.Unity.DataAccess.Services.Baselinker.Models;
 
 namespace Akces.Unity.DataAccess.Services
 {

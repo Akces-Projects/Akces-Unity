@@ -258,6 +258,10 @@
     <Compile Include="Migrations\20220721134522_nexo_config_update.designer.cs">
       <DependentUpon>20220721134522_nexo_config_update.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\20220829104125_shoper_update.cs" />
+    <Compile Include="Migrations\20220829104125_shoper_update.designer.cs">
+      <DependentUpon>20220829104125_shoper_update.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\UnityDbContextModelSnapshot.cs" />
     <Compile Include="NexoManagers\NexoAssortmentManager.cs" />
     <Compile Include="NexoManagers\NexoContractorsManager.cs" />
@@ -286,6 +290,26 @@
     <Compile Include="SaleChannelsServices\Olx\Models\OlxAuthResponse.cs" />
     <Compile Include="SaleChannelsServices\Olx\Models\OlxGetProductsResponse.cs" />
     <Compile Include="SaleChannelsServices\Olx\OlxService.cs" />
+    <Compile Include="SaleChannelsServices\Shoper\Models\ShoperAccessToken.cs" />
+    <Compile Include="SaleChannelsServices\Shoper\Models\ShoperAdditionalField.cs" />
+    <Compile Include="SaleChannelsServices\Shoper\Models\ShoperBillingAddress.cs" />
+    <Compile Include="SaleChannelsServices\Shoper\Models\ShoperCountries.cs" />
+    <Compile Include="SaleChannelsServices\Shoper\Models\ShoperCurrency.cs" />
+    <Compile Include="SaleChannelsServices\Shoper\Models\ShoperDeliveryAddress.cs" />
+    <Compile Include="SaleChannelsServices\Shoper\Models\ShoperOrder.cs" />
+    <Compile Include="SaleChannelsServices\Shoper\Models\ShoperOrderPosition.cs" />
+    <Compile Include="SaleChannelsServices\Shoper\Models\ShoperPaymentMethod.cs" />
+    <Compile Include="SaleChannelsServices\Shoper\Models\ShoperPlPL.cs" />
+    <Compile Include="SaleChannelsServices\Shoper\Models\ShoperProduct.cs" />
+    <Compile Include="SaleChannelsServices\Shoper\Models\ShoperShipping.cs" />
+    <Compile Include="SaleChannelsServices\Shoper\Models\ShoperShippingPayment.cs" />
+    <Compile Include="SaleChannelsServices\Shoper\Models\ShoperShippingPlPL.cs" />
+    <Compile Include="SaleChannelsServices\Shoper\Models\ShoperTranslations.cs" />
+    <Compile Include="SaleChannelsServices\Shoper\Responses\GetCurrenciesResponse.cs" />
+    <Compile Include="SaleChannelsServices\Shoper\Responses\GetOrderPositionsResponse.cs" />
+    <Compile Include="SaleChannelsServices\Shoper\Responses\GetOrdersResponse.cs" />
+    <Compile Include="SaleChannelsServices\Shoper\Responses\GetPaymentMethodsResponse.cs" />
+    <Compile Include="SaleChannelsServices\Shoper\Responses\GetShippingsResponse.cs" />
     <Compile Include="SaleChannelsServices\Shoper\ShoperService.cs" />
     <Compile Include="SaleChannelsServices\Shopgold\ShopgoldService.cs" />
     <Compile Include="UnityDbContext.cs" />
@@ -315,6 +339,7 @@
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.3\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.3\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Data.SqlClient.SNI.1.1.0\build\net46\Microsoft.Data.SqlClient.SNI.targets" Condition="Exists('..\packages\Microsoft.Data.SqlClient.SNI.1.1.0\build\net46\Microsoft.Data.SqlClient.SNI.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

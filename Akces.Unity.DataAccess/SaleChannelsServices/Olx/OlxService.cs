@@ -26,6 +26,7 @@ namespace Akces.Unity.DataAccess.Services
         public OlxService(OlxConfiguration olxConfiguration)
         {
             this.olxConfiguration = olxConfiguration;
+            //olxConfiguration.AccessToken = "5384a2cbaf7b7f64b175b982e005de429773ce27";
         }
 
         public async Task<bool> AuthenticateAsync()
@@ -101,7 +102,7 @@ namespace Akces.Unity.DataAccess.Services
                 return await GetProductsPageAsync(pageIndex);
             }
         }
-        private async Task<ProductsContainer> GetProductsPageAsync(int pageIndex) 
+        private async Task<ProductsContainer> GetProductsPageAsync(int pageIndex)
         {
             var pageSize = 1000;
             var offset = pageIndex * pageSize;
@@ -114,6 +115,7 @@ namespace Akces.Unity.DataAccess.Services
                 if (!response.IsSuccessStatusCode)
                     throw new Exception("Nie udało się pobrać produktów. Sprawdź poprawność połączenia");
 
+                var t = await response.Content.ReadAsStringAsync();
                 var olxGetProductsResponse = await response.Content.ReadFromJsonAsync<OlxGetProductsResponse>();
 
                 var products = olxGetProductsResponse.data
@@ -129,9 +131,6 @@ namespace Akces.Unity.DataAccess.Services
                         Name = x.title
                     })
                     .ToList();
-
-
-                var Product = products[0];
 
                 var container = new ProductsContainer()
                 {

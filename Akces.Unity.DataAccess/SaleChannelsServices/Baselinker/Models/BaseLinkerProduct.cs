@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Akces.Unity.Models.SaleChannels.Baselinker
+namespace Akces.Unity.DataAccess.Services.Baselinker.Models
 {
     public class BaseLinkerProduct
     {
