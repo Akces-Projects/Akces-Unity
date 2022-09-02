@@ -20,16 +20,6 @@ namespace Akces.Unity.DataAccess.Services.Allegro.Models
         public string id { get; set; }
     }
 
-    public class Delivery
-    {
-        public ShippingRates shippingRates { get; set; }
-    }
-
-    public class External
-    {
-        public string id { get; set; }
-    }
-
     public class ImpliedWarranty
     {
         public string id { get; set; }
@@ -51,12 +41,6 @@ namespace Akces.Unity.DataAccess.Services.Allegro.Models
         public External external { get; set; }
         public Delivery delivery { get; set; }
         public B2b b2b { get; set; }
-    }
-
-    public class Price
-    {
-        public decimal amount { get; set; }
-        public string currency { get; set; }
     }
 
     public class PrimaryImage

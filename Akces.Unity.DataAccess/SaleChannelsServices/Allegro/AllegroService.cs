@@ -73,9 +73,24 @@ namespace Akces.Unity.DataAccess.Services
             httpClient?.Dispose();
             return true;
         }
-        public Task<List<Order>> GetOrdersAsync()
+        public async Task<List<Order>> GetOrdersAsync()
         {
-            throw new NotImplementedException();
+            using (var httpClient = new HttpClient())
+            {
+                var request = BuildGetOrdersRequest();
+                var response = await httpClient.SendAsync(request);
+
+                if (!response.IsSuccessStatusCode)
+                    throw new Exception("Nie udało się pobrać zamówień. Sprawdź poprawność połączenia");
+
+                var allegroGetOrdersResponse = await response.Content.ReadFromJsonAsync<AllegroGetOrdersResponse>();
+
+                var orders = allegroGetOrdersResponse.checkoutForms
+                    .Select(x => x.ToOrder())
+                    .ToList();
+
+                return orders;
+            }
         }
         public async Task<ProductsContainer> GetProductsAsync(bool all, int pageIndex = 0)
         {
@@ -232,6 +247,28 @@ namespace Akces.Unity.DataAccess.Services
         {
             var uri = allegroConfiguration.Sandbox ? allegroConfiguration.SandboxBaseAddress : allegroConfiguration.BaseAddress;
             var request = new HttpRequestMessage(HttpMethod.Get, $"https://api.{uri}/sale/offers?offset={offset}&limit={pageSize}");
+
+            request.Headers.TryAddWithoutValidation("Authorization", "Bearer " + allegroConfiguration.AccessToken);
+            request.Headers.TryAddWithoutValidation("Accept", "application/vnd.allegro.public.v1+json");
+            request.Headers.TryAddWithoutValidation("Content-Type", "application/vnd.allegro.public.v1+json");
+
+            return request;
+        }
+        private HttpRequestMessage BuildGetOrdersRequest()
+        {
+            var uri = allegroConfiguration.Sandbox ? allegroConfiguration.SandboxBaseAddress : allegroConfiguration.BaseAddress;
+            var request = new HttpRequestMessage(HttpMethod.Get, $"https://api.{uri}/order/checkout-forms");
+
+            request.Headers.TryAddWithoutValidation("Authorization", "Bearer " + allegroConfiguration.AccessToken);
+            request.Headers.TryAddWithoutValidation("Accept", "application/vnd.allegro.public.v1+json");
+            request.Headers.TryAddWithoutValidation("Content-Type", "application/vnd.allegro.public.v1+json");
+
+            return request;
+        }
+        private HttpRequestMessage BuildGetOrderRequest(object id)
+        {
+            var uri = allegroConfiguration.Sandbox ? allegroConfiguration.SandboxBaseAddress : allegroConfiguration.BaseAddress;
+            var request = new HttpRequestMessage(HttpMethod.Get, $"https://api.{uri}/order/checkout-forms/{id}");
 
             request.Headers.TryAddWithoutValidation("Authorization", "Bearer " + allegroConfiguration.AccessToken);
             request.Headers.TryAddWithoutValidation("Accept", "application/vnd.allegro.public.v1+json");
