@@ -6,5 +6,7 @@ namespace Akces.Unity.DataAccess.Services.Shoper.Models
     {
         [JsonPropertyName("pl_PL")]
         public ShoperPlPL PlPL { get; set; }
+        [JsonPropertyName("de_DE")]
+        public ShoperPlPL DeDE { get; set; }
     }
 }

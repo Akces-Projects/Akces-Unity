@@ -159,6 +159,11 @@ namespace Akces.Unity.App
                     var reports = taskReportsManager.Get(to: to);
                     unityOperation = new DeleteTaskReportsTask(reports, harmonogramPosition);
                 }
+                else if (harmonogramPosition.HarmonogramOperation == TaskType.ResetTokenaOlx)
+                {
+                    var account = accountsManager.Get(harmonogramPosition.Account.Id);
+                    unityOperation = new ResetOlxTokenTask(account, harmonogramPosition);
+                }
 
                 if (unityOperation == null)
                     return;

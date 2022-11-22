@@ -50,6 +50,7 @@ namespace Akces.Unity.DataAccess.Services
                 var json = await response.Content.ReadAsStringAsync();
                 var shoperAccessToken = JsonSerializer.Deserialize<ShoperAccessToken>(json);
                 shoperConfiguration.Token = shoperAccessToken.Value;
+                SaveConfiguration();
 
                 return true;
             }

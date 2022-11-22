@@ -174,6 +174,14 @@ namespace Akces.Unity.DataAccess.Services.Shoper.Models
             if (DateTime.TryParse(this.ConfirmDate, out DateTime _confirmDate))
                 confirmDate = _deliveryDate;
 
+            string paymentName = string.Empty;
+
+            if (PaymentMethod.Translations.PlPL != null)
+                paymentName = PaymentMethod.Translations.PlPL.Title;
+            else if (PaymentMethod.Translations.DeDE != null)
+                paymentName = PaymentMethod.Translations.DeDE.Title;
+            else
+                paymentName = PaymentMethod.Name;
 
             var order = new Order
             {

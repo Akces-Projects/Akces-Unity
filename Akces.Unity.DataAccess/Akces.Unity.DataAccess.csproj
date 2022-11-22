@@ -42,35 +42,35 @@
       <HintPath>..\packages\Google.Protobuf.3.19.4\lib\net45\Google.Protobuf.dll</HintPath>
     </Reference>
     <Reference Include="InsERT.Moria.API">
-      <HintPath>..\..\..\..\AppData\Local\InsERT\Deployments\Nexo\Demo_1153f4c5ccf3c04981b2f5bf6bb\Binaries\InsERT.Moria.API.dll</HintPath>
+      <HintPath>..\..\..\..\AppData\Local\InsERT\Deployments\Nexo\Demo_13d719380d27654fa8ba983bfea\Binaries\InsERT.Moria.API.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="InsERT.Moria.BibliotekaDokumentow">
-      <HintPath>..\..\..\..\AppData\Local\InsERT\Deployments\Nexo\Demo_1153f4c5ccf3c04981b2f5bf6bb\Binaries\InsERT.Moria.BibliotekaDokumentow.dll</HintPath>
+      <HintPath>..\..\..\..\AppData\Local\InsERT\Deployments\Nexo\Demo_13d719380d27654fa8ba983bfea\Binaries\InsERT.Moria.BibliotekaDokumentow.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="InsERT.Moria.DaneDomyslne">
-      <HintPath>..\..\..\..\AppData\Local\InsERT\Deployments\Nexo\Demo_1153f4c5ccf3c04981b2f5bf6bb\Binaries\InsERT.Moria.DaneDomyslne.dll</HintPath>
+      <HintPath>..\..\..\..\AppData\Local\InsERT\Deployments\Nexo\Demo_13d719380d27654fa8ba983bfea\Binaries\InsERT.Moria.DaneDomyslne.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="InsERT.Moria.ModelDanych">
-      <HintPath>..\..\..\..\AppData\Local\InsERT\Deployments\Nexo\Demo_1153f4c5ccf3c04981b2f5bf6bb\Binaries\InsERT.Moria.ModelDanych.dll</HintPath>
+      <HintPath>..\..\..\..\AppData\Local\InsERT\Deployments\Nexo\Demo_13d719380d27654fa8ba983bfea\Binaries\InsERT.Moria.ModelDanych.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="InsERT.Moria.Sfera">
-      <HintPath>..\..\..\..\AppData\Local\InsERT\Deployments\Nexo\Demo_1153f4c5ccf3c04981b2f5bf6bb\Binaries\InsERT.Moria.Sfera.dll</HintPath>
+      <HintPath>..\..\..\..\AppData\Local\InsERT\Deployments\Nexo\Demo_13d719380d27654fa8ba983bfea\Binaries\InsERT.Moria.Sfera.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="InsERT.Mox.Core">
-      <HintPath>..\..\..\..\AppData\Local\InsERT\Deployments\Nexo\Demo_1153f4c5ccf3c04981b2f5bf6bb\Binaries\InsERT.Mox.Core.dll</HintPath>
+      <HintPath>..\..\..\..\AppData\Local\InsERT\Deployments\Nexo\Demo_13d719380d27654fa8ba983bfea\Binaries\InsERT.Mox.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="InsERT.Mox.EntityFramework.Core">
-      <HintPath>..\..\..\..\AppData\Local\InsERT\Deployments\Nexo\Demo_1153f4c5ccf3c04981b2f5bf6bb\Binaries\InsERT.Mox.EntityFramework.Core.dll</HintPath>
+      <HintPath>..\..\..\..\AppData\Local\InsERT\Deployments\Nexo\Demo_13d719380d27654fa8ba983bfea\Binaries\InsERT.Mox.EntityFramework.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="InsERT.Mox.EntityFrameworkSupport">
-      <HintPath>..\..\..\..\AppData\Local\InsERT\Deployments\Nexo\Demo_1153f4c5ccf3c04981b2f5bf6bb\Binaries\InsERT.Mox.EntityFrameworkSupport.dll</HintPath>
+      <HintPath>..\..\..\..\AppData\Local\InsERT\Deployments\Nexo\Demo_13d719380d27654fa8ba983bfea\Binaries\InsERT.Mox.EntityFrameworkSupport.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="K4os.Compression.LZ4, Version=1.2.6.0, Culture=neutral, PublicKeyToken=2186fa9121ef231d, processorArchitecture=MSIL">
@@ -277,6 +277,7 @@
     <Compile Include="SaleChannelsServices\Allegro\Models\AllegroOffer.cs" />
     <Compile Include="SaleChannelsServices\Allegro\Models\BuyNowPrice.cs" />
     <Compile Include="SaleChannelsServices\Allegro\Models\ChangePriceRequest.cs" />
+    <Compile Include="SaleChannelsServices\Allegro\Models\CheckoutForm.cs" />
     <Compile Include="SaleChannelsServices\Allegro\Models\DeviceAuthResponse.cs" />
     <Compile Include="SaleChannelsServices\Allegro\Models\Input.cs" />
     <Compile Include="SaleChannelsServices\Baselinker\BaselinkerService.cs" />

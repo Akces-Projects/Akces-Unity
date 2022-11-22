@@ -37,7 +37,7 @@ namespace Akces.Unity.DataAccess.Services
 
             for (int i = 0; i < 10; i++)
             {
-                await Task.Delay(500);
+                await Task.Delay(20000);
                 if (authCode != null)
                     break;
             }
@@ -68,6 +68,8 @@ namespace Akces.Unity.DataAccess.Services
             olxConfiguration.AccessToken = olxAuthResponse.access_token;
             olxConfiguration.RefreshToken = olxAuthResponse.refresh_token;
 
+            SaveConfiguration();
+
             httpClient?.Dispose();
             return true;
         }
@@ -77,6 +79,7 @@ namespace Akces.Unity.DataAccess.Services
         }
         public async Task<ProductsContainer> GetProductsAsync(bool all, int pageIndex = 0)
         {
+            await RefreshTokenAsync();
             if (all)
             {
                 var container = new ProductsContainer();
@@ -113,7 +116,11 @@ namespace Akces.Unity.DataAccess.Services
                 var response = await httpClient.SendAsync(request);
 
                 if (!response.IsSuccessStatusCode)
-                    throw new Exception("Nie udało się pobrać produktów. Sprawdź poprawność połączenia");
+                {
+                   await RefreshTokenAsync();
+                   throw new Exception("Nie udało się pobrać produktów. Sprawdź poprawność połączenia");
+                }
+                    
 
                 var t = await response.Content.ReadAsStringAsync();
                 var olxGetProductsResponse = await response.Content.ReadFromJsonAsync<OlxGetProductsResponse>();
@@ -238,7 +245,7 @@ namespace Akces.Unity.DataAccess.Services
             return request;
         }
 
-        private async Task<bool> RefreshTokenAsync() 
+        public async Task<bool> RefreshTokenAsync() 
         {
             var httpClient = new HttpClient();
             var request = new HttpRequestMessage(HttpMethod.Post, $"{olxConfiguration.BaseAddress}api/open/oauth/token");
