@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace Unity.SaleChannels.Shoper.Models
+namespace Akces.Unity.DataAccess.Services.Shoper.Models
 {
     public class ShoperShipping
     {

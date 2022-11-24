@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.Json.Serialization;
 
-namespace Unity.SaleChannels.Shoper.Models
+namespace Akces.Unity.DataAccess.Services.Shoper.Models
 {
     public class ShoperOrder
     {
@@ -174,7 +174,14 @@ namespace Unity.SaleChannels.Shoper.Models
             if (DateTime.TryParse(this.ConfirmDate, out DateTime _confirmDate))
                 confirmDate = _deliveryDate;
 
-            var currencyRate = this.Currency.Name == "EUR" ? 4 : 1;
+            string paymentName = string.Empty;
+
+            if (PaymentMethod.Translations.PlPL != null)
+                paymentName = PaymentMethod.Translations.PlPL.Title;
+            else if (PaymentMethod.Translations.DeDE != null)
+                paymentName = PaymentMethod.Translations.DeDE.Title;
+            else
+                paymentName = PaymentMethod.Name;
 
             var order = new Order
             {
@@ -184,38 +191,34 @@ namespace Unity.SaleChannels.Shoper.Models
                 OriginalDate = DateTime.Parse(this.Date),
                 CompletionDate = deliveryDate,
                 Title = this.Code,
-                Subtitle = this.PickupPoint,
+                Subtitle = "",
                 Branch = this.BillingAddress.CountryCode,
                 OriginalPlace = this.BillingAddress.City,
                 Warehouse = "",
                 Confirmed = this.Confirm == "1",
                 Currency = this.Currency.Name,
-                Products = this.OrderPositions.Select(x => x.ToProduct(currencyRate)).ToList(),
+                Products = this.OrderPositions.Select(x => x.ToProduct()).ToList(),
                 Payments = new List<Payment>()
                 {
                     new Payment()
                     {
-                        PaymentMethod = (typeof(ShoperTranslations).GetProperties()
-                            .FirstOrDefault(x => x.Name == BillingAddress.CountryCode)
-                            .GetValue(PaymentMethod.Translations) as ShoperTranslation)
-                            .Title,
-
+                        PaymentMethod = this.PaymentMethod.Name,
                         Currency = this.Currency.Name,
                         TimeLimit = null,
-                        Value = decimal.Parse(this.Sum, CultureInfo.InvariantCulture) / currencyRate
+                        Value = decimal.Parse(this.Sum, CultureInfo.InvariantCulture)
                     }
                 },
 
                 Delivery = new Delivery()
                 {
-                    DeliveryCost = decimal.Parse(this.ShippingCost, CultureInfo.InvariantCulture) / currencyRate,
+                    DeliveryCost = decimal.Parse(this.ShippingCost, CultureInfo.InvariantCulture),
                     DeliveryTax = this.ShippingTaxValue,
                     DeliveryMethod = this.Shipping.Name,
                     DeliveryAddress = new DeliveryAddress()
                     {
                         DeliveryPointName = this.PickupPoint,
                         DeliveryPointId = this.PickupPoint,
-                        Name = (this.DeliveryAddress.Company + " " + this.DeliveryAddress.Firstname + " " + this.DeliveryAddress.Lastname + " ").Trim(),
+                        Name = (this.DeliveryAddress.Firstname + " " + this.DeliveryAddress.Lastname + " " + this.DeliveryAddress.Company).Trim(),
                         Country = this.DeliveryAddress.Country,
                         CountryCode = this.DeliveryAddress.CountryCode,
                         Line1 = this.DeliveryAddress.Street1 + " " + this.DeliveryAddress.Street2,
@@ -236,23 +239,17 @@ namespace Unity.SaleChannels.Shoper.Models
                     Line3 = this.BillingAddress.City,
                     VATIN = this.BillingAddress.TaxIdentificationNumber,
                     CountryCode = this.BillingAddress.CountryCode,
-                    FullName = this.BillingAddress.Company?.Trim(),
-                    Name = string.IsNullOrEmpty(this.BillingAddress.Company) ? (this.BillingAddress.Firstname + this.BillingAddress.Lastname).Trim() : this.BillingAddress.Company.Trim(),
+                    FullName = (this.BillingAddress.Company + " " + this.BillingAddress.Firstname + " " + this.BillingAddress.Lastname).Trim(),
+                    Name = this.BillingAddress.Company,
                     PhoneNumber = this.BillingAddress.Phone,
                     Username = this.Email,
-                    Type = string.IsNullOrEmpty(this.BillingAddress.Company) ? ContractorType.Person : ContractorType.Company
+                    Type = string.IsNullOrEmpty(this.BillingAddress.TaxIdentificationNumber) ? ContractorType.Person : ContractorType.Company
                 }
             };
-
-            order.Delivery.DeliveryCost = Math.Round(order.Delivery.DeliveryCost, 2, MidpointRounding.AwayFromZero);
-            var wartosc = order.Products.Sum(x => Math.Round(x.Price, 2, MidpointRounding.AwayFromZero) * x.Quantity) + order.Delivery.DeliveryCost;
-            var roznica = order.Payments.Sum(x => x.Value) - wartosc;
-
-            order.Delivery.DeliveryCost += roznica;
-
-            wartosc = order.Products.Sum(x => x.Price * x.Quantity) + order.Delivery.DeliveryCost;
 
             return order;
         }
     }
+
+
 }

@@ -99,11 +99,11 @@ namespace Akces.Unity.DataAccess.NexoManagers.Operations
                     var panstwo = sfera.PodajObiektTypu<IPanstwa>().Dane.Wszystkie().FirstOrDefault(x => x.Nazwa == Data.Purchaser.Country || x.KodPanstwaUE == Data.Purchaser.CountryCode);
                     zkOB.Dane.MiejsceDostawyTyp = (byte)MiejsceDostawyTyp.Reczny;
 
-                    zkOB.Dane.MiejsceDostawy = new AdresHistoria
-                    {
-                        Panstwo = panstwo,
-                        Nazwa = Data.Delivery.DeliveryAddress.Name
-                    };
+                    //zkOB.Dane.MiejsceDostawy = new AdresHistoria
+                    //{
+                    //    Panstwo = panstwo,
+                    //    Nazwa = Data.Delivery.DeliveryAddress.Name
+                    //};
 
                     if (!string.IsNullOrEmpty(Data.Delivery.DeliveryAddress.DeliveryPointName))
                     {
@@ -127,7 +127,14 @@ namespace Akces.Unity.DataAccess.NexoManagers.Operations
 
                 zkOB.Dane.OperacjePrzeliczaniaPozycji = OperacjePrzeliczaniaPozycji.Brutto_ID;
                 zkOB.Dane.StatusDokumentu = DopasujStatusDokumentu(Data.Warehouse, Data.Purchaser.CountryCode);
-                zkOB.Dane.Waluta = waluty.FirstOrDefault(x => x.Symbol == Data.Currency || x.Nazwa == Data.Currency);
+                try
+                {
+                    zkOB.Dane.Waluta = waluty.FirstOrDefault(x => x.Symbol == Data.Currency || x.Nazwa == Data.Currency);
+                }
+                catch
+                {
+                    operationResult.Warrnings.Add($"Nie można dodać waluty: {Data.Currency}");
+                }
 
                 foreach (var product in Data.Products)
                 {
@@ -153,7 +160,10 @@ namespace Akces.Unity.DataAccess.NexoManagers.Operations
                                 {
                                     pozycjaGlowna.StawkaVat = DopasujStawkeVAT(product.Tax, Data.Purchaser.CountryCode);
                                     pozycjaGlowna.Cena.BruttoPrzedRabatem = product.Price;
-                                    pozycjaGlowna.Cena.RabatProcent = product.DiscountPercentage;
+                                    if (product.DiscountPercentage >= 1)
+                                        pozycjaGlowna.Cena.RabatProcent = product.DiscountPercentage / 100;
+                                    else
+                                        pozycjaGlowna.Cena.RabatProcent = product.DiscountPercentage;
                                 }
                             }
                             else
@@ -161,7 +171,10 @@ namespace Akces.Unity.DataAccess.NexoManagers.Operations
                                 var pozycja = zkOB.Pozycje.Dodaj(asortyment, product.Quantity, jma);
                                 pozycja.StawkaVat = DopasujStawkeVAT(product.Tax, Data.Purchaser.CountryCode);
                                 pozycja.Cena.BruttoPrzedRabatem = product.Price;
-                                pozycja.Cena.RabatProcent = product.DiscountPercentage;
+                                if (product.DiscountPercentage >= 1)
+                                    pozycja.Cena.RabatProcent = product.DiscountPercentage / 100;
+                                else
+                                    pozycja.Cena.RabatProcent = product.DiscountPercentage;
                             }
                         }
                         else
@@ -170,7 +183,10 @@ namespace Akces.Unity.DataAccess.NexoManagers.Operations
                             var pozycja = zkOB.Pozycje.Dodaj("US", product.Name, product.Quantity, jm, jm.Precyzja, null, null);
                             pozycja.StawkaVat = DopasujStawkeVAT(product.Tax, Data.Purchaser.CountryCode);
                             pozycja.Cena.BruttoPrzedRabatem = product.Price;
-                            pozycja.Cena.RabatProcent = product.DiscountPercentage / 100;
+                            if (product.DiscountPercentage >= 1)
+                                pozycja.Cena.RabatProcent = product.DiscountPercentage / 100;
+                            else
+                                pozycja.Cena.RabatProcent = product.DiscountPercentage;
                         }
                     }
                 }
@@ -198,7 +214,6 @@ namespace Akces.Unity.DataAccess.NexoManagers.Operations
                 #endregion
 
                 #region Podsumowanie
-
                 zkOB.Dane.Tytul = Data.Title;
                 zkOB.Dane.Podtytul = Data.Subtitle ?? "";
                 zkOB.Dane.Uwagi = Data.Annotation;
@@ -208,7 +223,10 @@ namespace Akces.Unity.DataAccess.NexoManagers.Operations
                     var formaPlatnosci = DopasujFormePlatnosci(payment.PaymentMethod, Data.Delivery.DeliveryMethod, payment.Currency, Data.Purchaser.CountryCode);
 
                     var value = payment.Value == 0 ? (Data.Products.Sum(x => x.Price * x.Quantity) + Data.Delivery.DeliveryCost) : payment.Value;
-                    var platnoscDokumentu = zkOB.Platnosci.DodajPlatnoscNatychmiastowa(formaPlatnosci, value);
+                    if (formaPlatnosci.TypPlatnosci.Odroczony)
+                        zkOB.Platnosci.DodajPlatnoscOdroczona(formaPlatnosci, value);
+                    else
+                        zkOB.Platnosci.DodajPlatnoscNatychmiastowa(formaPlatnosci, value);
                 }
 
                 #endregion

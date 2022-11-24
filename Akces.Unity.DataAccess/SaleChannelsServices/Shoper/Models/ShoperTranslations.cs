@@ -1,13 +1,12 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Unity.SaleChannels.Shoper.Models
+namespace Akces.Unity.DataAccess.Services.Shoper.Models
 {
     public class ShoperTranslations
     {
         [JsonPropertyName("pl_PL")]
-        public ShoperTranslation PL { get; set; }
-
+        public ShoperPlPL PlPL { get; set; }
         [JsonPropertyName("de_DE")]
-        public ShoperTranslation DE { get; set; }
+        public ShoperPlPL DeDE { get; set; }
     }
 }

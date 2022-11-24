@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Unity.SaleChannels.Shoper.Models
+namespace Akces.Unity.DataAccess.Services.Shoper.Models
 {
-    public class ShoperTranslation
+    public class ShoperPlPL
     {
         [JsonPropertyName("translation_id")]
         public string TranslationId { get; set; }

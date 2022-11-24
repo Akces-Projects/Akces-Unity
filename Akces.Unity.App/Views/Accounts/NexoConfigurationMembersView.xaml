@@ -34,7 +34,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="5"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="1"
@@ -450,60 +450,61 @@
                 </DataGrid>
             </TabItem>
             <TabItem Header="Formy płatności" FontSize="14" Foreground="{style:AkcesStyle ResourceKey=InfoColor}">
-                <DataGrid ItemsSource="{Binding PaymentMethodConfigurationMembers}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
-                    <DataGrid.Columns>
-                        <DataGridTemplateColumn Header="Domyślny" Width="75">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <CheckBox IsChecked="{Binding Default, UpdateSourceTrigger=PropertyChanged}"
+                <Grid>
+                    <DataGrid ItemsSource="{Binding PaymentMethodConfigurationMembers}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="Domyślny" Width="75">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding Default, UpdateSourceTrigger=PropertyChanged}"
                                               VerticalAlignment="Center" HorizontalAlignment="Center">
-                                        <CheckBox.LayoutTransform>
-                                            <ScaleTransform ScaleX="1.4" ScaleY="1.4"/>
-                                        </CheckBox.LayoutTransform>
-                                    </CheckBox>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Header="Forma płatności (sklep)" Width="160">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBox Text="{Binding ChannelPaymentMethod, UpdateSourceTrigger=PropertyChanged}"/>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Header="Sposób dostawy (sklep)" Width="160">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBox Text="{Binding ChannelDeliveryMethod, UpdateSourceTrigger=PropertyChanged}"/>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Header="Waluta (sklep)" Width="160">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBox Text="{Binding CurrencyCode, UpdateSourceTrigger=PropertyChanged}"/>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Header="Forma płatności (nexo)" Width="160">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <ComboBox ItemsSource="{Binding Path=DataContext.PaymentMethods, RelativeSource= {RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}"
+                                            <CheckBox.LayoutTransform>
+                                                <ScaleTransform ScaleX="1.4" ScaleY="1.4"/>
+                                            </CheckBox.LayoutTransform>
+                                        </CheckBox>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Forma płatności (sklep)" Width="160">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox Text="{Binding ChannelPaymentMethod, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Sposób dostawy (sklep)" Width="160">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox Text="{Binding ChannelDeliveryMethod, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Waluta (sklep)" Width="160">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox Text="{Binding CurrencyCode, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Forma płatności (nexo)" Width="160">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox ItemsSource="{Binding Path=DataContext.PaymentMethods, RelativeSource= {RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}"
                                               SelectedValue="{Binding Path=NexoPaymentMethod, UpdateSourceTrigger=PropertyChanged}">
-                                    </ComboBox>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Header="Kraje" Width="*">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBox Text="{Binding CountriesCodes, UpdateSourceTrigger=PropertyChanged}"/>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Width="60">
-                            <DataGridTemplateColumn.Header>
-                                <Button Content="Dodaj"
+                                        </ComboBox>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Kraje" Width="*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox Text="{Binding CountriesCodes, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Width="60">
+                                <DataGridTemplateColumn.Header>
+                                    <Button Content="Dodaj"
                                         Background="Transparent"
                                         BorderBrush="Transparent"
                                         FontWeight="SemiBold"
@@ -511,10 +512,10 @@
                                         HorizontalAlignment="Center"
                                         Command="{Binding Source={StaticResource Proxy}, Path=Data.AddPaymentMethodCommand}"
                                         Foreground="{style:AkcesStyle ResourceKey=SuccessColor}"/>
-                            </DataGridTemplateColumn.Header>
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Content="Usuń"
+                                </DataGridTemplateColumn.Header>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="Usuń"
                                             Background="Transparent"
                                             BorderBrush="Transparent"
                                             FontWeight="SemiBold"
@@ -522,11 +523,12 @@
                                             Command="{Binding Source={StaticResource Proxy}, Path=Data.RemovePaymentMethodCommand}"
                                             CommandParameter="{Binding .}"
                                             Foreground="{style:AkcesStyle ResourceKey=DangerColor}"/>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
             </TabItem>
             <TabItem Header="Sposoby dostaw" FontSize="14" Foreground="{style:AkcesStyle ResourceKey=InfoColor}">
                 <DataGrid ItemsSource="{Binding DeliveryMethodConfigurationMembers}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">

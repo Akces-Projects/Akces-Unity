@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text.Json.Serialization;
 
-namespace Unity.SaleChannels.Shoper.Models
+namespace Akces.Unity.DataAccess.Services.Shoper.Models
 {
     public class ShoperOrderPosition
     {
@@ -74,14 +74,14 @@ namespace Unity.SaleChannels.Shoper.Models
         public List<object> FileOptions { get; set; }
         public ShoperProduct Product { get; internal set; }
 
-        internal Product ToProduct(decimal currencyRate)
+        internal Product ToProduct()
         {
             var product = new Product();
             //{
             product.Symbol = this.Code;
             product.Name = this.Name;
             product.Id = this.ProductId;
-            product.Price = decimal.Parse(this.Price, CultureInfo.InvariantCulture) / currencyRate;
+            product.Price = decimal.Parse(this.Price, CultureInfo.InvariantCulture);
             product.Quantity = decimal.Parse(this.Quantity, CultureInfo.InvariantCulture);
             product.DiscountPercentage = decimal.Parse(this.DiscountPerc, CultureInfo.InvariantCulture);
             product.EAN = this.Product?.Ean;

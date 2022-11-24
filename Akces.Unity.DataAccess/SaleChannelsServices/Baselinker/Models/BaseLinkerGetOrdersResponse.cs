@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Akces.Unity.Models.SaleChannels.Baselinker.Models
+namespace Akces.Unity.DataAccess.Services.Baselinker.Models
 {
     public class BaseLinkerGetOrdersResponse
     {

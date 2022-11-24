@@ -4,14 +4,16 @@ using Akces.Unity.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Akces.Unity.DataAccess.Migrations
 {
     [DbContext(typeof(UnityDbContext))]
-    partial class UnityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220829104125_shoper_update")]
+    partial class shoper_update
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

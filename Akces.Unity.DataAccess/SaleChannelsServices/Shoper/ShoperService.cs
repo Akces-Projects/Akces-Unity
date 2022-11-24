@@ -1,16 +1,16 @@
 ﻿using System;
-using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Net.Http;
+using System.Linq;
+using System.Text.Json;
+using System.Text;
+using System.Net;
 using Microsoft.EntityFrameworkCore;
 using Akces.Unity.Models;
 using Akces.Unity.Models.SaleChannels;
-using System.Net.Http;
-using Unity.SaleChannels.Shoper.Models;
-using Unity.SaleChannels.Shoper.Responses;
-using System.Linq;
-using System.Text;
-using System.Net;
-using System.Text.Json;
+using Akces.Unity.DataAccess.Services.Shoper.Models;
+using Akces.Unity.DataAccess.Services.Shoper.Responses;
 
 namespace Akces.Unity.DataAccess.Services
 {
@@ -19,24 +19,51 @@ namespace Akces.Unity.DataAccess.Services
         private HttpClient httpClient;
         private readonly ShoperConfiguration shoperConfiguration;
 
-        public AccountType SaleChannelType { get => AccountType.Shoper; }
-        public ShoperConfiguration Configuration { get; set; }
-
+        public AccountType SaleChannelType => AccountType.Shoper;
 
         public ShoperService(ShoperConfiguration shoperConfiguration)
         {
+            httpClient = new HttpClient();
+            httpClient.BaseAddress = new Uri(shoperConfiguration.BaseAddress);
             this.shoperConfiguration = shoperConfiguration;
         }
 
+        public async Task<bool> AuthenticateAsync()
+        {
+            using (httpClient = new HttpClient())
+            {
+                httpClient.BaseAddress = new Uri(shoperConfiguration.BaseAddress);
+
+                var username = shoperConfiguration.ClientId;
+                var password = shoperConfiguration.ClientSecret;
+
+                var encoded = Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1").GetBytes(username + ":" + password));
+
+                var uri = "webapi/rest/auth";
+                var request = new HttpRequestMessage(HttpMethod.Post, uri);
+                request.Headers.Add("Authorization", "Basic " + encoded);
+                var response = await httpClient.SendAsync(request);
+
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    throw new Exception("Niepoprawny login lub hasło");
+
+                var json = await response.Content.ReadAsStringAsync();
+                var shoperAccessToken = JsonSerializer.Deserialize<ShoperAccessToken>(json);
+                shoperConfiguration.Token = shoperAccessToken.Value;
+                SaveConfiguration();
+
+                return true;
+            }
+        }
         public async Task<List<Order>> GetOrdersAsync()
         {
             var shoperOrders = new List<ShoperOrder>();
             var currentPage = 1;
             var pagesCount = 1;
-
+            
             using (httpClient = new HttpClient())
             {
-                httpClient.BaseAddress = new Uri(Configuration.BaseAddress);
+                httpClient.BaseAddress = new Uri(shoperConfiguration.BaseAddress);
 
                 var shippings = await GetShippingsAsync();
                 var paymentMethods = await GetPaymentMethodsAsync();
@@ -46,9 +73,9 @@ namespace Akces.Unity.DataAccess.Services
                 {
                     var uri = $"webapi/rest/orders?page={currentPage}&limit=50";
 
-                    if (Configuration.ImportOffset_Hours != default)
+                    if (shoperConfiguration.ImportOffset_Hours != default) 
                     {
-                        var from = DateTime.Now.AddHours(-Configuration.ImportOffset_Hours);
+                        var from = DateTime.Now.AddHours(-shoperConfiguration.ImportOffset_Hours);
                         var dateFilter = $"{{\"date\":{{\">=\":\"{from:yyyy-MM-dd HH:mm:ss}\"}}}}";
                         uri += "&filters=" + dateFilter;
                     }
@@ -60,8 +87,8 @@ namespace Akces.Unity.DataAccess.Services
                 }
                 while (currentPage <= pagesCount);
 
-                if (Configuration.ImportOrders_OnlyCashOnDeliveryOrPaid) shoperOrders.RemoveAll(x => x.IsPaid == false && x.PaymentId != "2");
-                if (Configuration.ImportOrders_OnlyConfirmed) shoperOrders.RemoveAll(x => x.Confirm == "0");
+                if (shoperConfiguration.ImportOrders_OnlyCashOnDeliveryOrPaid) shoperOrders.RemoveAll(x => x.IsPaid == false && x.PaymentId != "2");
+                if (shoperConfiguration.ImportOrders_OnlyConfirmed) shoperOrders.RemoveAll(x => x.Confirm == "0");
 
                 foreach (var shoperOrder in shoperOrders)
                 {
@@ -95,40 +122,22 @@ namespace Akces.Unity.DataAccess.Services
         {
             throw new NotImplementedException();
         }
-        public async Task<bool> AuthenticateAsync()
+        public async Task<ProductsContainer> GetProductsAsync(bool all, int pageIndex = 0)
         {
-            using (httpClient = new HttpClient())
-            {
-                httpClient.BaseAddress = new Uri(Configuration.BaseAddress);
-
-                var username = Configuration.ClientId;
-                var password = Configuration.ClientSecret;
-
-                var encoded = Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1").GetBytes(username + ":" + password));
-
-                var uri = "webapi/rest/auth";
-                var request = new HttpRequestMessage(HttpMethod.Post, uri);
-                request.Headers.Add("Authorization", "Basic " + encoded);
-                var response = await httpClient.SendAsync(request);
-
-                if (response.StatusCode == HttpStatusCode.Unauthorized)
-                    throw new Exception("Niepoprawny login lub hasło");
-
-                var json = await response.Content.ReadAsStringAsync();
-                var shoperAccessToken = JsonSerializer.Deserialize<ShoperAccessToken>(json);
-                Configuration.Token = shoperAccessToken.Value;
-
-                return true;
-            }
+            throw new NotImplementedException();
         }
-        public async Task<bool> ValidateConnectionAsync() 
+        public async Task<bool> UpdateProductPriceAsync(object id, string currency, decimal newPrice)
+        {
+            throw new NotImplementedException();
+        }
+        public async Task<bool> ValidateConnectionAsync()
         {
             try
             {
-                await GetCurrienciesAsync();
+                await GetOrdersAsync();
                 return true;
             }
-            catch (Exception)
+            catch
             {
                 return false;
             }
@@ -144,31 +153,25 @@ namespace Akces.Unity.DataAccess.Services
                 context.SaveChanges();
             }
         }
-        public Task<ProductsContainer> GetProductsAsync(bool all, int pageIndex = 0)
-        {
-            throw new NotImplementedException();
-        }
-        public Task<bool> UpdateProductPriceAsync(object id, string currency, decimal newPrice)
-        {
-            throw new NotImplementedException();
-        }
         public void Dispose()
         {
-            throw new NotImplementedException();
+            httpClient?.Dispose();
+            httpClient = null;
         }
-        public async Task<T> CallAsync<T>(string uri) where T : class
+
+        private async Task<T> CallAsync<T>(string uri) where T: class
         {
             T obj = null;
 
             try
             {
                 var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
-                requestMessage.Headers.Add("Authorization", $"Bearer {Configuration.Token}");
+                requestMessage.Headers.Add("Authorization", $"Bearer {shoperConfiguration.Token}");
                 var response = await httpClient.SendAsync(requestMessage);
                 var json = await response.Content.ReadAsStringAsync();
                 obj = JsonSerializer.Deserialize<T>(json);
 
-                if ((int)response.StatusCode == 429)
+                if ((int)response.StatusCode == 429) 
                 {
                     await Task.Delay(5000);
                     return await CallAsync<T>(uri);
@@ -254,7 +257,7 @@ namespace Akces.Unity.DataAccess.Services
 
             return shoperShippings;
         }
-        private async Task<List<ShoperCurrency>> GetCurrienciesAsync()
+        private async Task<List<ShoperCurrency>> GetCurrienciesAsync() 
         {
             var shoperCurrencies = new List<ShoperCurrency>();
             var currentPage = 1;

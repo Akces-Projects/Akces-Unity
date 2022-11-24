@@ -112,6 +112,19 @@ namespace Akces.Unity.App.ViewModels
             OpenModificationWindowCommand = CreateCommand(OpenModificationWindow, (err) => Host.ShowError(err));
             SearchMethods = new ObservableCollection<SearchMethod>(Enum.GetValues(typeof(SearchMethod)).Cast<SearchMethod>());
 
+            //Mocno pod nich trzeba było by wymyślić jak przechować informacje o ostatnim zaznaczeniu zamiast wybierać na sztywno jak chcieli.
+            var accountsToSelect = new List<string>() { "etos147p", "sm-g", "olx", "hurt", "detal" };
+            foreach (var account in Accounts)
+            {
+                if (accountsToSelect.Any(x => x == account.Item.Name.ToLower()))
+                {
+                    account.Selected = true;
+                }
+            }
+
+            SearchMethod = SearchMethods.FirstOrDefault(x => x == SearchMethod.Symbol);
+            //
+
             LoadPricesCommand = CreateAsyncCommand(LoadPricesAsync, (err) => Host.ShowError(err), null, true, "Pobieranie cen...");
             FirstPageCommand = CreateAsyncCommand(async () => { CurrentPage = 1; await LoadProductsAsync(); }, (err) => Host.ShowError(err), (a) => { return CurrentPage > 1; }, true, "Ładowanie produktów...");
             PreviousPageCommand = CreateAsyncCommand(async () => { CurrentPage--; await LoadProductsAsync(); }, (err) => Host.ShowError(err), (a) => { return CurrentPage > 1; }, true, "Ładowanie produktów...");

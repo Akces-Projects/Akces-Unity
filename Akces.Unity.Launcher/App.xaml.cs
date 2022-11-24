@@ -35,6 +35,15 @@ namespace Akces.Unity.Launcher
                 Nip = "5542963074",
                 ProductCode = ProductCode
             }.ToLicenseKey();
+
+            var lickey1 = new License()
+            {
+                AccountingOffice = false,
+                Expire = System.DateTime.Now.AddYears(50),
+                IsDemo = true,
+                Nip = "1111111111",
+                ProductCode = ProductCode
+            }.ToLicenseKey();
         }
 
         private void Application_Startup(object sender, StartupEventArgs e)

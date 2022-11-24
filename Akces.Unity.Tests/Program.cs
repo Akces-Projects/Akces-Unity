@@ -21,103 +21,103 @@ using System.IO;
 
 namespace Akces.Unity.Tests
 {
-    public class A
-    {
-        public int Value { get; set; }
-    }
-    public class B
-    {
-        public int Value { get; set; }
-    }
+    //public class A
+    //{
+    //    public int Value { get; set; }
+    //}
+    //public class B
+    //{
+    //    public int Value { get; set; }
+    //}
 
-    public class Vals
-    {
-        public A ValA { get; set; }
-        public B ValB { get; set; }
-    }
-    internal class Program
-    {
-        static void Main(string[] args)
-        {
-            Test().Wait();
-        }
-        static async Task Test()
-        {
-            using (var client = new HttpClient())
-            {
-                var request = new HttpRequestMessage(HttpMethod.Get, "https://api.github.com/repos/Akces-Projects/Akces-Unity/releases");
-                request.Headers.TryAddWithoutValidation("User-Agent", "Updater");
-                var response = await client.SendAsync(request);
-                var content = await response.Content.ReadAsStringAsync();
-            }
-        }
+    //public class Vals
+    //{
+    //    public A ValA { get; set; }
+    //    public B ValB { get; set; }
+    //}
+    //internal class Program
+    //{
+    //    static void Main(string[] args)
+    //    {
+    //        Test().Wait();
+    //    }
+    //    static async Task Test()
+    //    {
+    //        using (var client = new HttpClient())
+    //        {
+    //            var request = new HttpRequestMessage(HttpMethod.Get, "https://api.github.com/repos/Akces-Projects/Akces-Unity/releases");
+    //            request.Headers.TryAddWithoutValidation("User-Agent", "Updater");
+    //            var response = await client.SendAsync(request);
+    //            var content = await response.Content.ReadAsStringAsync();
+    //        }
+    //    }
 
-        public static Uchwyt UruchomSfere()
-        {
-            DanePolaczenia danePolaczenia = DanePolaczenia.Jawne("DESKTOP-KD0D5SK\\INSERTNEXO", "nexo_Demo_13", true);
-            MenedzerPolaczen mp = new MenedzerPolaczen();
-            Uchwyt sfera = mp.Polacz(danePolaczenia, ProductId.Subiekt);
-            sfera.ZalogujOperatora("Szef", "robocze");
-            return sfera;
-        }
+    //    public static Uchwyt UruchomSfere()
+    //    {
+    //        DanePolaczenia danePolaczenia = DanePolaczenia.Jawne("DESKTOP-KD0D5SK\\INSERTNEXO", "nexo_Demo_13", true);
+    //        MenedzerPolaczen mp = new MenedzerPolaczen();
+    //        Uchwyt sfera = mp.Polacz(danePolaczenia, ProductId.Subiekt);
+    //        sfera.ZalogujOperatora("Szef", "robocze");
+    //        return sfera;
+    //    }
 
-        public static void CreateAcc()
-        {
-            var accountsManager = new AccountsManager();
-            using (var accountBO = accountsManager.Create<BaselinkerAccount>())
-            {
-                accountBO.Data.Name = "Baselinker1";
-                accountBO.Data.BaselinkerConfiguration.Token = "3008690-3013746-QDCOQ0OZC24XRXH9A4IQLNRSK5C93U2DPUJLBGVKDATIVPWIGFKKJP2QIIFS9TK3";
-                accountBO.Data.BaselinkerConfiguration.GetUnconfirmedOrders = false;
+    //    public static void CreateAcc()
+    //    {
+    //        var accountsManager = new AccountsManager();
+    //        using (var accountBO = accountsManager.Create<BaselinkerAccount>())
+    //        {
+    //            accountBO.Data.Name = "Baselinker1";
+    //            accountBO.Data.BaselinkerConfiguration.Token = "3008690-3013746-QDCOQ0OZC24XRXH9A4IQLNRSK5C93U2DPUJLBGVKDATIVPWIGFKKJP2QIIFS9TK3";
+    //            accountBO.Data.BaselinkerConfiguration.GetUnconfirmedOrders = false;
 
-                accountBO.Data.NexoConfiguration.Warehouses.Add(new WarehouseConfigurationMember()
-                {
-                    NexoDocumentStatus = "B",
-                    NexoWarehouseSymbol = "MAG",
-                    Default = true
-                });
+    //            accountBO.Data.NexoConfiguration.Warehouses.Add(new WarehouseConfigurationMember()
+    //            {
+    //                NexoDocumentStatus = "B",
+    //                NexoWarehouseSymbol = "MAG",
+    //                Default = true
+    //            });
 
-                accountBO.Data.NexoConfiguration.Branches.Add(new BranchConfigurationMember
-                {
-                    NexoBranchSymbol = "CENTRALA",
-                    Default = true
-                });
+    //            accountBO.Data.NexoConfiguration.Branches.Add(new BranchConfigurationMember
+    //            {
+    //                NexoBranchSymbol = "CENTRALA",
+    //                Default = true
+    //            });
 
-                accountBO.Data.NexoConfiguration.PaymentMethods.Add(new PaymentMethodConfigurationMember()
-                {
-                    NexoPaymentMethod = "Gotówka",
-                    Default = true
-                });
+    //            accountBO.Data.NexoConfiguration.PaymentMethods.Add(new PaymentMethodConfigurationMember()
+    //            {
+    //                NexoPaymentMethod = "Gotówka",
+    //                Default = true
+    //            });
 
-                accountBO.Data.NexoConfiguration.TaxRates.Add(new TaxRateConfigurationMember()
-                {
-                    NexoTaxRateSymbol = "8",
-                    Default = true
-                });
+    //            accountBO.Data.NexoConfiguration.TaxRates.Add(new TaxRateConfigurationMember()
+    //            {
+    //                NexoTaxRateSymbol = "8",
+    //                Default = true
+    //            });
 
-                accountBO.Data.NexoConfiguration.Units.Add(new UnitConfigurationMember()
-                {
-                    NexoUnitSymbol = "kg",
-                    Default = true
-                });
+    //            accountBO.Data.NexoConfiguration.Units.Add(new UnitConfigurationMember()
+    //            {
+    //                NexoUnitSymbol = "kg",
+    //                Default = true
+    //            });
 
-                accountBO.Data.NexoConfiguration.DeliveryMethods.Add(new DeliveryMethodConfigurationMember()
-                {
-                    NexoDeliveryMethodName = "Kurier",
-                    Default = true
-                });
+    //            accountBO.Data.NexoConfiguration.DeliveryMethods.Add(new DeliveryMethodConfigurationMember()
+    //            {
+    //                NexoDeliveryMethodName = "Kurier",
+    //                Default = true
+    //            });
 
-                accountBO.Data.NexoConfiguration.Transactions.Add(new TransactionConfigurationMember()
-                {
-                    NexoTranstactionSymbol = "WDT",
-                    Default = true
-                });
+    //            accountBO.Data.NexoConfiguration.Transactions.Add(new TransactionConfigurationMember()
+    //            {
+    //                NexoTranstactionSymbol = "WDT",
+    //                Default = true
+    //            });
 
-                accountBO.Save();
-            }
-        }
+    //            accountBO.Save();
+    //        }
+    //    }
 
-	}
+	//}
 }
 
 

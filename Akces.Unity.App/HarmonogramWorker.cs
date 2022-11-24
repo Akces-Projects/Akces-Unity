@@ -44,7 +44,6 @@ namespace Akces.Unity.App
             Enabled = workerStatusesManager.GetCurrent()?.Enabled ?? false;
 
             timer = new Timer();
-            timer.Elapsed += CheckStatus;
 
             if (loggedUnityUser.IsWorker)
             {
@@ -53,6 +52,7 @@ namespace Akces.Unity.App
             }
             else
             {
+                timer.Elapsed += CheckStatus;
                 timer.Interval = 1000 * 2;
             }
 
@@ -96,7 +96,13 @@ namespace Akces.Unity.App
 
             foreach (var harmonogramPosition in activeHarmonogram.Positions.Where(x => x.ShouldRun()))
             {
-                Enabled = workerStatusesManager.GetCurrent()?.Enabled ?? false;
+                var enabled = workerStatusesManager.GetCurrent()?.Enabled ?? false;
+
+                if (Enabled != enabled)
+                {
+                    Enabled = enabled;
+                    OnWorkerStatusChanged.Invoke(enabled);
+                }
 
                 if (!Enabled)
                     break;
@@ -123,6 +129,12 @@ namespace Akces.Unity.App
                     var reports = taskReportsManager.Get(to: to);
                     unityOperation = new DeleteTaskReportsTask(reports, harmonogramPosition);
                 }
+                else if (harmonogramPosition.HarmonogramOperation == TaskType.UsuwanieRaportow_starsze_niz_2_dni)
+                {
+                    var to = DateTime.Now.AddDays(-2);
+                    var reports = taskReportsManager.Get(to: to);
+                    unityOperation = new DeleteTaskReportsTask(reports, harmonogramPosition);
+                }
                 else if (harmonogramPosition.HarmonogramOperation == TaskType.UsuwanieRaportow_starsze_niz_3_dni)
                 {
                     var to = DateTime.Now.AddDays(-3);
@@ -146,6 +158,11 @@ namespace Akces.Unity.App
                     var to = DateTime.Now.AddMonths(-1);
                     var reports = taskReportsManager.Get(to: to);
                     unityOperation = new DeleteTaskReportsTask(reports, harmonogramPosition);
+                }
+                else if (harmonogramPosition.HarmonogramOperation == TaskType.ResetTokenaOlx)
+                {
+                    var account = accountsManager.Get(harmonogramPosition.Account.Id);
+                    unityOperation = new ResetOlxTokenTask(account, harmonogramPosition);
                 }
 
                 if (unityOperation == null)

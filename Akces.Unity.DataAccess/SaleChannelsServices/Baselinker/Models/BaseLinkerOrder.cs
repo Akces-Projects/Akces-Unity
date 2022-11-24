@@ -2,8 +2,9 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using Akces.Unity.Models.SaleChannels;
 
-namespace Akces.Unity.Models.SaleChannels.Baselinker
+namespace Akces.Unity.DataAccess.Services.Baselinker.Models
 {
     public class BaseLinkerOrder
     {

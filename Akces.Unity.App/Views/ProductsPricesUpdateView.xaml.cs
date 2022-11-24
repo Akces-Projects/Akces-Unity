@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using Akces.Unity.App.ViewModels;
 
@@ -10,26 +11,17 @@ namespace Akces.Unity.App.Views
         public ProductsPricesUpdateView()
         {
             InitializeComponent();
-            accountsFilterText.Text = "Brak wybranych kont";
         }
+
+        //Robią to samo ale zostawiam jako 2 osobne jakby było trzeba dodać coś tylko do jednej, OnLoaded może przecież wiecej rzeczy robić jeśli zajdzie taka potrzeba 
+        private void OnLoaded(object sender, EventArgs e)
+        {
+            ChangeAccountsFilterText();
+        }
+
         private void ComboBox_DropDownClosed(object sender, EventArgs e)
         {
-            var vm = DataContext as ProductsPricesUpdateViewModel;
-            var count = vm.Accounts.Count(x => x.Selected);
-
-            if (count == 0)
-            {
-                accountsFilterText.Text = "Brak wybranych kont";
-            }
-            else if (count == 1)
-            {
-                var account = vm.Accounts.First(x => x.Selected).Item;
-                accountsFilterText.Text = $"{account.Name} ({account.AccountType})";
-            }
-            else 
-            {
-                accountsFilterText.Text = $"Wybranych kont: {count}";
-            }
+            ChangeAccountsFilterText();
         }
 
         private void SearchMethodButtonClicked(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -50,6 +42,26 @@ namespace Akces.Unity.App.Views
             var searchMethod = (SearchMethod)menuItem.DataContext;
             var vm = DataContext as ProductsPricesUpdateViewModel;
             vm.SearchMethod = searchMethod;
+        }
+
+        private void ChangeAccountsFilterText()
+        {
+            var vm = DataContext as ProductsPricesUpdateViewModel;
+            var count = vm.Accounts.Count(x => x.Selected);
+
+            if (count == 0)
+            {
+                accountsFilterText.Text = "Brak wybranych kont";
+            }
+            else if (count == 1)
+            {
+                var account = vm.Accounts.First(x => x.Selected).Item;
+                accountsFilterText.Text = $"{account.Name} ({account.AccountType})";
+            }
+            else
+            {
+                accountsFilterText.Text = $"Wybranych kont: {count}";
+            }
         }
     }
 }

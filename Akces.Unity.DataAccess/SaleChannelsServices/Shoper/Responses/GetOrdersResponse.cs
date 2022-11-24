@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Akces.Unity.DataAccess.Services.Shoper.Models;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using Unity.SaleChannels.Shoper.Models;
 
-namespace Unity.SaleChannels.Shoper.Responses
+namespace Akces.Unity.DataAccess.Services.Shoper.Responses
 {
     public class GetOrdersResponse
     {

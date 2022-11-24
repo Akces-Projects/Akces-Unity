@@ -70,17 +70,19 @@
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Akces.Core.Nexo">
-      <HintPath>..\..\..\..\Desktop\Akces\Akces.Core.Nexo.dll</HintPath>
+    <Reference Include="Akces.Core.Nexo, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Akces-Core-Wpf\Akces.Core.Nexo\bin\Debug\Akces.Core.Nexo.dll</HintPath>
     </Reference>
-    <Reference Include="Akces.Wpf">
-      <HintPath>..\..\..\..\Desktop\Akces\Akces.Wpf.dll</HintPath>
+    <Reference Include="Akces.Wpf, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Akces-Core-Wpf\Akces.Wpf\bin\Debug\Akces.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="FontAwesome.WPF, Version=4.7.0.37774, Culture=neutral, PublicKeyToken=0758b07a11a4f466, processorArchitecture=MSIL">
       <HintPath>..\packages\FontAwesome.WPF.4.7.0.9\lib\net40\FontAwesome.WPF.dll</HintPath>
@@ -235,6 +237,7 @@
     <Compile Include="UnityTasks\DeleteTaskReportsTask.cs" />
     <Compile Include="UnityTasks\ImportOrdersTask.cs" />
     <Compile Include="UnityTasks\IUnityTask.cs" />
+    <Compile Include="UnityTasks\ResetOlxTokenTask.cs" />
     <Compile Include="UnityTasks\UpdateProductsPricesTask.cs" />
     <Compile Include="ViewModels\AccountFunctionsViewModel.cs" />
     <Compile Include="ViewModels\AccountsViewModel.cs" />

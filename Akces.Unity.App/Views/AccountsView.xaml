@@ -75,9 +75,9 @@
                                       Command="{Binding Source={StaticResource Proxy}, Path=Data.CreateAccountCommand}"
                                       CommandParameter="{x:Static models:AccountType.shopGold}"/>
                             
-                            <!--<MenuItem Header="Shoper" 
+                            <MenuItem Header="Shoper" 
                                       Command="{Binding Source={StaticResource Proxy}, Path=Data.CreateAccountCommand}"
-                                      CommandParameter="{x:Static models:AccountType.Shoper}"/>-->
+                                      CommandParameter="{x:Static models:AccountType.Shoper}"/>
 
                         </ContextMenu>
                     </Button.ContextMenu>
