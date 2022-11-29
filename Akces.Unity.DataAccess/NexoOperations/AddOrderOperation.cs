@@ -222,7 +222,8 @@ namespace Akces.Unity.DataAccess.NexoManagers.Operations
                 {
                     var formaPlatnosci = DopasujFormePlatnosci(payment.PaymentMethod, Data.Delivery.DeliveryMethod, payment.Currency, Data.Purchaser.CountryCode);
 
-                    var value = payment.Value == 0 ? (Data.Products.Sum(x => x.Price * x.Quantity) + Data.Delivery.DeliveryCost) : payment.Value;
+                    var value = payment.Value == 0 ? (Data.Products.Sum(x => x.Price * x.Quantity * x.RepeatPosition) + Data.Delivery.DeliveryCost) : payment.Value;
+                    value = Math.Round(value, 2, MidpointRounding.AwayFromZero);
                     if (formaPlatnosci.TypPlatnosci.Odroczony)
                         zkOB.Platnosci.DodajPlatnoscOdroczona(formaPlatnosci, value);
                     else

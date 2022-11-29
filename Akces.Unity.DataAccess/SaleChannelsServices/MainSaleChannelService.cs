@@ -31,8 +31,16 @@ namespace Akces.Unity.DataAccess.SaleChannelsServices
 
             foreach (var product in order.Products)
             {
-                product.Quantity = func1.Invoke(product);
-                product.Symbol = func2.Invoke(product);
+                try
+                {
+                    var fullPrice = product.Price * product.Quantity;
+                    product.Quantity = func1.Invoke(product);
+                    product.Symbol = func2.Invoke(product);
+                    product.Price = Math.Round(fullPrice / product.RepeatPosition / (product.Quantity == 0 ? 1 : product.Quantity), 2, MidpointRounding.AwayFromZero);
+                }
+                catch
+                {
+                }
             }
 
             return order;
@@ -47,6 +55,7 @@ namespace Akces.Unity.DataAccess.SaleChannelsServices
 
             foreach (var order in orders)
             {
+
                 foreach (var product in order.Products)
                 {
                     try
@@ -54,7 +63,7 @@ namespace Akces.Unity.DataAccess.SaleChannelsServices
                         var fullPrice = product.Price * product.Quantity;
                         product.Quantity = func1.Invoke(product);
                         product.Symbol = func2.Invoke(product);
-                        product.Price = Math.Round(fullPrice / (product.Quantity == 0 ? 1 : product.Quantity), 2, MidpointRounding.AwayFromZero);
+                        product.Price = Math.Round(fullPrice / product.RepeatPosition / (product.Quantity == 0 ? 1 : product.Quantity), 2, MidpointRounding.AwayFromZero);
                     }
                     catch
                     {
